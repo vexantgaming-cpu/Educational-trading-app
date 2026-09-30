@@ -22,7 +22,8 @@ class Indicators {
     final out = List<double?>.filled(values.length, null);
     if (values.length < period) return out;
     final k = 2 / (period + 1);
-    var previous = values.take(period).fold<double>(0, (a, b) => a + b) / period;
+    var previous =
+        values.take(period).fold<double>(0, (a, b) => a + b) / period;
     out[period - 1] = previous;
     for (var i = period; i < values.length; i++) {
       previous = values[i] * k + previous * (1 - k);
@@ -70,7 +71,8 @@ class Indicators {
                 (candles[i].low - candles[i - 1].close).abs(),
               ].reduce(math.max),
     ];
-    var value = trueRanges.take(period).fold<double>(0, (a, b) => a + b) / period;
+    var value =
+        trueRanges.take(period).fold<double>(0, (a, b) => a + b) / period;
     out[period - 1] = value;
     for (var i = period; i < candles.length; i++) {
       value = (value * (period - 1) + trueRanges[i]) / period;

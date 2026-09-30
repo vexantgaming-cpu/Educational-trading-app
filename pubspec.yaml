@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   market_sim:
     path: packages/market_sim
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:
@@ -53,6 +54,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/lessons/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

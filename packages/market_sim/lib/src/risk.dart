@@ -92,10 +92,12 @@ class Risk {
     if (riskPerQuantity <= 0 || balance <= 0 || entry <= 0) {
       return PositionSize.zero;
     }
-    var quantity =
-        spec.roundQuantityDown(balance * riskPct / 100 / riskPerQuantity);
+    var quantity = spec.roundQuantityDown(
+      balance * riskPct / 100 / riskPerQuantity,
+    );
     final maxByLeverage = spec.roundQuantityDown(
-        balance * spec.maxLeverage / (entry * spec.contractSize));
+      balance * spec.maxLeverage / (entry * spec.contractSize),
+    );
     var limited = false;
     if (quantity > maxByLeverage) {
       quantity = maxByLeverage;

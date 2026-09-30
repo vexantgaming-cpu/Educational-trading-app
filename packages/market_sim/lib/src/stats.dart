@@ -16,15 +16,17 @@ class TradeStats {
     required this.maxDrawdownPct,
   });
 
-  factory TradeStats.from(List<ClosedTrade> trades,
-      {double startingBalance = 10000}) {
+  factory TradeStats.from(
+    List<ClosedTrade> trades, {
+    double startingBalance = 10000,
+  }) {
     final winners = trades.where((t) => t.netPnl > 0).toList();
     final losers = trades.where((t) => t.netPnl <= 0).toList();
     final grossWins = winners.fold<double>(0, (a, t) => a + t.netPnl);
     final grossLosses = losers.fold<double>(0, (a, t) => a + t.netPnl).abs();
     final rValues = [
       for (final t in trades)
-        if (t.rMultiple != null) t.rMultiple!
+        if (t.rMultiple != null) t.rMultiple!,
     ];
 
     var equity = startingBalance, peak = startingBalance, maxDrawdown = 0.0;

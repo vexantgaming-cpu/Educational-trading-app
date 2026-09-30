@@ -1,0 +1,90 @@
+{
+  "id": "L0-05",
+  "title": "Reading a candlestick",
+  "steps": [
+    {
+      "type": "candle_anatomy",
+      "title": "Four prices in one shape",
+      "text": "Each candle shows four prices for one period: **Open**, **High**, **Low** and **Close** (\"OHLC\").\n\nThe thick part is the **body**, from open to close. The thin lines are **wicks** (or shadows), which reach the high and the low."
+    },
+    {
+      "type": "explain",
+      "title": "Colour shows direction",
+      "text": "**Green** (bullish): the candle closed **higher** than it opened. The open is at the bottom of the body.\n\n**Red** (bearish): the candle closed **lower** than it opened. The open is at the top of the body."
+    },
+    {
+      "type": "quiz",
+      "question": "A candle opened at 50, reached a high of 54 and a low of 49, and closed at 53. What colour is it?",
+      "options": [
+        "Green",
+        "Red",
+        "It depends on the next candle",
+        "Grey"
+      ],
+      "answer": 0,
+      "explanation": "It closed (53) **above** where it opened (50), so it's a green, bullish candle."
+    },
+    {
+      "type": "quiz",
+      "question": "On that same candle, how long is the upper wick?",
+      "options": [
+        "1 (from 53 to 54)",
+        "4 (from 50 to 54)",
+        "3 (from 50 to 53)",
+        "5 (from 49 to 54)"
+      ],
+      "answer": 0,
+      "explanation": "The upper wick runs from the top of the body (the close, 53) to the high (54): a length of **1**."
+    },
+    {
+      "type": "explain",
+      "title": "What the shape tells you",
+      "text": "A **long body** means one side was in control for most of the period.\n\nA **long wick** means price travelled somewhere and got **pushed back**. That's a sign of rejection.\n\nA **tiny body** means buyers and sellers ended roughly even."
+    },
+    {
+      "type": "quiz",
+      "question": "A candle has a small body near its top and a long lower wick. What happened?",
+      "options": [
+        "Sellers pushed price down, but buyers pushed it back up before the close",
+        "Sellers were in control the whole time",
+        "The market was closed",
+        "Price didn't move at all"
+      ],
+      "answer": 0,
+      "explanation": "The long lower wick shows price went much lower during the period, but it closed near the top. The lower prices were **rejected** by buyers."
+    },
+    {
+      "type": "spot",
+      "prompt": "Tap the candle with the highest high.",
+      "target": "highest",
+      "explanation": "The highest high is the top of the tallest upper wick, not the tallest green body.",
+      "chart": {
+        "seed": 255,
+        "visibleBars": 36,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 18,
+            "movePct": 8,
+            "volatilityPct": 0.8
+          },
+          {
+            "type": "trend",
+            "bars": 18,
+            "movePct": -7,
+            "volatilityPct": 0.8
+          }
+        ]
+      }
+    },
+    {
+      "type": "recap",
+      "points": [
+        "Every candle shows **open, high, low and close**.",
+        "**Body** = open to close. **Wicks** = the high and the low.",
+        "**Green** closed higher than it opened; **red** closed lower.",
+        "Long wicks show **rejection** of those prices."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "id": "L1-04",
+  "title": "Support and resistance are zones",
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Where price keeps turning",
+      "text": "**Support** is a price area where buying has repeatedly stopped a fall.\n\n**Resistance** is a price area where selling has repeatedly stopped a rise.\n\nWhy do they work? Traders remember prices. Buyers who missed the last bounce wait there, and people who bought too high wait to sell when they're back to break even."
+    },
+    {
+      "type": "explain",
+      "title": "Zones, not lines",
+      "text": "Price rarely turns at exactly the same number. Wicks poke through, and some bounces stop a little short.\n\nSo think of support and resistance as **areas**, drawn around the cluster of turning points.",
+      "chart": {
+        "seed": 104,
+        "showZones": true,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 30,
+            "movePct": 10
+          },
+          {
+            "type": "range",
+            "bars": 40,
+            "belowPct": 4.5,
+            "abovePct": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "type": "spot",
+      "prompt": "Tap the support zone on this chart.",
+      "target": "support",
+      "explanation": "Support is the area near the bottom of the sideways range, where the falls kept stopping.",
+      "chart": {
+        "seed": 131,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 30,
+            "movePct": 11
+          },
+          {
+            "type": "range",
+            "bars": 40,
+            "belowPct": 5,
+            "abovePct": 0.4
+          }
+        ]
+      }
+    },
+    {
+      "type": "spot",
+      "prompt": "Now tap the resistance zone.",
+      "target": "resistance",
+      "explanation": "Resistance is the area near the top of the range, where the rallies kept failing.",
+      "chart": {
+        "seed": 142,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 30,
+            "movePct": -10
+          },
+          {
+            "type": "range",
+            "bars": 40,
+            "belowPct": 0.4,
+            "abovePct": 5
+          }
+        ]
+      }
+    },
+    {
+      "type": "quiz",
+      "question": "Price has bounced off the same area three times. What's the most reasonable view?",
+      "options": [
+        "Many traders are watching this area, but it can still break",
+        "It can never break",
+        "It will definitely break next time",
+        "Past bounces don't matter"
+      ],
+      "answer": 0,
+      "explanation": "Levels matter because traders watch them. But every test uses up some of the buyers there, and eventually levels do break. Always plan for both outcomes."
+    },
+    {
+      "type": "quiz",
+      "question": "You want to buy at support. Where does a sensible stop-loss go?",
+      "options": [
+        "Just below the support zone, beyond the wicks",
+        "In the middle of the zone",
+        "Above your entry price",
+        "Nowhere: support will hold"
+      ],
+      "answer": 0,
+      "explanation": "If price falls clearly **below** the zone, your idea is wrong. A stop inside the zone gets hit by normal wiggles."
+    },
+    {
+      "type": "exercise",
+      "title": "Put it into practice",
+      "text": "Price is back at support. Plan a **long** trade: put your stop-loss **below** the support zone and your target near **resistance**. Then watch it play out.\n\nCome back here when you're done.",
+      "route": "/exercise/place-trade"
+    },
+    {
+      "type": "recap",
+      "points": [
+        "**Support** stops falls; **resistance** stops rises.",
+        "They are **zones**, not exact lines.",
+        "Levels can break, so always use a **stop-loss**.",
+        "Stops go **beyond** the zone, not inside it."
+      ]
+    }
+  ]
+}

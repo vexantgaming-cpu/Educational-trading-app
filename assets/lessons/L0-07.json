@@ -1,0 +1,66 @@
+{
+  "id": "L0-07",
+  "title": "Volume and liquidity",
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Volume: how much was traded",
+      "text": "**Volume** is how much was traded in each period. It's shown as the bars along the bottom of the chart.\n\nHigh volume means lots of participation. Low volume means few traders were active.",
+      "chart": {
+        "seed": 72,
+        "segments": [
+          {"type": "range", "bars": 45, "belowPct": 2.5, "abovePct": 2.5, "volume": 0.7},
+          {"type": "trend", "bars": 20, "movePct": 8, "volume": 2.4}
+        ]
+      }
+    },
+    {
+      "type": "explain",
+      "title": "Volume confirms moves",
+      "text": "Look at the chart again: while price moved sideways, volume was **quiet**. When price broke higher, volume **jumped**.\n\nA breakout on high volume shows many traders are behind the move. A move on very low volume is easier to reverse."
+    },
+    {
+      "type": "quiz",
+      "question": "Price breaks above a level on the highest volume of the month. What does that suggest?",
+      "options": [
+        "Strong participation behind the move",
+        "The move is guaranteed to continue",
+        "Nobody cared about the move",
+        "Volume has nothing to do with price"
+      ],
+      "answer": 0,
+      "explanation": "High volume shows **conviction**: many traders acted. It makes the move more believable, but nothing in trading is guaranteed."
+    },
+    {
+      "type": "explain",
+      "title": "Liquidity",
+      "text": "**Liquidity** is how easily you can trade **without moving the price**.\n\n**Liquid** markets (large company shares, EUR/USD, Bitcoin) have many buyers and sellers, tight spreads and smooth prices.\n\n**Illiquid** markets have wide spreads and prices that jump around."
+    },
+    {
+      "type": "explain",
+      "title": "A note on forex volume",
+      "text": "Forex has no single central exchange, so forex charts usually show **tick volume**: the number of price changes reported by your data provider, not the true amount traded.\n\nIt's still a useful rough measure of activity."
+    },
+    {
+      "type": "quiz",
+      "question": "Which is usually a sign of an illiquid market?",
+      "options": [
+        "Wide spreads and sudden price jumps",
+        "Tight spreads",
+        "Consistently high volume",
+        "Lots of buyers and sellers"
+      ],
+      "answer": 0,
+      "explanation": "Few participants means big gaps between bids and asks, so even small orders can move the price."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "**Volume** shows how much was traded in each period.",
+        "Moves on **high volume** carry more conviction.",
+        "**Liquidity** means you can trade easily without moving the price.",
+        "Forex charts usually show **tick volume**."
+      ]
+    }
+  ]
+}

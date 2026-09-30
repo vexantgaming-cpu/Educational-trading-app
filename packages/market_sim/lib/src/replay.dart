@@ -139,9 +139,9 @@ class ReplaySession {
     required this.spec,
     this.startingBalance = 10000,
     int startIndex = 0,
-  })  : assert(candles.isNotEmpty),
-        _index = math.min(startIndex, candles.length - 1),
-        balance = startingBalance;
+  }) : assert(candles.isNotEmpty),
+       _index = math.min(startIndex, candles.length - 1),
+       balance = startingBalance;
 
   final List<Candle> candles;
   final InstrumentSpec spec;
@@ -177,7 +177,8 @@ class ReplaySession {
   void submit(OrderRequest order) {
     if (!isFlat) {
       throw const OrderRejected(
-          'You already have a trade or order open. Close it first.');
+        'You already have a trade or order open. Close it first.',
+      );
     }
     final quantity = spec.roundQuantityDown(order.quantity);
     if (quantity <= 0) {
@@ -197,8 +198,9 @@ class ReplaySession {
     if (levelError != null) throw OrderRejected(levelError);
     if (spec.notional(price, quantity) / spec.maxLeverage > equity) {
       throw OrderRejected(
-          'Not enough margin: at ${spec.maxLeverage.toStringAsFixed(0)}:1 '
-          'leverage this position needs more than your account balance.');
+        'Not enough margin: at ${spec.maxLeverage.toStringAsFixed(0)}:1 '
+        'leverage this position needs more than your account balance.',
+      );
     }
 
     final sized = OrderRequest(
@@ -227,7 +229,11 @@ class ReplaySession {
     final p = _position;
     if (p == null) throw const OrderRejected('There is no open trade.');
     final error = Risk.levelError(
-        side: p.side, entry: currentPrice, stop: stopLoss, target: takeProfit);
+      side: p.side,
+      entry: currentPrice,
+      stop: stopLoss,
+      target: takeProfit,
+    );
     if (error != null) {
       throw OrderRejected(error.replaceAll('your entry', 'the current price'));
     }
@@ -258,8 +264,9 @@ class ReplaySession {
       final stop = p.stopLoss;
       if (stop != null) {
         final gappedThrough = (fill - stop) * p.side.sign <= 0;
-        final touched =
-            p.side == Side.long ? bar.low <= stop : bar.high >= stop;
+        final touched = p.side == Side.long
+            ? bar.low <= stop
+            : bar.high >= stop;
         if (gappedThrough) {
           closed = _close(fill, ExitReason.stopLoss);
         } else if (touched) {
@@ -267,11 +274,19 @@ class ReplaySession {
         }
       }
       return StepEvent(
-          index: _index, candle: bar, entryFilled: true, closedTrade: closed);
+        index: _index,
+        candle: bar,
+        entryFilled: true,
+        closedTrade: closed,
+      );
     }
 
     if (_position != null) {
-      return StepEvent(index: _index, candle: bar, closedTrade: _checkExits(bar));
+      return StepEvent(
+        index: _index,
+        candle: bar,
+        closedTrade: _checkExits(bar),
+      );
     }
     return StepEvent(index: _index, candle: bar);
   }
@@ -279,7 +294,9 @@ class ReplaySession {
   /// Steps until the trade closes (or the data ends / [maxBars] pass).
   List<StepEvent> runUntilFlat({int? maxBars}) {
     final events = <StepEvent>[];
-    while (!isFlat && hasNextBar && (maxBars == null || events.length < maxBars)) {
+    while (!isFlat &&
+        hasNextBar &&
+        (maxBars == null || events.length < maxBars)) {
       events.add(step());
     }
     return events;
@@ -336,16 +353,20 @@ class ReplaySession {
     switch ((type, buy)) {
       case (OrderType.limit, true) when !below:
         throw const OrderRejected(
-            'A buy limit waits for a lower price. Set it below the current price.');
+          'A buy limit waits for a lower price. Set it below the current price.',
+        );
       case (OrderType.limit, false) when !above:
         throw const OrderRejected(
-            'A sell limit waits for a higher price. Set it above the current price.');
+          'A sell limit waits for a higher price. Set it above the current price.',
+        );
       case (OrderType.stop, true) when !above:
         throw const OrderRejected(
-            'A buy stop triggers on a breakout. Set it above the current price.');
+          'A buy stop triggers on a breakout. Set it above the current price.',
+        );
       case (OrderType.stop, false) when !below:
         throw const OrderRejected(
-            'A sell stop triggers on a breakdown. Set it below the current price.');
+          'A sell stop triggers on a breakdown. Set it below the current price.',
+        );
       default:
         return;
     }

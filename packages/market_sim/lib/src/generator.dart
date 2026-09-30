@@ -105,28 +105,28 @@ class Scenario {
   final List<SegmentSpan> spans;
 
   Map<String, dynamic> toJson() => {
-        'seed': seed,
-        'candles': [for (final c in candles) c.toJson()],
-        'zones': [
-          for (final z in zones)
-            {
-              'kind': z.kind.name,
-              'low': z.low,
-              'high': z.high,
-              'from': z.fromIndex,
-              'to': z.toIndex,
-            }
-        ],
-        'spans': [
-          for (final s in spans)
-            {
-              'kind': s.kind,
-              'from': s.fromIndex,
-              'to': s.toIndex,
-              if (s.label != null) 'label': s.label,
-            }
-        ],
-      };
+    'seed': seed,
+    'candles': [for (final c in candles) c.toJson()],
+    'zones': [
+      for (final z in zones)
+        {
+          'kind': z.kind.name,
+          'low': z.low,
+          'high': z.high,
+          'from': z.fromIndex,
+          'to': z.toIndex,
+        },
+    ],
+    'spans': [
+      for (final s in spans)
+        {
+          'kind': s.kind,
+          'from': s.fromIndex,
+          'to': s.toIndex,
+          if (s.label != null) 'label': s.label,
+        },
+    ],
+  };
 }
 
 /// Builds synthetic, realistic-looking charts from scripted segments.
@@ -164,45 +164,58 @@ class ScenarioGenerator {
         case TrendSegment():
           closes.addAll(_trendPath(price, segment));
           vols.addAll(List.filled(segment.bars, segment.volatilityPct));
-          volumeMults
-              .addAll(List.filled(segment.bars, segment.volumeMultiplier));
-          spans.add(SegmentSpan(
-            kind: segment.movePct >= 0 ? 'uptrend' : 'downtrend',
-            fromIndex: from,
-            toIndex: to,
-            label: segment.label,
-          ));
+          volumeMults.addAll(
+            List.filled(segment.bars, segment.volumeMultiplier),
+          );
+          spans.add(
+            SegmentSpan(
+              kind: segment.movePct >= 0 ? 'uptrend' : 'downtrend',
+              fromIndex: from,
+              toIndex: to,
+              label: segment.label,
+            ),
+          );
         case RangeSegment():
           final support = price * (1 - segment.belowPct / 100);
           final resistance = price * (1 + segment.abovePct / 100);
           final halfWidth = math.max(
-              price * segment.volatilityPct / 100 * 0.5, tickSize * 5);
+            price * segment.volatilityPct / 100 * 0.5,
+            tickSize * 5,
+          );
           closes.addAll(
-              _rangePath(price, support, resistance, halfWidth, segment));
+            _rangePath(price, support, resistance, halfWidth, segment),
+          );
           vols.addAll(List.filled(segment.bars, segment.volatilityPct));
-          volumeMults
-              .addAll(List.filled(segment.bars, segment.volumeMultiplier));
+          volumeMults.addAll(
+            List.filled(segment.bars, segment.volumeMultiplier),
+          );
           zones
-            ..add(Zone(
-              kind: ZoneKind.support,
-              low: _round(support - halfWidth),
-              high: _round(support + halfWidth),
+            ..add(
+              Zone(
+                kind: ZoneKind.support,
+                low: _round(support - halfWidth),
+                high: _round(support + halfWidth),
+                fromIndex: from,
+                toIndex: to,
+              ),
+            )
+            ..add(
+              Zone(
+                kind: ZoneKind.resistance,
+                low: _round(resistance - halfWidth),
+                high: _round(resistance + halfWidth),
+                fromIndex: from,
+                toIndex: to,
+              ),
+            );
+          spans.add(
+            SegmentSpan(
+              kind: 'range',
               fromIndex: from,
               toIndex: to,
-            ))
-            ..add(Zone(
-              kind: ZoneKind.resistance,
-              low: _round(resistance - halfWidth),
-              high: _round(resistance + halfWidth),
-              fromIndex: from,
-              toIndex: to,
-            ));
-          spans.add(SegmentSpan(
-            kind: 'range',
-            fromIndex: from,
-            toIndex: to,
-            label: segment.label,
-          ));
+              label: segment.label,
+            ),
+          );
       }
       price = closes.last;
     }
@@ -223,17 +236,21 @@ class ScenarioGenerator {
       final length = math.min(20 + _rng.nextInt(31), bars - total);
       final roll = _rng.nextDouble();
       if (roll < 0.4) {
-        segments.add(TrendSegment(
-            bars: length, movePct: _rng.nextRange(5, 20)));
+        segments.add(
+          TrendSegment(bars: length, movePct: _rng.nextRange(5, 20)),
+        );
       } else if (roll < 0.7) {
-        segments.add(TrendSegment(
-            bars: length, movePct: -_rng.nextRange(5, 16)));
+        segments.add(
+          TrendSegment(bars: length, movePct: -_rng.nextRange(5, 16)),
+        );
       } else {
-        segments.add(RangeSegment(
-          bars: length,
-          belowPct: _rng.nextRange(1.5, 5),
-          abovePct: _rng.nextRange(1.5, 5),
-        ));
+        segments.add(
+          RangeSegment(
+            bars: length,
+            belowPct: _rng.nextRange(1.5, 5),
+            abovePct: _rng.nextRange(1.5, 5),
+          ),
+        );
       }
       total += length;
     }
@@ -242,12 +259,15 @@ class ScenarioGenerator {
 
   List<double> _trendPath(double start, TrendSegment segment) {
     final totalLog = math.log(1 + segment.movePct / 100);
-    final impulses =
-        segment.pullbacks && segment.bars >= 8 ? math.max(1, segment.bars ~/ 10) : 1;
+    final impulses = segment.pullbacks && segment.bars >= 8
+        ? math.max(1, segment.bars ~/ 10)
+        : 1;
 
     // Leg sizes in log space: impulse, pullback, impulse, ... impulse.
-    final pullbackRatios =
-        List.generate(impulses - 1, (_) => _rng.nextRange(0.3, 0.6));
+    final pullbackRatios = List.generate(
+      impulses - 1,
+      (_) => _rng.nextRange(0.3, 0.6),
+    );
     final impulse =
         totalLog / (impulses - pullbackRatios.fold<double>(0, (a, b) => a + b));
     final legs = <double>[];
@@ -272,8 +292,13 @@ class ScenarioGenerator {
     return path;
   }
 
-  List<double> _rangePath(double start, double support, double resistance,
-      double halfWidth, RangeSegment segment) {
+  List<double> _rangePath(
+    double start,
+    double support,
+    double resistance,
+    double halfWidth,
+    RangeSegment segment,
+  ) {
     final path = <double>[];
     var current = start;
     // Head for the farther boundary first, then alternate.
@@ -283,7 +308,12 @@ class ScenarioGenerator {
       final target = goingDown
           ? support + _rng.nextRange(-0.2, 1.0) * halfWidth
           : resistance - _rng.nextRange(-0.2, 1.0) * halfWidth;
-      final leg = _bridge(current, target, legLength, segment.volatilityPct * 0.6);
+      final leg = _bridge(
+        current,
+        target,
+        legLength,
+        segment.volatilityPct * 0.6,
+      );
       for (final p in leg) {
         if (path.length == segment.bars) break;
         path.add(p.clamp(support - halfWidth, resistance + halfWidth));
@@ -305,17 +335,21 @@ class ScenarioGenerator {
     }
     return [
       for (var k = 1; k <= bars; k++)
-        math.exp(x0 +
-            walk[k - 1] -
-            (k / bars) * walk[bars - 1] +
-            (k / bars) * (x1 - x0)),
+        math.exp(
+          x0 +
+              walk[k - 1] -
+              (k / bars) * walk[bars - 1] +
+              (k / bars) * (x1 - x0),
+        ),
     ];
   }
 
   /// Splits [total] bars across legs in proportion to [weights] (min 2 each).
   List<int> _allocate(int total, List<double> weights) {
     final sum = weights.fold<double>(0, (a, b) => a + b);
-    final bars = [for (final w in weights) math.max(2, (total * w / sum).floor())];
+    final bars = [
+      for (final w in weights) math.max(2, (total * w / sum).floor()),
+    ];
     var diff = total - bars.fold<int>(0, (a, b) => a + b);
     var i = 0;
     while (diff != 0) {
@@ -333,25 +367,32 @@ class ScenarioGenerator {
   }
 
   List<Candle> _buildCandles(
-      List<double> closes, List<double> vols, List<double> volumeMults) {
+    List<double> closes,
+    List<double> vols,
+    List<double> volumeMults,
+  ) {
     final candles = <Candle>[];
     var previousClose = startPrice;
     for (var i = 0; i < closes.length; i++) {
       final open = _round(previousClose);
       final close = _round(closes[i]);
       final wickScale = closes[i] * vols[i] / 100 * 0.5;
-      final high = _round(math.max(open, close) +
-          _rng.nextGaussian().abs() * wickScale);
-      final low = _round(math.min(open, close) -
-          _rng.nextGaussian().abs() * wickScale);
+      final high = _round(
+        math.max(open, close) + _rng.nextGaussian().abs() * wickScale,
+      );
+      final low = _round(
+        math.min(open, close) - _rng.nextGaussian().abs() * wickScale,
+      );
       final move = (close - open).abs() / (closes[i] * vols[i] / 100);
-      final volume = (baseVolume *
-              volumeMults[i] *
-              (0.6 + 0.8 * _rng.nextDouble()) *
-              (1 + 0.8 * move))
-          .roundToDouble();
-      candles.add(Candle(
-          open: open, high: high, low: low, close: close, volume: volume));
+      final volume =
+          (baseVolume *
+                  volumeMults[i] *
+                  (0.6 + 0.8 * _rng.nextDouble()) *
+                  (1 + 0.8 * move))
+              .roundToDouble();
+      candles.add(
+        Candle(open: open, high: high, low: low, close: close, volume: volume),
+      );
       previousClose = closes[i];
     }
     return candles;
@@ -362,6 +403,7 @@ class ScenarioGenerator {
         ? 0
         : (-math.log(tickSize) / math.ln10).ceil().clamp(0, 10);
     return double.parse(
-        ((price / tickSize).round() * tickSize).toStringAsFixed(decimals));
+      ((price / tickSize).round() * tickSize).toStringAsFixed(decimals),
+    );
   }
 }

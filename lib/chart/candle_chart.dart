@@ -52,50 +52,56 @@ class _CandleChartState extends State<CandleChart> {
   @override
   Widget build(BuildContext context) {
     final colors = ChartColors.of(context);
-    return LayoutBuilder(builder: (context, constraints) {
-      final geometry = ChartGeometry.fit(
-        size: constraints.biggest,
-        candles: widget.candles,
-        visibleBars: widget.visibleBars,
-        futureSlots: widget.futureSlots,
-        showVolume: widget.showVolume,
-        fixedLines: [
-          for (final l in widget.lines)
-            if (!l.draggable) l.price
-        ],
-      );
-      _geometry = geometry;
-      return GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTapUp: widget.onTapPrice == null
-            ? null
-            : (details) {
-                final p = details.localPosition;
-                if (p.dx > geometry.plotWidth || p.dy > geometry.plotHeight) {
-                  return;
-                }
-                widget.onTapPrice!(
-                    geometry.indexAt(p.dx), geometry.priceAt(p.dy));
-              },
-        onVerticalDragStart: widget.onLineDragged == null ? null : _dragStart,
-        onVerticalDragUpdate: widget.onLineDragged == null ? null : _dragUpdate,
-        onVerticalDragEnd: (_) => setState(() => _draggingId = null),
-        child: CustomPaint(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final geometry = ChartGeometry.fit(
           size: constraints.biggest,
-          painter: _CandlePainter(
-            geometry: geometry,
-            candles: widget.candles,
-            lines: widget.lines,
-            zones: widget.zones,
-            markers: widget.markers,
-            movingAverage: widget.movingAverage,
-            decimals: widget.priceDecimals,
-            colors: colors,
-            activeLineId: _draggingId,
+          candles: widget.candles,
+          visibleBars: widget.visibleBars,
+          futureSlots: widget.futureSlots,
+          showVolume: widget.showVolume,
+          fixedLines: [
+            for (final l in widget.lines)
+              if (!l.draggable) l.price,
+          ],
+        );
+        _geometry = geometry;
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapUp: widget.onTapPrice == null
+              ? null
+              : (details) {
+                  final p = details.localPosition;
+                  if (p.dx > geometry.plotWidth || p.dy > geometry.plotHeight) {
+                    return;
+                  }
+                  widget.onTapPrice!(
+                    geometry.indexAt(p.dx),
+                    geometry.priceAt(p.dy),
+                  );
+                },
+          onVerticalDragStart: widget.onLineDragged == null ? null : _dragStart,
+          onVerticalDragUpdate: widget.onLineDragged == null
+              ? null
+              : _dragUpdate,
+          onVerticalDragEnd: (_) => setState(() => _draggingId = null),
+          child: CustomPaint(
+            size: constraints.biggest,
+            painter: _CandlePainter(
+              geometry: geometry,
+              candles: widget.candles,
+              lines: widget.lines,
+              zones: widget.zones,
+              markers: widget.markers,
+              movingAverage: widget.movingAverage,
+              decimals: widget.priceDecimals,
+              colors: colors,
+              activeLineId: _draggingId,
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
   void _dragStart(DragStartDetails details) {
@@ -104,7 +110,8 @@ class _CandleChartState extends State<CandleChart> {
     PriceLine? nearest;
     var best = 28.0; // finger-friendly grab distance in pixels
     for (final line in widget.lines.where((l) => l.draggable)) {
-      final distance = (geometry.y(line.price) - details.localPosition.dy).abs();
+      final distance = (geometry.y(line.price) - details.localPosition.dy)
+          .abs();
       if (distance < best) {
         best = distance;
         nearest = line;
@@ -240,12 +247,19 @@ class _CandlePainter extends CustomPainter {
     while (price <= g.maxPrice) {
       final y = g.y(price);
       canvas.drawLine(Offset(0, y), Offset(g.plotWidth, y), grid);
-      _text(canvas, price.toStringAsFixed(decimals),
-          Offset(g.plotWidth + 6, y - 7), colors.text);
+      _text(
+        canvas,
+        price.toStringAsFixed(decimals),
+        Offset(g.plotWidth + 6, y - 7),
+        colors.text,
+      );
       price += step;
     }
-    canvas.drawLine(Offset(g.plotWidth, 0), Offset(g.plotWidth, size.height),
-        grid);
+    canvas.drawLine(
+      Offset(g.plotWidth, 0),
+      Offset(g.plotWidth, size.height),
+      grid,
+    );
   }
 
   void _paintZones(Canvas canvas) {
@@ -255,13 +269,17 @@ class _CandlePainter extends CustomPainter {
       final right = math.min(g.plotWidth, g.x(zone.toIndex) + g.slotWidth / 2);
       if (right <= left) continue;
       final rect = Rect.fromLTRB(left, g.y(zone.high), right, g.y(zone.low));
-      canvas.drawRect(rect, Paint()..color = zone.color.withValues(alpha: 0.18));
       canvas.drawRect(
-          rect,
-          Paint()
-            ..color = zone.color.withValues(alpha: 0.7)
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 1);
+        rect,
+        Paint()..color = zone.color.withValues(alpha: 0.18),
+      );
+      canvas.drawRect(
+        rect,
+        Paint()
+          ..color = zone.color.withValues(alpha: 0.7)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1,
+      );
     }
   }
 
@@ -271,9 +289,14 @@ class _CandlePainter extends CustomPainter {
     for (final zone in zones) {
       if (zone.label == null) continue;
       final left = math.max(0.0, g.x(zone.fromIndex) - g.slotWidth / 2);
-      _text(canvas, zone.label!, Offset(left + 4, g.y(zone.high) - 15),
-          zone.color,
-          bold: true, background: colors.background);
+      _text(
+        canvas,
+        zone.label!,
+        Offset(left + 4, g.y(zone.high) - 15),
+        zone.color,
+        bold: true,
+        background: colors.background,
+      );
     }
   }
 
@@ -292,8 +315,9 @@ class _CandlePainter extends CustomPainter {
       canvas.drawRect(
         Rect.fromLTWH(g.x(i) - width / 2, bottom - h, width, h),
         Paint()
-          ..color = (c.isBullish ? colors.up : colors.down)
-              .withValues(alpha: 0.35),
+          ..color = (c.isBullish ? colors.up : colors.down).withValues(
+            alpha: 0.35,
+          ),
       );
     }
   }
@@ -307,14 +331,20 @@ class _CandlePainter extends CustomPainter {
       final paint = Paint()..color = c.isBullish ? colors.up : colors.down;
       final x = g.x(i);
       canvas.drawRect(
-          Rect.fromLTRB(
-              x - wickWidth / 2, g.y(c.high), x + wickWidth / 2, g.y(c.low)),
-          paint);
+        Rect.fromLTRB(
+          x - wickWidth / 2,
+          g.y(c.high),
+          x + wickWidth / 2,
+          g.y(c.low),
+        ),
+        paint,
+      );
       final top = g.y(math.max(c.open, c.close));
       final bottom = math.max(top + 1, g.y(math.min(c.open, c.close)));
       canvas.drawRect(
-          Rect.fromLTRB(x - bodyWidth / 2, top, x + bodyWidth / 2, bottom),
-          paint);
+        Rect.fromLTRB(x - bodyWidth / 2, top, x + bodyWidth / 2, bottom),
+        paint,
+      );
     }
   }
 
@@ -336,11 +366,12 @@ class _CandlePainter extends CustomPainter {
       }
     }
     canvas.drawPath(
-        path,
-        Paint()
-          ..color = colors.movingAverage
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.6);
+      path,
+      Paint()
+        ..color = colors.movingAverage
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.6,
+    );
   }
 
   void _paintMarkers(Canvas canvas) {
@@ -371,11 +402,14 @@ class _CandlePainter extends CustomPainter {
     final g = geometry;
     final last = candles.last;
     final y = g.y(last.close);
-    final coveredByLine =
-        lines.any((l) => (g.y(l.price) - y).abs() < 10);
+    final coveredByLine = lines.any((l) => (g.y(l.price) - y).abs() < 10);
     if (coveredByLine) return;
-    _tag(canvas, y, last.close.toStringAsFixed(decimals),
-        last.isBullish ? colors.up : colors.down);
+    _tag(
+      canvas,
+      y,
+      last.close.toStringAsFixed(decimals),
+      last.isBullish ? colors.up : colors.down,
+    );
   }
 
   void _paintLines(Canvas canvas) {
@@ -388,23 +422,40 @@ class _CandlePainter extends CustomPainter {
         ..strokeWidth = active ? 2.5 : 1.5;
       if (line.dashed) {
         for (var x = 0.0; x < g.plotWidth; x += 9) {
-          canvas.drawLine(Offset(x, y),
-              Offset(math.min(x + 5, g.plotWidth), y), paint);
+          canvas.drawLine(
+            Offset(x, y),
+            Offset(math.min(x + 5, g.plotWidth), y),
+            paint,
+          );
         }
       } else {
         canvas.drawLine(Offset(0, y), Offset(g.plotWidth, y), paint);
       }
       _tag(canvas, y, line.price.toStringAsFixed(decimals), line.color);
-      _text(canvas, line.label, Offset(6, y - 16), line.color,
-          bold: true, background: colors.background);
+      _text(
+        canvas,
+        line.label,
+        Offset(6, y - 16),
+        line.color,
+        bold: true,
+        background: colors.background,
+      );
       if (line.draggable) {
         final handle = Offset(g.plotWidth - 22, y);
-        canvas.drawCircle(handle, active ? 13 : 11, Paint()..color = line.color);
+        canvas.drawCircle(
+          handle,
+          active ? 13 : 11,
+          Paint()..color = line.color,
+        );
         final grip = Paint()
           ..color = Colors.white
           ..strokeWidth = 1.5;
         for (final dy in [-3.0, 0.0, 3.0]) {
-          canvas.drawLine(handle + Offset(-5, dy), handle + Offset(5, dy), grip);
+          canvas.drawLine(
+            handle + Offset(-5, dy),
+            handle + Offset(5, dy),
+            grip,
+          );
         }
       }
     }
@@ -413,15 +464,27 @@ class _CandlePainter extends CustomPainter {
   void _tag(Canvas canvas, double y, String text, Color color) {
     final g = geometry;
     final rect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(g.plotWidth + 2, y - 9, ChartGeometry.axisWidth - 4, 18),
-        const Radius.circular(4));
+      Rect.fromLTWH(g.plotWidth + 2, y - 9, ChartGeometry.axisWidth - 4, 18),
+      const Radius.circular(4),
+    );
     canvas.drawRRect(rect, Paint()..color = color);
-    _text(canvas, text, Offset(g.plotWidth + 6, y - 7), Colors.white,
-        bold: true);
+    _text(
+      canvas,
+      text,
+      Offset(g.plotWidth + 6, y - 7),
+      Colors.white,
+      bold: true,
+    );
   }
 
-  void _text(Canvas canvas, String text, Offset offset, Color color,
-      {bool bold = false, Color? background}) {
+  void _text(
+    Canvas canvas,
+    String text,
+    Offset offset,
+    Color color, {
+    bool bold = false,
+    Color? background,
+  }) {
     final painter = TextPainter(
       text: TextSpan(
         text: text,
@@ -436,8 +499,12 @@ class _CandlePainter extends CustomPainter {
     if (background != null) {
       canvas.drawRRect(
         RRect.fromRectAndRadius(
-          Rect.fromLTWH(offset.dx - 3, offset.dy - 1, painter.width + 6,
-              painter.height + 2),
+          Rect.fromLTWH(
+            offset.dx - 3,
+            offset.dy - 1,
+            painter.width + 6,
+            painter.height + 2,
+          ),
           const Radius.circular(3),
         ),
         Paint()..color = background.withValues(alpha: 0.85),
@@ -448,16 +515,17 @@ class _CandlePainter extends CustomPainter {
 
   static double _niceStep(double raw) {
     if (raw <= 0) return 1;
-    final magnitude =
-        math.pow(10, (math.log(raw) / math.ln10).floor()).toDouble();
+    final magnitude = math
+        .pow(10, (math.log(raw) / math.ln10).floor())
+        .toDouble();
     final normalized = raw / magnitude;
     final nice = normalized < 1.5
         ? 1
         : normalized < 3
-            ? 2
-            : normalized < 7
-                ? 5
-                : 10;
+        ? 2
+        : normalized < 7
+        ? 5
+        : 10;
     return nice * magnitude;
   }
 

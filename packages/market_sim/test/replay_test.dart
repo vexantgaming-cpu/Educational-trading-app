@@ -19,8 +19,14 @@ ReplaySession session(List<Candle> bars, {InstrumentSpec spec = free}) =>
 void main() {
   test('long market order hits take-profit', () {
     final s = session([c(100, 101, 99.5, 100.5), c(100.5, 103, 100, 102.5)]);
-    s.submit(const OrderRequest(
-        side: Side.long, quantity: 10, stopLoss: 98, takeProfit: 102));
+    s.submit(
+      const OrderRequest(
+        side: Side.long,
+        quantity: 10,
+        stopLoss: 98,
+        takeProfit: 102,
+      ),
+    );
     expect(s.position!.entryPrice, 100);
     expect(s.step().closedTrade, isNull);
     final trade = s.step().closedTrade!;
@@ -34,8 +40,14 @@ void main() {
 
   test('short trade hits stop-loss', () {
     final s = session([c(100, 102, 99.8, 101.5)]);
-    s.submit(const OrderRequest(
-        side: Side.short, quantity: 10, stopLoss: 101, takeProfit: 97));
+    s.submit(
+      const OrderRequest(
+        side: Side.short,
+        quantity: 10,
+        stopLoss: 101,
+        takeProfit: 97,
+      ),
+    );
     final trade = s.step().closedTrade!;
     expect(trade.exitReason, ExitReason.stopLoss);
     expect(trade.netPnl, closeTo(-10, 1e-9));
@@ -44,8 +56,14 @@ void main() {
 
   test('when one bar hits both levels, the stop is assumed first', () {
     final s = session([c(100, 103, 97, 100)]);
-    s.submit(const OrderRequest(
-        side: Side.long, quantity: 1, stopLoss: 98, takeProfit: 102));
+    s.submit(
+      const OrderRequest(
+        side: Side.long,
+        quantity: 1,
+        stopLoss: 98,
+        takeProfit: 102,
+      ),
+    );
     expect(s.step().closedTrade!.exitReason, ExitReason.stopLoss);
   });
 
@@ -59,8 +77,14 @@ void main() {
 
   test('a gap through the target fills at the open (better than target)', () {
     final s = session([c(104, 105, 103.5, 104.5)]);
-    s.submit(const OrderRequest(
-        side: Side.long, quantity: 1, stopLoss: 98, takeProfit: 102));
+    s.submit(
+      const OrderRequest(
+        side: Side.long,
+        quantity: 1,
+        stopLoss: 98,
+        takeProfit: 102,
+      ),
+    );
     final trade = s.step().closedTrade!;
     expect(trade.exitReason, ExitReason.takeProfit);
     expect(trade.exitPrice, 104);
@@ -68,13 +92,16 @@ void main() {
 
   test('buy limit waits, fills at its price, and checks the stop that bar', () {
     final s = session([c(100, 100.5, 99.5, 100), c(99.8, 100, 98.5, 99)]);
-    s.submit(const OrderRequest(
+    s.submit(
+      const OrderRequest(
         side: Side.long,
         quantity: 10,
         type: OrderType.limit,
         price: 99,
         stopLoss: 98.8,
-        takeProfit: 103));
+        takeProfit: 103,
+      ),
+    );
     expect(s.step().entryFilled, isFalse);
     final event = s.step();
     expect(event.entryFilled, isTrue);
@@ -84,33 +111,67 @@ void main() {
 
   test('buy limit that gaps below fills at the (better) open', () {
     final s = session([c(98, 99, 97.5, 98.5)]);
-    s.submit(const OrderRequest(
-        side: Side.long, quantity: 1, type: OrderType.limit, price: 99, stopLoss: 97));
+    s.submit(
+      const OrderRequest(
+        side: Side.long,
+        quantity: 1,
+        type: OrderType.limit,
+        price: 99,
+        stopLoss: 97,
+      ),
+    );
     s.step();
     expect(s.position!.entryPrice, 98);
   });
 
-  test('a limit fill that opens beyond the stop exits immediately at the fill', () {
-    final s = session([c(96, 96.5, 95, 96)]);
-    s.submit(const OrderRequest(
-        side: Side.long, quantity: 1, type: OrderType.limit, price: 99, stopLoss: 97));
-    final trade = s.step().closedTrade!;
-    expect(trade.entryPrice, 96);
-    expect(trade.exitPrice, 96);
-    expect(trade.exitReason, ExitReason.stopLoss);
-  });
+  test(
+    'a limit fill that opens beyond the stop exits immediately at the fill',
+    () {
+      final s = session([c(96, 96.5, 95, 96)]);
+      s.submit(
+        const OrderRequest(
+          side: Side.long,
+          quantity: 1,
+          type: OrderType.limit,
+          price: 99,
+          stopLoss: 97,
+        ),
+      );
+      final trade = s.step().closedTrade!;
+      expect(trade.entryPrice, 96);
+      expect(trade.exitPrice, 96);
+      expect(trade.exitReason, ExitReason.stopLoss);
+    },
+  );
 
   test('buy stop triggers on a breakout, or at the open after a gap', () {
-    final s = session([c(100, 100.8, 99.5, 100.5), c(100.5, 102, 100.2, 101.8)]);
-    s.submit(const OrderRequest(
-        side: Side.long, quantity: 1, type: OrderType.stop, price: 101, stopLoss: 99));
+    final s = session([
+      c(100, 100.8, 99.5, 100.5),
+      c(100.5, 102, 100.2, 101.8),
+    ]);
+    s.submit(
+      const OrderRequest(
+        side: Side.long,
+        quantity: 1,
+        type: OrderType.stop,
+        price: 101,
+        stopLoss: 99,
+      ),
+    );
     expect(s.step().entryFilled, isFalse);
     expect(s.step().entryFilled, isTrue);
     expect(s.position!.entryPrice, 101);
 
     final gap = session([c(102, 103, 101.5, 102.5)]);
-    gap.submit(const OrderRequest(
-        side: Side.long, quantity: 1, type: OrderType.stop, price: 101, stopLoss: 99));
+    gap.submit(
+      const OrderRequest(
+        side: Side.long,
+        quantity: 1,
+        type: OrderType.stop,
+        price: 101,
+        stopLoss: 99,
+      ),
+    );
     gap.step();
     expect(gap.position!.entryPrice, 102);
   });
@@ -118,22 +179,49 @@ void main() {
   test('rejects orders with a helpful explanation', () {
     final s = session([c(100, 101, 99, 100)]);
     expect(
-        () => s.submit(const OrderRequest(
-            side: Side.long, quantity: 1, type: OrderType.limit, price: 101)),
-        throwsA(isA<OrderRejected>()
-            .having((e) => e.message, 'message', contains('below the current price'))));
+      () => s.submit(
+        const OrderRequest(
+          side: Side.long,
+          quantity: 1,
+          type: OrderType.limit,
+          price: 101,
+        ),
+      ),
+      throwsA(
+        isA<OrderRejected>().having(
+          (e) => e.message,
+          'message',
+          contains('below the current price'),
+        ),
+      ),
+    );
     expect(
-        () => s.submit(
-            const OrderRequest(side: Side.long, quantity: 1, stopLoss: 101)),
-        throwsA(isA<OrderRejected>()
-            .having((e) => e.message, 'message', contains('below your entry'))));
+      () => s.submit(
+        const OrderRequest(side: Side.long, quantity: 1, stopLoss: 101),
+      ),
+      throwsA(
+        isA<OrderRejected>().having(
+          (e) => e.message,
+          'message',
+          contains('below your entry'),
+        ),
+      ),
+    );
     expect(
-        () => s.submit(const OrderRequest(side: Side.long, quantity: 2000)),
-        throwsA(isA<OrderRejected>()
-            .having((e) => e.message, 'message', contains('margin'))));
+      () => s.submit(const OrderRequest(side: Side.long, quantity: 2000)),
+      throwsA(
+        isA<OrderRejected>().having(
+          (e) => e.message,
+          'message',
+          contains('margin'),
+        ),
+      ),
+    );
     s.submit(const OrderRequest(side: Side.long, quantity: 1));
-    expect(() => s.submit(const OrderRequest(side: Side.long, quantity: 1)),
-        throwsA(isA<OrderRejected>()));
+    expect(
+      () => s.submit(const OrderRequest(side: Side.long, quantity: 1)),
+      throwsA(isA<OrderRejected>()),
+    );
   });
 
   test('spread and commission are charged on entry and exit', () {
@@ -147,7 +235,9 @@ void main() {
       maxLeverage: 1,
     );
     final s = session([c(100, 102.5, 99.5, 102)], spec: costly);
-    s.submit(const OrderRequest(side: Side.long, quantity: 10, takeProfit: 102));
+    s.submit(
+      const OrderRequest(side: Side.long, quantity: 10, takeProfit: 102),
+    );
     final trade = s.step().closedTrade!;
     // Entry: 1000 × 0.1% + 0.05 × 10 = 1.5; exit: 1020 × 0.1% + 0.5 = 1.52.
     expect(trade.fees, closeTo(3.02, 1e-9));
@@ -174,9 +264,20 @@ void main() {
     s.step();
     s.updateLevels(stopLoss: 100, takeProfit: 105);
     expect(s.position!.stopLoss, 100);
-    expect(s.position!.initialStop, 98, reason: 'R is measured from the first stop');
-    expect(() => s.updateLevels(stopLoss: 101),
-        throwsA(isA<OrderRejected>()
-            .having((e) => e.message, 'message', contains('current price'))));
+    expect(
+      s.position!.initialStop,
+      98,
+      reason: 'R is measured from the first stop',
+    );
+    expect(
+      () => s.updateLevels(stopLoss: 101),
+      throwsA(
+        isA<OrderRejected>().having(
+          (e) => e.message,
+          'message',
+          contains('current price'),
+        ),
+      ),
+    );
   });
 }

@@ -11,8 +11,11 @@ void main() {
     };
     expected.forEach((seed, values) {
       final rng = SeededRandom(seed);
-      expect([for (var i = 0; i < 5; i++) rng.nextUint32()], values,
-          reason: 'seed $seed');
+      expect(
+        [for (var i = 0; i < 5; i++) rng.nextUint32()],
+        values,
+        reason: 'seed $seed',
+      );
     });
   });
 

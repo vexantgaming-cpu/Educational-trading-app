@@ -44,7 +44,9 @@ void main() {
     for (final seed in [1, 2, 3, 4, 5]) {
       final s = ScenarioGenerator(seed: seed).generate(script);
       final support = s.zones.firstWhere((z) => z.kind == ZoneKind.support);
-      final resistance = s.zones.firstWhere((z) => z.kind == ZoneKind.resistance);
+      final resistance = s.zones.firstWhere(
+        (z) => z.kind == ZoneKind.resistance,
+      );
       expect(support.fromIndex, 60);
       expect(support.toIndex, 99);
       expect(support.high, lessThan(resistance.low));
@@ -56,16 +58,24 @@ void main() {
       // Price should visit both zones at least twice so the range is obvious.
       final visitsSupport = [
         for (var i = 60; i < 100; i++)
-          if (support.contains(s.candles[i].low)) i
+          if (support.contains(s.candles[i].low)) i,
       ];
-      expect(visitsSupport.length, greaterThanOrEqualTo(2), reason: 'seed $seed');
+      expect(
+        visitsSupport.length,
+        greaterThanOrEqualTo(2),
+        reason: 'seed $seed',
+      );
     }
   });
 
   test('a scripted uptrend reads as higher highs and higher lows', () {
-    final s = ScenarioGenerator(seed: 9)
-        .generate(const [TrendSegment(bars: 80, movePct: 25, volatilityPct: 0.6)]);
-    expect(classifyTrend(findSwings(s.candles, strength: 2)), TrendDirection.up);
+    final s = ScenarioGenerator(
+      seed: 9,
+    ).generate(const [TrendSegment(bars: 80, movePct: 25, volatilityPct: 0.6)]);
+    expect(
+      classifyTrend(findSwings(s.candles, strength: 2)),
+      TrendDirection.up,
+    );
   });
 
   test('randomMarket produces the requested number of bars', () {

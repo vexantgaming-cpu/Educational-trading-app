@@ -1,13 +1,19 @@
-/// The learning path. Lesson content is added lesson by lesson; entries with
-/// an [Lesson.exercise] are already playable.
+/// The learning path. Lesson content is added lesson by lesson: entries with
+/// an [Lesson.id] have content in `assets/lessons/<id>.json`; entries with
+/// only an [Lesson.exercise] open that exercise directly.
 class Lesson {
-  const Lesson(this.title, {this.minutes = 4, this.exercise});
+  const Lesson(this.title, {this.minutes = 4, this.id, this.exercise});
 
   final String title;
   final int minutes;
 
+  /// Lesson content id (`assets/lessons/<id>.json`).
+  final String? id;
+
   /// Route of an interactive exercise that is already built.
   final String? exercise;
+
+  bool get isPlayable => id != null || exercise != null;
 }
 
 class Level {
@@ -35,13 +41,25 @@ const curriculum = <Level>[
     summary: 'What a market is and how to read a candle.',
     premium: false,
     lessons: [
-      Lesson('What a market is: buyers, sellers and price', minutes: 3),
-      Lesson('Bid, ask and spread: the cost of every trade', minutes: 3),
-      Lesson('Stocks, forex, crypto, commodities, indices: what differs', minutes: 5),
-      Lesson('Order types: market, limit, stop. Long vs short'),
-      Lesson('Reading a candlestick'),
-      Lesson('Timeframes: same market, different stories'),
-      Lesson('Volume and liquidity'),
+      Lesson(
+        'What a market is: buyers, sellers and price',
+        minutes: 3,
+        id: 'L0-01',
+      ),
+      Lesson(
+        'Bid, ask and spread: the cost of every trade',
+        minutes: 3,
+        id: 'L0-02',
+      ),
+      Lesson(
+        'Stocks, forex, crypto, commodities, indices: what differs',
+        minutes: 5,
+        id: 'L0-03',
+      ),
+      Lesson('Order types: market, limit, stop. Long vs short', id: 'L0-04'),
+      Lesson('Reading a candlestick', id: 'L0-05'),
+      Lesson('Timeframes: same market, different stories', id: 'L0-06'),
+      Lesson('Volume and liquidity', id: 'L0-07'),
     ],
   ),
   Level(
@@ -53,7 +71,7 @@ const curriculum = <Level>[
       Lesson('Trends: higher highs and higher lows'),
       Lesson('Ranges and consolidation'),
       Lesson('Swing highs and swing lows'),
-      Lesson('Support and resistance are zones', minutes: 5, exercise: placeTradeRoute),
+      Lesson('Support and resistance are zones', minutes: 6, id: 'L1-04'),
       Lesson('When support becomes resistance'),
       Lesson('Trendlines and channels'),
       Lesson('Breakouts vs fakeouts'),

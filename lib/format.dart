@@ -4,7 +4,9 @@ String money(double value, {bool signed = false}) {
   final fixed = value.abs().toStringAsFixed(2);
   final parts = fixed.split('.');
   final whole = parts[0].replaceAllMapped(
-      RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
+    RegExp(r'\B(?=(\d{3})+(?!\d))'),
+    (_) => ',',
+  );
   return '$sign\$$whole.${parts[1]}';
 }
 

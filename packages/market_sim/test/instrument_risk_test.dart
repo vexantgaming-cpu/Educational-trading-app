@@ -17,36 +17,63 @@ void main() {
     });
 
     test('tick value = tick size × contract size', () {
-      expect(Instruments.eurUsd.tickValue, closeTo(1.0, 1e-9)); // $1 per 0.1 pip per lot
+      expect(
+        Instruments.eurUsd.tickValue,
+        closeTo(1.0, 1e-9),
+      ); // $1 per 0.1 pip per lot
       expect(Instruments.gold.tickValue, closeTo(1.0, 1e-9));
     });
   });
 
   group('Risk.rewardRisk', () {
     test('long and short', () {
-      expect(Risk.rewardRisk(side: Side.long, entry: 100, stop: 98, target: 104), 2);
-      expect(Risk.rewardRisk(side: Side.short, entry: 100, stop: 101, target: 97), 3);
+      expect(
+        Risk.rewardRisk(side: Side.long, entry: 100, stop: 98, target: 104),
+        2,
+      );
+      expect(
+        Risk.rewardRisk(side: Side.short, entry: 100, stop: 101, target: 97),
+        3,
+      );
     });
 
     test('null when a level is missing or on the wrong side', () {
       expect(Risk.rewardRisk(side: Side.long, entry: 100, stop: 98), isNull);
-      expect(Risk.rewardRisk(side: Side.long, entry: 100, stop: 101, target: 104), isNull);
-      expect(Risk.rewardRisk(side: Side.short, entry: 100, stop: 101, target: 102), isNull);
+      expect(
+        Risk.rewardRisk(side: Side.long, entry: 100, stop: 101, target: 104),
+        isNull,
+      );
+      expect(
+        Risk.rewardRisk(side: Side.short, entry: 100, stop: 101, target: 102),
+        isNull,
+      );
     });
 
     test('levelError explains wrong-side levels', () {
-      expect(Risk.levelError(side: Side.long, entry: 100, stop: 101),
-          contains('below your entry'));
-      expect(Risk.levelError(side: Side.short, entry: 100, stop: 101, target: 103),
-          contains('take-profit goes below'));
-      expect(Risk.levelError(side: Side.long, entry: 100, stop: 99, target: 103), isNull);
+      expect(
+        Risk.levelError(side: Side.long, entry: 100, stop: 101),
+        contains('below your entry'),
+      );
+      expect(
+        Risk.levelError(side: Side.short, entry: 100, stop: 101, target: 103),
+        contains('take-profit goes below'),
+      );
+      expect(
+        Risk.levelError(side: Side.long, entry: 100, stop: 99, target: 103),
+        isNull,
+      );
     });
   });
 
   group('Risk.positionSize', () {
     test('shares: risk 1% of 10k with a 2.00 stop = 50 shares', () {
       final size = Risk.positionSize(
-          balance: 10000, riskPct: 1, entry: 100, stop: 98, spec: Instruments.stock);
+        balance: 10000,
+        riskPct: 1,
+        entry: 100,
+        stop: 98,
+        spec: Instruments.stock,
+      );
       expect(size.quantity, 50);
       expect(size.riskAmount, closeTo(100, 1e-9));
       expect(size.riskPct, closeTo(1, 1e-9));
@@ -56,7 +83,12 @@ void main() {
 
     test('forex: a 50-pip stop risking 1% of 10k = 0.20 lots', () {
       final size = Risk.positionSize(
-          balance: 10000, riskPct: 1, entry: 1.1, stop: 1.095, spec: Instruments.eurUsd);
+        balance: 10000,
+        riskPct: 1,
+        entry: 1.1,
+        stop: 1.095,
+        spec: Instruments.eurUsd,
+      );
       expect(size.quantity, 0.2);
       expect(size.riskAmount, closeTo(100, 1e-6));
     });
@@ -64,7 +96,12 @@ void main() {
     test('caps the size at the maximum leverage', () {
       // A 0.10 stop would allow 1 000 shares ($100k), but 5:1 caps it at $50k.
       final size = Risk.positionSize(
-          balance: 10000, riskPct: 1, entry: 100, stop: 99.9, spec: Instruments.stock);
+        balance: 10000,
+        riskPct: 1,
+        entry: 100,
+        stop: 99.9,
+        spec: Instruments.stock,
+      );
       expect(size.quantity, 500);
       expect(size.limitedByLeverage, isTrue);
       expect(size.riskPct, closeTo(0.5, 1e-9));

@@ -68,8 +68,9 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
       startingBalance: balance,
       startIndex: _scenario.revealIndex,
     );
-    _ma = Indicators.sma(
-        [for (final c in _scenario.scenario.candles) c.close], 20);
+    _ma = Indicators.sma([
+      for (final c in _scenario.scenario.candles) c.close,
+    ], 20);
     _phase = _Phase.planning;
     _side = Side.long;
     _result = null;
@@ -82,7 +83,8 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
   /// Starts with a deliberately cramped 1:1 plan so the learner has to think
   /// about where the stop and target really belong.
   void _resetLevels() {
-    final atr = Indicators.atr(_scenario.scenario.candles)[_session.currentIndex] ??
+    final atr =
+        Indicators.atr(_scenario.scenario.candles)[_session.currentIndex] ??
         _entry * 0.01;
     _stop = spec.roundPrice(_entry - _side.sign * atr * 0.6);
     _target = spec.roundPrice(_entry + _side.sign * atr * 0.6);
@@ -95,28 +97,35 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
       return PositionSize.zero;
     }
     return Risk.positionSize(
-        balance: balance,
-        riskPct: _riskPct,
-        entry: _entry,
-        stop: _stop,
-        spec: spec);
+      balance: balance,
+      riskPct: _riskPct,
+      entry: _entry,
+      stop: _stop,
+      spec: spec,
+    );
   }
 
   void _placeTrade() {
     final levelError = Risk.levelError(
-        side: _side, entry: _entry, stop: _stop, target: _target);
+      side: _side,
+      entry: _entry,
+      stop: _stop,
+      target: _target,
+    );
     if (levelError != null) {
       setState(() => _error = levelError);
       return;
     }
     final size = _size;
     try {
-      _session.submit(OrderRequest(
-        side: _side,
-        quantity: size.quantity,
-        stopLoss: _stop,
-        takeProfit: _target,
-      ));
+      _session.submit(
+        OrderRequest(
+          side: _side,
+          quantity: size.quantity,
+          stopLoss: _stop,
+          takeProfit: _target,
+        ),
+      );
     } on OrderRejected catch (e) {
       setState(() => _error = e.message);
       return;
@@ -141,11 +150,15 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
   void _tick() {
     if (!mounted) return;
     setState(() {
-      if (_session.hasNextBar && !_session.isFlat && _barsReplayed < maxReplayBars) {
+      if (_session.hasNextBar &&
+          !_session.isFlat &&
+          _barsReplayed < maxReplayBars) {
         _session.step();
         _barsReplayed++;
       }
-      if (_session.isFlat || !_session.hasNextBar || _barsReplayed >= maxReplayBars) {
+      if (_session.isFlat ||
+          !_session.hasNextBar ||
+          _barsReplayed >= maxReplayBars) {
         _timer?.cancel();
         _session.finish();
         _result = _session.trades.last;
@@ -185,8 +198,10 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(8, 4, 0, 4),
                 child: CandleChart(
-                  candles: _scenario.scenario.candles
-                      .sublist(0, _session.currentIndex + 1),
+                  candles: _scenario.scenario.candles.sublist(
+                    0,
+                    _session.currentIndex + 1,
+                  ),
                   visibleBars: 70,
                   futureSlots: 14,
                   movingAverage: _ma,
@@ -204,7 +219,8 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surfaceContainerLow,
                   border: Border(
-                      top: BorderSide(color: theme.colorScheme.outlineVariant)),
+                    top: BorderSide(color: theme.colorScheme.outlineVariant),
+                  ),
                 ),
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
@@ -262,23 +278,23 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
   }
 
   List<ChartZone> _answerZones() => [
-        ChartZone(
-          low: _scenario.support.low,
-          high: _scenario.support.high,
-          fromIndex: _scenario.support.fromIndex,
-          toIndex: _scenario.support.toIndex,
-          color: Colors.indigo,
-          label: 'Support zone',
-        ),
-        ChartZone(
-          low: _scenario.resistance.low,
-          high: _scenario.resistance.high,
-          fromIndex: _scenario.resistance.fromIndex,
-          toIndex: _scenario.resistance.toIndex,
-          color: Colors.deepOrange,
-          label: 'Resistance zone',
-        ),
-      ];
+    ChartZone(
+      low: _scenario.support.low,
+      high: _scenario.support.high,
+      fromIndex: _scenario.support.fromIndex,
+      toIndex: _scenario.support.toIndex,
+      color: Colors.indigo,
+      label: 'Support zone',
+    ),
+    ChartZone(
+      low: _scenario.resistance.low,
+      high: _scenario.resistance.high,
+      fromIndex: _scenario.resistance.fromIndex,
+      toIndex: _scenario.resistance.toIndex,
+      color: Colors.deepOrange,
+      label: 'Resistance zone',
+    ),
+  ];
 
   List<ChartMarker> _markers() {
     final trade = _result;
@@ -298,7 +314,9 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
           index: trade.exitIndex,
           price: trade.exitPrice,
           pointsUp: _side != Side.long,
-          color: trade.isWin ? const Color(0xFF26A69A) : const Color(0xFFEF5350),
+          color: trade.isWin
+              ? const Color(0xFF26A69A)
+              : const Color(0xFFEF5350),
         ),
     ];
   }
@@ -307,15 +325,27 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
     final theme = Theme.of(context);
     final size = _size;
     final rr = Risk.rewardRisk(
-        side: _side, entry: _entry, stop: _stop, target: _target);
+      side: _side,
+      entry: _entry,
+      stop: _stop,
+      target: _target,
+    );
     final reward = (_target - _entry).abs() * size.quantity * spec.contractSize;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SegmentedButton<Side>(
           segments: const [
-            ButtonSegment(value: Side.long, label: Text('Long (buy)'), icon: Icon(Icons.trending_up)),
-            ButtonSegment(value: Side.short, label: Text('Short (sell)'), icon: Icon(Icons.trending_down)),
+            ButtonSegment(
+              value: Side.long,
+              label: Text('Long (buy)'),
+              icon: Icon(Icons.trending_up),
+            ),
+            ButtonSegment(
+              value: Side.short,
+              label: Text('Short (sell)'),
+              icon: Icon(Icons.trending_down),
+            ),
           ],
           selected: {_side},
           onSelectionChanged: (s) => setState(() {
@@ -362,15 +392,19 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
           ],
         ),
         const SizedBox(height: 12),
-        Text('Risk per trade (of your ${money(balance)} virtual account)',
-            style: theme.textTheme.labelMedium),
+        Text(
+          'Risk per trade (of your ${money(balance)} virtual account)',
+          style: theme.textTheme.labelMedium,
+        ),
         const SizedBox(height: 6),
         Wrap(
           spacing: 8,
           children: [
             for (final pct in const [0.5, 1.0, 2.0, 5.0])
               ChoiceChip(
-                label: Text('${pct == pct.roundToDouble() ? pct.toStringAsFixed(0) : pct}%'),
+                label: Text(
+                  '${pct == pct.roundToDouble() ? pct.toStringAsFixed(0) : pct}%',
+                ),
                 selected: _riskPct == pct,
                 onSelected: (_) => setState(() => _riskPct = pct),
               ),
@@ -387,9 +421,12 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
         if (_error != null)
           Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: Text(_error!,
-                style: theme.textTheme.bodyMedium
-                    ?.copyWith(color: theme.colorScheme.error)),
+            child: Text(
+              _error!,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.error,
+              ),
+            ),
           ),
         const SizedBox(height: 14),
         FilledButton.icon(
@@ -407,8 +444,10 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Trade running… bar $_barsReplayed',
-            style: theme.textTheme.titleMedium),
+        Text(
+          'Trade running… bar $_barsReplayed',
+          style: theme.textTheme.titleMedium,
+        ),
         const SizedBox(height: 8),
         _Metric(
           label: 'Open profit / loss',
@@ -437,10 +476,8 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
     final goodProcess = score.score >= 70;
     final takeaway = switch ((trade.isWin, goodProcess)) {
       (true, true) => 'Good plan, good result. Now repeat it many times.',
-      (false, true) =>
-        'A well-planned loss. Losses are part of trading; over many trades a good process is what wins.',
-      (true, false) =>
-        'You made money, but the plan was risky. Luck doesn\'t repeat. Process does.',
+      (false, true) => 'A well-planned loss. Losses are part of trading; over many trades a good process is what wins.',
+      (true, false) => 'You made money, but the plan was risky. Luck doesn\'t repeat. Process does.',
       (false, false) =>
         'The plan needed work. Check the notes below, then try another chart.',
     };
@@ -449,8 +486,7 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
       children: [
         Row(
           children: [
-            Expanded(
-                child: Text(headline, style: theme.textTheme.titleLarge)),
+            Expanded(child: Text(headline, style: theme.textTheme.titleLarge)),
             Text(
               '${money(trade.netPnl, signed: true)}${r == null ? '' : '  (${rMultiple(r)})'}',
               style: theme.textTheme.titleMedium?.copyWith(
@@ -463,8 +499,10 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
           ],
         ),
         const SizedBox(height: 4),
-        Text('Costs paid (spread): ${money(trade.fees)}',
-            style: theme.textTheme.bodySmall),
+        Text(
+          'Costs paid (spread): ${money(trade.fees)}',
+          style: theme.textTheme.bodySmall,
+        ),
         const SizedBox(height: 12),
         Card(
           margin: EdgeInsets.zero,
@@ -473,8 +511,10 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Plan score: ${score.score}/${score.maxScore} · ${score.grade}',
-                    style: theme.textTheme.titleMedium),
+                Text(
+                  'Plan score: ${score.score}/${score.maxScore} · ${score.grade}',
+                  style: theme.textTheme.titleMedium,
+                ),
                 const SizedBox(height: 8),
                 for (final check in score.checks)
                   Padding(
@@ -486,23 +526,30 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
                           check.passed
                               ? Icons.check_circle
                               : check.points > 0
-                                  ? Icons.remove_circle
-                                  : Icons.cancel,
+                              ? Icons.remove_circle
+                              : Icons.cancel,
                           size: 20,
                           color: check.passed
                               ? const Color(0xFF26A69A)
                               : check.points > 0
-                                  ? Colors.amber.shade700
-                                  : const Color(0xFFEF5350),
+                              ? Colors.amber.shade700
+                              : const Color(0xFFEF5350),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: Text.rich(TextSpan(children: [
+                          child: Text.rich(
                             TextSpan(
-                                text: '${check.label}: ',
-                                style: const TextStyle(fontWeight: FontWeight.w600)),
-                            TextSpan(text: check.feedback),
-                          ])),
+                              children: [
+                                TextSpan(
+                                  text: '${check.label}: ',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                TextSpan(text: check.feedback),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -554,8 +601,10 @@ class _Banner extends StatelessWidget {
         children: [
           Text(text, style: theme.textTheme.bodyMedium),
           const SizedBox(height: 2),
-          Text('Simulated trade with virtual money. Educational only, not financial advice.',
-              style: theme.textTheme.labelSmall),
+          Text(
+            'Simulated trade with virtual money. Educational only, not financial advice.',
+            style: theme.textTheme.labelSmall,
+          ),
         ],
       ),
     );
@@ -563,7 +612,12 @@ class _Banner extends StatelessWidget {
 }
 
 class _Metric extends StatelessWidget {
-  const _Metric({required this.label, required this.value, this.color, this.good});
+  const _Metric({
+    required this.label,
+    required this.value,
+    this.color,
+    this.good,
+  });
 
   final String label;
   final String value;
@@ -573,7 +627,8 @@ class _Metric extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final valueColor = color ??
+    final valueColor =
+        color ??
         switch (good) {
           true => const Color(0xFF26A69A),
           false => Colors.amber.shade800,
@@ -583,11 +638,14 @@ class _Metric extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: theme.textTheme.labelMedium),
-        Text(value,
-            style: theme.textTheme.titleMedium
-                ?.copyWith(color: valueColor, fontWeight: FontWeight.w700)),
+        Text(
+          value,
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: valueColor,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ],
     );
   }
 }
-

@@ -54,9 +54,9 @@ class InstrumentSpec {
     return (-math.log(tickSize) / math.ln10).ceil().clamp(0, 10);
   }
 
-  double roundPrice(double price) =>
-      double.parse(((price / tickSize).round() * tickSize)
-          .toStringAsFixed(priceDecimals));
+  double roundPrice(double price) => double.parse(
+    ((price / tickSize).round() * tickSize).toStringAsFixed(priceDecimals),
+  );
 
   /// Rounds a quantity down to a whole number of [lotStep]s.
   double roundQuantityDown(double quantity) {

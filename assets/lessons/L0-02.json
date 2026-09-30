@@ -1,0 +1,66 @@
+{
+  "id": "L0-02",
+  "title": "Bid, ask and spread: the cost of every trade",
+  "steps": [
+    {
+      "type": "explain",
+      "title": "There are two prices, not one",
+      "text": "At any moment a market has a **bid**: the highest price a buyer is currently offering.\n\nIt also has an **ask** (or **offer**): the lowest price a seller is currently asking for."
+    },
+    {
+      "type": "explain",
+      "title": "Which one do you get?",
+      "text": "If you **buy** right now, you pay the **ask**.\n\nIf you **sell** right now, you receive the **bid**.\n\nThe gap between them is the **spread**. Example: bid 99.98, ask 100.02, so the spread is 0.04."
+    },
+    {
+      "type": "quiz",
+      "question": "A stock shows bid 49.95 and ask 50.05. You buy at market. What price do you pay?",
+      "options": ["49.95", "50.00", "50.05", "50.10"],
+      "answer": 2,
+      "explanation": "Buying at market takes the **ask**: the cheapest price a seller is offering right now."
+    },
+    {
+      "type": "explain",
+      "title": "Why the spread matters",
+      "text": "If you bought at the ask and sold straight away at the bid, you'd lose the spread. So **every trade starts slightly in the red** by that amount.\n\nIt's a real cost, and it adds up quickly if you trade often."
+    },
+    {
+      "type": "quiz",
+      "question": "EUR/USD shows bid 1.08500 and ask 1.08510. What is the spread?",
+      "options": [
+        "0.00010 (1 pip)",
+        "0.00100 (10 pips)",
+        "1.08505",
+        "0.1"
+      ],
+      "answer": 0,
+      "explanation": "1.08510 − 1.08500 = 0.00010. For most currency pairs, 0.0001 is called a **pip**, so this spread is 1 pip."
+    },
+    {
+      "type": "explain",
+      "title": "When spreads widen",
+      "text": "Spreads are usually **tight** in busy markets with lots of buyers and sellers (this is called **liquidity**).\n\nThey tend to **widen** in quiet markets, outside main trading hours, and around big news, when many traders step back."
+    },
+    {
+      "type": "quiz",
+      "question": "When is the spread usually widest?",
+      "options": [
+        "During a busy session in a popular market",
+        "Around major news or in thinly traded markets",
+        "It never changes",
+        "Whenever the price is rising"
+      ],
+      "answer": 1,
+      "explanation": "Fewer active buyers and sellers means a bigger gap between the best bid and the best ask."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "**Bid** = best price a buyer offers. **Ask** = best price a seller asks.",
+        "You buy at the ask and sell at the bid.",
+        "The **spread** is a cost you pay on every trade.",
+        "Spreads widen in quiet markets and around big news."
+      ]
+    }
+  ]
+}

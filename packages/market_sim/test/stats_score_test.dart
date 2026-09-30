@@ -2,22 +2,26 @@ import 'package:market_sim/market_sim.dart';
 import 'package:test/test.dart';
 
 ClosedTrade trade(double pnl, {double? risk = 100}) => ClosedTrade(
-      side: Side.long,
-      quantity: 1,
-      entryIndex: 0,
-      entryPrice: 100,
-      exitIndex: 1,
-      exitPrice: 100 + pnl,
-      exitReason: pnl > 0 ? ExitReason.takeProfit : ExitReason.stopLoss,
-      grossPnl: pnl,
-      fees: 0,
-      riskAmount: risk,
-    );
+  side: Side.long,
+  quantity: 1,
+  entryIndex: 0,
+  entryPrice: 100,
+  exitIndex: 1,
+  exitPrice: 100 + pnl,
+  exitReason: pnl > 0 ? ExitReason.takeProfit : ExitReason.stopLoss,
+  grossPnl: pnl,
+  fees: 0,
+  riskAmount: risk,
+);
 
 void main() {
   test('TradeStats', () {
-    final stats =
-        TradeStats.from([trade(200), trade(-100), trade(150), trade(-100)]);
+    final stats = TradeStats.from([
+      trade(200),
+      trade(-100),
+      trade(150),
+      trade(-100),
+    ]);
     expect(stats.count, 4);
     expect(stats.wins, 2);
     expect(stats.winRate, 0.5);

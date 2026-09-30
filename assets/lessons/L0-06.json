@@ -1,0 +1,78 @@
+{
+  "id": "L0-06",
+  "title": "Timeframes: same market, different stories",
+  "steps": [
+    {
+      "type": "explain",
+      "title": "One candle, one period",
+      "text": "Each candle covers a fixed amount of time: 1 minute, 1 hour, 1 day, 1 week... That period is the **timeframe**.\n\nThe same market can tell very different stories on different timeframes."
+    },
+    {
+      "type": "explain",
+      "title": "Zoomed in",
+      "text": "This is a market on a **1-hour** chart. There are lots of ups and downs, and it's hard to see the big picture.",
+      "chart": {
+        "seed": 64,
+        "visibleBars": 96,
+        "segments": [
+          {"type": "trend", "bars": 44, "movePct": 9, "volatilityPct": 1.2},
+          {"type": "trend", "bars": 20, "movePct": -4, "volatilityPct": 1.2},
+          {"type": "trend", "bars": 32, "movePct": 7, "volatilityPct": 1.2}
+        ]
+      }
+    },
+    {
+      "type": "explain",
+      "title": "Zoomed out",
+      "text": "Here's the **same market** on a **4-hour** chart. Each candle combines four 1-hour candles.\n\nThe noise fades and the **uptrend** is much clearer. The drop in the middle turns out to be a **pullback** inside that trend.",
+      "chart": {
+        "seed": 64,
+        "aggregate": 4,
+        "visibleBars": 24,
+        "segments": [
+          {"type": "trend", "bars": 44, "movePct": 9, "volatilityPct": 1.2},
+          {"type": "trend", "bars": 20, "movePct": -4, "volatilityPct": 1.2},
+          {"type": "trend", "bars": 32, "movePct": 7, "volatilityPct": 1.2}
+        ]
+      }
+    },
+    {
+      "type": "quiz",
+      "question": "A daily candle opened at 20 and closed at 22. Which statement is true?",
+      "options": [
+        "Price rose over the day, even if it dropped at some point during it",
+        "Price went up every hour of that day",
+        "The next day will also go up",
+        "Price never went below 20 that day"
+      ],
+      "answer": 0,
+      "explanation": "A candle only shows the open, high, low and close. What happened inside it (dips, spikes) is hidden unless you look at a **lower timeframe**."
+    },
+    {
+      "type": "explain",
+      "title": "Which timeframe should you use?",
+      "text": "It depends on how long you plan to hold a trade.\n\nA common approach is to use a **higher timeframe** to find the trend and the key price levels, then a **lower timeframe** to time your entry. You'll practise this in Level 1."
+    },
+    {
+      "type": "quiz",
+      "question": "The 1-hour chart shows a small drop, but the daily chart shows a strong uptrend. What's the best description?",
+      "options": [
+        "A pullback inside a bigger uptrend",
+        "The uptrend is definitely over",
+        "One of the charts must be wrong",
+        "The market is closed"
+      ],
+      "answer": 0,
+      "explanation": "Both charts are right: they show different time scales. Small drops are normal inside bigger trends."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "The **timeframe** is how much time each candle covers.",
+        "Higher timeframes show the **big picture**; lower ones show the **detail**.",
+        "A drop on a small timeframe can be a **pullback** in a bigger trend.",
+        "Use a higher timeframe for direction, a lower one for timing."
+      ]
+    }
+  ]
+}

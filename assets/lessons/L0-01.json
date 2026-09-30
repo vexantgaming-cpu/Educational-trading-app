@@ -1,0 +1,71 @@
+{
+  "id": "L0-01",
+  "title": "What a market is: buyers, sellers and price",
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Buyers meet sellers",
+      "text": "A **market** is simply a place where buyers and sellers meet. It can be a stock exchange, the network of banks that trade currencies, or a crypto exchange.\n\nThe rule is the same everywhere: a trade only happens when a buyer and a seller **agree on a price**."
+    },
+    {
+      "type": "explain",
+      "title": "Price is the last agreement",
+      "text": "Every price you see on a chart is the price at which the **most recent trade** happened.\n\nIt isn't a \"true value\". It's what one person was just willing to pay and another was willing to accept."
+    },
+    {
+      "type": "explain",
+      "title": "Why prices move",
+      "text": "When buyers are more eager than sellers, they accept higher prices and **price rises**. When sellers are more eager, they accept lower prices and **price falls**.\n\nA chart is a record of that tug-of-war. Each candle below is one period of trading.",
+      "chart": {
+        "seed": 21,
+        "segments": [
+          {"type": "trend", "bars": 40, "movePct": 10},
+          {"type": "trend", "bars": 30, "movePct": -8}
+        ]
+      }
+    },
+    {
+      "type": "quiz",
+      "question": "Price has been rising all morning. What does that most likely tell you?",
+      "options": [
+        "Buyers have been more eager than sellers",
+        "Sellers have been more eager than buyers",
+        "The exchange decided to raise the price",
+        "Nobody has been trading"
+      ],
+      "answer": 0,
+      "explanation": "Rising prices mean buyers kept accepting higher prices to get their trades done. No one \"sets\" the price; buyers and sellers do."
+    },
+    {
+      "type": "explain",
+      "title": "Someone is always on the other side",
+      "text": "Every trade has two sides. When you buy, someone sells to you. When you sell, someone buys from you.\n\nThose people include banks, funds, market makers and individual traders, each with their own reasons and time horizons."
+    },
+    {
+      "type": "quiz",
+      "question": "For you to buy 10 shares, what has to happen?",
+      "options": [
+        "Someone must be willing to sell 10 shares at the price you pay",
+        "The exchange creates 10 new shares for you",
+        "The price must rise first",
+        "Nothing: you buy directly from the chart"
+      ],
+      "answer": 0,
+      "explanation": "Every purchase is matched with a sale. If nobody wants to sell at your price, your order doesn't fill."
+    },
+    {
+      "type": "explain",
+      "title": "Same idea, every market",
+      "text": "Stocks, currencies, crypto, gold, indices: the product is different, but the price is always set by **buyers and sellers**.\n\nThat's why the chart-reading skills in this app work on any of them."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "A market is buyers and sellers **agreeing on prices**.",
+        "The price on a chart is the **last agreed trade**, not a \"true value\".",
+        "More eager buyers push price **up**; more eager sellers push it **down**.",
+        "Every trade has a buyer **and** a seller."
+      ]
+    }
+  ]
+}

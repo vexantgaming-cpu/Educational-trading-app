@@ -381,7 +381,7 @@ Answered on 30 Sep 2026: see §0. Still open:
 3. ✅ Flutter project + **simulation engine** (pure logic, 43 tests).
 4. ✅ Chart engine: candles, volume, moving average, draggable SL/TP lines, zones, tap hit-testing (pan/zoom still to do).
    ✅ First exercise: "Place the trade".
-5. Synthetic scenario generator + first 3 lessons in JSON.
+5. ✅ Synthetic scenario generator, lesson player, 8 lessons (Level 0 + support/resistance).
 6. GitHub Actions: ✅ tests + installable test APK on every push; signed `.aab` for Play in Phase 2.
 7. Clickable prototype → beginner usability test → iterate.
 8. Owner registers the Play developer account (personal) and payments profile.
