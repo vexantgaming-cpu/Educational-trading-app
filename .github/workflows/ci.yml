@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Tests & analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.5
+          cache: true
+      - name: Simulation engine tests
+        working-directory: packages/market_sim
+        run: |
+          dart pub get
+          dart analyze
+          dart test
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+
+  android:
+    name: Test APK
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.5
+          cache: true
+      # Release build signed with the debug key: installable on a phone for
+      # testing, not uploadable to Play (that needs the upload key, Phase 2).
+      - run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trading-academy-test-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30

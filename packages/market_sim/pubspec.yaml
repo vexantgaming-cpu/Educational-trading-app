@@ -1,0 +1,14 @@
+name: market_sim
+description: >-
+  Pure-Dart market simulation for Trading Academy: candles, instrument specs,
+  synthetic chart generation, indicators, position sizing, a deterministic
+  bar-by-bar replay engine, trade statistics and process scoring.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
