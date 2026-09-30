@@ -19,7 +19,7 @@ Free lessons to start; a paid tier unlocks the full curriculum and practice tool
 | **Lesson content** | Written and self-checked by Claude against standard, widely taught definitions | Beginner material is well established. Recommended: one read-through by an experienced trader before public launch. |
 | **Play developer account** | **Personal** (not created yet) | $25 one-time fee + identity verification. **Closed test with ≥ 12 testers for 14 continuous days** before production. A Google **payments profile** is needed to sell subscriptions. Because the app earns money, EU law (Digital Services Act) makes the developer a "trader": **contact details (address, phone, email) are shown on the EU store listing**, so consider a business address or PO box instead of a home address. |
 | **Launch markets** | **All of Europe (EU/EEA, UK, Switzerland and the rest) + USA** | English at launch, app built translation-ready; add major EU languages in Phase 3. Prices in EUR, GBP, CHF, USD etc. via Play regional pricing. GDPR / UK GDPR apply (see §9). |
-| **Repository** | New dedicated repo: `trading-academy` | Separate from the Smoke-Free Coach repo. |
+| **Repository** | Dedicated repo: [`Educational-trading-app`](https://github.com/vexantgaming-cpu/Educational-trading-app) | Separate from the Smoke-Free Coach repo. |
 
 ---
 
@@ -377,10 +377,11 @@ Answered on 30 Sep 2026: see §0. Still open:
 ## 14. Next steps
 
 1. ✅ Plan and decisions agreed.
-2. Owner creates the empty `trading-academy` GitHub repo and gives Claude access.
-3. Scaffold the Flutter project; build the **simulation engine first** (pure logic, tests).
-4. Chart-engine spike: candles, pan/zoom, draggable SL/TP lines, tap hit-testing.
+2. ✅ Dedicated GitHub repo created.
+3. ✅ Flutter project + **simulation engine** (pure logic, 43 tests).
+4. ✅ Chart engine: candles, volume, moving average, draggable SL/TP lines, zones, tap hit-testing (pan/zoom still to do).
+   ✅ First exercise: "Place the trade".
 5. Synthetic scenario generator + first 3 lessons in JSON.
-6. GitHub Actions: tests on every push; signed `.aab` build on release.
+6. GitHub Actions: ✅ tests + installable test APK on every push; signed `.aab` for Play in Phase 2.
 7. Clickable prototype → beginner usability test → iterate.
 8. Owner registers the Play developer account (personal) and payments profile.
