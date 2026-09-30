@@ -17,21 +17,28 @@ void main() {
   }
 
   group('GameStore', () {
-    test('starts in Bronze with \$10,000 and one ranked session a day', () async {
-      now = DateTime(2026, 9, 30, 10); // Wednesday, week 40
-      final store = await freshStore();
-      expect(store.league, League.bronze);
-      expect(store.balance, 10000);
-      expect(store.seasonId, 202640);
-      expect(store.rankedPlayedToday, isFalse);
-      await store.recordRankedDay(symbol: 'EURUSD', pnl: 250, trades: 2);
-      expect(store.balance, 10250);
-      expect(store.rankedPlayedToday, isTrue);
-      expect(store.seasonReturnPct, closeTo(2.5, 1e-9));
-      expect(store.standings.where((s) => s.isYou), hasLength(1));
-      now = DateTime(2026, 10, 1, 9);
-      expect(store.rankedPlayedToday, isFalse, reason: 'a new day, a new session');
-    });
+    test(
+      'starts in Bronze with \$10,000 and one ranked session a day',
+      () async {
+        now = DateTime(2026, 9, 30, 10); // Wednesday, week 40
+        final store = await freshStore();
+        expect(store.league, League.bronze);
+        expect(store.balance, 10000);
+        expect(store.seasonId, 202640);
+        expect(store.rankedPlayedToday, isFalse);
+        await store.recordRankedDay(symbol: 'EURUSD', pnl: 250, trades: 2);
+        expect(store.balance, 10250);
+        expect(store.rankedPlayedToday, isTrue);
+        expect(store.seasonReturnPct, closeTo(2.5, 1e-9));
+        expect(store.standings.where((s) => s.isYou), hasLength(1));
+        now = DateTime(2026, 10, 1, 9);
+        expect(
+          store.rankedPlayedToday,
+          isFalse,
+          reason: 'a new day, a new session',
+        );
+      },
+    );
 
     test('a blown account restarts in Bronze with \$10,000', () async {
       now = DateTime(2026, 9, 30, 10);
@@ -45,30 +52,41 @@ void main() {
       expect(store.justBlown, isFalse);
     });
 
-    test('top of the group is promoted, bottom is demoted, at season end', () async {
-      now = DateTime(2026, 9, 28, 10); // Monday
-      final store = await freshStore();
-      for (final day in [28, 29, 30]) {
-        now = DateTime(2026, 9, day, 10);
-        await store.recordRankedDay(symbol: 'XAUUSD', pnl: store.balance * 0.1, trades: 1);
-      }
-      now = DateTime(2026, 10, 5, 9); // next Monday
-      await store.refresh();
-      expect(store.pendingReport!.outcome, SeasonOutcome.promoted);
-      expect(store.league, League.silver);
-      expect(store.seasonDaysPlayed, 0, reason: 'new season starts clean');
-      await store.clearNotices();
+    test(
+      'top of the group is promoted, bottom is demoted, at season end',
+      () async {
+        now = DateTime(2026, 9, 28, 10); // Monday
+        final store = await freshStore();
+        for (final day in [28, 29, 30]) {
+          now = DateTime(2026, 9, day, 10);
+          await store.recordRankedDay(
+            symbol: 'XAUUSD',
+            pnl: store.balance * 0.1,
+            trades: 1,
+          );
+        }
+        now = DateTime(2026, 10, 5, 9); // next Monday
+        await store.refresh();
+        expect(store.pendingReport!.outcome, SeasonOutcome.promoted);
+        expect(store.league, League.silver);
+        expect(store.seasonDaysPlayed, 0, reason: 'new season starts clean');
+        await store.clearNotices();
 
-      for (final day in [5, 6, 7]) {
-        now = DateTime(2026, 10, day, 10);
-        await store.recordRankedDay(symbol: 'XAUUSD', pnl: -store.balance * 0.25, trades: 1);
-      }
-      now = DateTime(2026, 10, 12, 9);
-      await store.refresh();
-      expect(store.pendingReport!.outcome, SeasonOutcome.demoted);
-      expect(store.league, League.bronze);
-      expect(store.bestLeague, League.silver);
-    });
+        for (final day in [5, 6, 7]) {
+          now = DateTime(2026, 10, day, 10);
+          await store.recordRankedDay(
+            symbol: 'XAUUSD',
+            pnl: -store.balance * 0.25,
+            trades: 1,
+          );
+        }
+        now = DateTime(2026, 10, 12, 9);
+        await store.refresh();
+        expect(store.pendingReport!.outcome, SeasonOutcome.demoted);
+        expect(store.league, League.bronze);
+        expect(store.bestLeague, League.silver);
+      },
+    );
 
     test('a week without trading changes nothing', () async {
       now = DateTime(2026, 9, 30, 10);
@@ -91,7 +109,9 @@ void main() {
     });
   });
 
-  testWidgets('a full session: pre-market, buy, news pause, day end', (tester) async {
+  testWidgets('a full session: pre-market, buy, news pause, day end', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1080, 2340);
     tester.view.devicePixelRatio = 2.75;
     addTearDown(tester.view.reset);
@@ -99,22 +119,24 @@ void main() {
     final store = await freshStore();
     SessionResult? result;
 
-    await tester.pumpWidget(GameScope(
-      store: store,
-      child: MaterialApp(
-        home: TradingSessionScreen(
-          market: GameMarkets.eurUsd,
-          dayNumber: 272,
-          ranked: false,
-          startingBalance: 10000,
-          tick: const Duration(milliseconds: 10),
-          onComplete: (r) async {
-            result = r;
-            return const Scaffold(body: Text('summary'));
-          },
+    await tester.pumpWidget(
+      GameScope(
+        store: store,
+        child: MaterialApp(
+          home: TradingSessionScreen(
+            market: GameMarkets.eurUsd,
+            dayNumber: 272,
+            ranked: false,
+            startingBalance: 10000,
+            tick: const Duration(milliseconds: 10),
+            onComplete: (r) async {
+              result = r;
+              return const Scaffold(body: Text('summary'));
+            },
+          ),
         ),
       ),
-    ));
+    );
 
     expect(find.text('Pre-market'), findsOneWidget);
     expect(find.textContaining('The market opens at 08:00'), findsOneWidget);
@@ -134,11 +156,19 @@ void main() {
 
     // Play until the news release pauses the session (or the trade closes).
     await tester.tap(find.byTooltip('Play'));
-    for (var i = 0; i < 200 && find.textContaining('BREAKING').evaluate().isEmpty; i++) {
+    for (
+      var i = 0;
+      i < 200 && find.textContaining('BREAKING').evaluate().isEmpty;
+      i++
+    ) {
       await tester.pump(const Duration(milliseconds: 10));
     }
     expect(find.textContaining('BREAKING'), findsOneWidget);
-    expect(find.byTooltip('Play'), findsOneWidget, reason: 'news pauses the replay');
+    expect(
+      find.byTooltip('Play'),
+      findsOneWidget,
+      reason: 'news pauses the replay',
+    );
 
     await tester.tap(find.byTooltip('Play'));
     for (var i = 0; i < 100 && result == null; i++) {

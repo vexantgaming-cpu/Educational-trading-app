@@ -50,7 +50,14 @@ class GradientButton extends StatelessWidget {
               Icon(icon, size: 20),
               const SizedBox(width: 8),
             ],
-            Text(label),
+            // Shrinks rather than overflowing on narrow phones or with large
+            // system text sizes.
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(label, maxLines: 1, softWrap: false),
+              ),
+            ),
           ],
         ),
       ),

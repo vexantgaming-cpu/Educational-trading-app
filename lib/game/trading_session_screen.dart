@@ -42,6 +42,12 @@ class TradingSessionScreen extends StatefulWidget {
 class _TradingSessionScreenState extends State<TradingSessionScreen> {
   static const _speeds = [1, 2, 4, 8];
 
+  /// Tight padding so three segments fit on a 320dp-wide phone.
+  static const _segmentStyle = ButtonStyle(
+    visualDensity: VisualDensity.compact,
+    padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 4)),
+  );
+
   late final TradingDay _day = generateTradingDay(
     widget.market,
     widget.dayNumber,
@@ -402,43 +408,45 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
           ],
         ),
         body: SafeArea(
-          child: Column(
-            children: [
-              _priceBar(theme),
-              _newsBar(theme),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(6, 4, 0, 2),
-                  child: CandleChart(
-                    candles: _day.candles.sublist(0, _s.currentIndex + 1),
-                    visibleBars: 80,
-                    futureSlots: 12,
-                    priceDecimals: _spec.priceDecimals,
-                    lines: _lines(),
-                    markers: _markers(),
-                    onLineDragged: _ending ? null : _onDrag,
+          child: LayoutBuilder(
+            builder: (context, constraints) => Column(
+              children: [
+                _priceBar(theme),
+                _newsBar(theme),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(6, 4, 0, 2),
+                    child: CandleChart(
+                      candles: _day.candles.sublist(0, _s.currentIndex + 1),
+                      visibleBars: 80,
+                      futureSlots: 12,
+                      priceDecimals: _spec.priceDecimals,
+                      lines: _lines(),
+                      markers: _markers(),
+                      onLineDragged: _ending ? null : _onDrag,
+                    ),
                   ),
                 ),
-              ),
-              _accountStrip(theme),
-              SizedBox(
-                height: 292,
-                child: DecoratedBox(
-                  decoration: const BoxDecoration(
-                    color: AppColors.surface,
-                    border: Border(top: BorderSide(color: AppColors.outline)),
-                  ),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
-                    child: _s.position != null
-                        ? _positionPanel(theme)
-                        : _s.pendingOrder != null
-                        ? _pendingPanel(theme)
-                        : _ticket(theme),
+                _accountStrip(theme),
+                SizedBox(
+                  height: (constraints.maxHeight * 0.42).clamp(170.0, 292.0),
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      color: AppColors.surface,
+                      border: Border(top: BorderSide(color: AppColors.outline)),
+                    ),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
+                      child: _s.position != null
+                          ? _positionPanel(theme)
+                          : _s.pendingOrder != null
+                          ? _pendingPanel(theme)
+                          : _ticket(theme),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -481,16 +489,20 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
             width: 92,
             child: Column(
               children: [
-                Text(
-                  _preMarket ? 'Pre-market' : _day.timeAt(_s.currentIndex),
-                  maxLines: 1,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontSize: _preMarket ? 13 : 16,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    _preMarket ? 'Pre-market' : _day.timeAt(_s.currentIndex),
+                    maxLines: 1,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontSize: _preMarket ? 13 : 16,
+                    ),
                   ),
                 ),
                 Text(
                   'Spread ${_spec.formatDistance(_s.spread)}',
                   textAlign: TextAlign.center,
+                  maxLines: 2,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: wide ? AppColors.orange : AppColors.textMuted,
                     fontWeight: wide ? FontWeight.w700 : null,
@@ -535,7 +547,14 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
         children: [
           Row(
             children: [
-              Text('MORNING NEWS', style: theme.textTheme.labelSmall),
+              Flexible(
+                child: Text(
+                  'MORNING NEWS',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.labelSmall,
+                ),
+              ),
               const SizedBox(width: 6),
               for (var i = 0; i < 3; i++)
                 Padding(
@@ -553,6 +572,8 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
           const SizedBox(height: 2),
           Text(
             briefing.headline,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -573,23 +594,31 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
   Widget _accountStrip(ThemeData theme) {
     final today = _s.equity - widget.startingBalance;
     Widget item(String label, String value, [Color? color]) => Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: theme.textTheme.labelSmall?.copyWith(letterSpacing: 0.4),
-          ),
-          Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: color ?? AppColors.text,
-              fontWeight: FontWeight.w700,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 6),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelSmall?.copyWith(letterSpacing: 0.4),
             ),
-          ),
-        ],
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                value,
+                maxLines: 1,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: color ?? AppColors.text,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
     final level = _s.marginLevelPct;
@@ -636,11 +665,13 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
         Row(
           children: [
             Expanded(
+              flex: 4,
               child: SegmentedButton<Side>(
                 showSelectedIcon: false,
+                style: _segmentStyle,
                 segments: const [
-                  ButtonSegment(value: Side.long, label: Text('Buy')),
-                  ButtonSegment(value: Side.short, label: Text('Sell')),
+                  ButtonSegment(value: Side.long, label: _FitLabel('Buy')),
+                  ButtonSegment(value: Side.short, label: _FitLabel('Sell')),
                 ],
                 selected: {_side},
                 onSelectionChanged: (s) => setState(() {
@@ -651,13 +682,23 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
             ),
             const SizedBox(width: 8),
             Expanded(
+              flex: 5,
               child: SegmentedButton<OrderType>(
                 showSelectedIcon: false,
-                style: const ButtonStyle(visualDensity: VisualDensity.compact),
+                style: _segmentStyle,
                 segments: const [
-                  ButtonSegment(value: OrderType.market, label: Text('Mkt')),
-                  ButtonSegment(value: OrderType.limit, label: Text('Limit')),
-                  ButtonSegment(value: OrderType.stop, label: Text('Stop')),
+                  ButtonSegment(
+                    value: OrderType.market,
+                    label: _FitLabel('Mkt'),
+                  ),
+                  ButtonSegment(
+                    value: OrderType.limit,
+                    label: _FitLabel('Limit'),
+                  ),
+                  ButtonSegment(
+                    value: OrderType.stop,
+                    label: _FitLabel('Stop'),
+                  ),
                 ],
                 selected: {_type},
                 onSelectionChanged: (s) => setState(() {
@@ -732,22 +773,26 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
               ),
             ),
             const SizedBox(width: 8),
-            for (final pct in const [0.5, 1.0, 2.0])
-              Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: ChoiceChip(
-                  visualDensity: VisualDensity.compact,
-                  showCheckmark: false,
-                  label: Text(
-                    '${pct == pct.roundToDouble() ? pct.toStringAsFixed(0) : pct}%',
-                  ),
-                  selected: _autoSize && _riskPct == pct,
-                  onSelected: (_) => setState(() {
+            Expanded(
+              child: SegmentedButton<double>(
+                showSelectedIcon: false,
+                emptySelectionAllowed: true,
+                style: _segmentStyle,
+                segments: const [
+                  ButtonSegment(value: 0.5, label: _FitLabel('0.5%')),
+                  ButtonSegment(value: 1.0, label: _FitLabel('1%')),
+                  ButtonSegment(value: 2.0, label: _FitLabel('2%')),
+                ],
+                selected: _autoSize ? {_riskPct} : const {},
+                onSelectionChanged: (s) {
+                  if (s.isEmpty) return;
+                  setState(() {
                     _autoSize = true;
-                    _riskPct = pct;
-                  }),
-                ),
+                    _riskPct = s.first;
+                  });
+                },
               ),
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -875,7 +920,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
                 onPressed: (p.stopLoss ?? 0) == p.entryPrice
                     ? null
                     : _breakeven,
-                child: const Text('Break-even'),
+                child: const _FitLabel('Break-even'),
               ),
             ),
             const SizedBox(width: 10),
@@ -1104,12 +1149,15 @@ class _Stepper extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodySmall,
                   ),
-                  Text(
-                    value,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      value,
+                      maxLines: 1,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ],
@@ -1167,7 +1215,21 @@ class _SideButton extends StatelessWidget {
         foregroundColor: Colors.white,
         minimumSize: const Size(0, 50),
       ),
-      child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+      child: _FitLabel(label),
     );
   }
+}
+
+/// A label that shrinks to fit instead of wrapping (narrow phones, large
+/// system text sizes).
+class _FitLabel extends StatelessWidget {
+  const _FitLabel(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => FittedBox(
+    fit: BoxFit.scaleDown,
+    child: Text(text, maxLines: 1, softWrap: false),
+  );
 }
