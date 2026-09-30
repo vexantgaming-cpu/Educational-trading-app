@@ -7,8 +7,9 @@ Flutter. Educational only: no real trading, no financial advice.
 
 - Product & build plan: [`docs/PLAN.md`](docs/PLAN.md)
 - Status: **Phase 1 in progress.** Done: simulation engine, chart, lesson player,
-  8 lessons (all of Level 0 + "Support and resistance are zones"), the
-  "Place the trade" exercise, XP and progress saved on the device.
+  11 lessons (all of Level 0, "Support and resistance are zones", and the 3 free
+  Trading Psychology lessons), the "Place the trade" exercise, XP, ranks and
+  progress saved on the device, dark gold/orange visual theme.
 
 ## Try it on your Android phone
 
@@ -32,6 +33,9 @@ signed separately (Phase 2).
 | `lib/lessons/` | Lesson player: explain, quiz, "spot it" on a chart, exercise and recap steps |
 | `assets/lessons/` | Lesson content as JSON (one file per lesson, validated by `test/lessons_test.dart`) |
 | `lib/progress/` | XP and completed lessons, saved on the device |
+| `lib/theme/` | Colours, typography and the vector key visuals for each tab |
+| `lib/widgets/` | Shared styled widgets (gradient button, tab hero, badges) |
+| `assets/fonts/` | Poppins and Inter (SIL Open Font License) |
 | `lib/screens/` | Learn path, Practice hub, Profile |
 | `lib/data/curriculum.dart` | The 56-lesson learning path |
 | `docs/PLAN.md` | Product plan, decisions, compliance notes, roadmap |

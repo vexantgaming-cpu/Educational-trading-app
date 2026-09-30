@@ -7,6 +7,10 @@ import 'package:market_sim/market_sim.dart';
 import '../chart/candle_chart.dart';
 import '../chart/chart_models.dart';
 import '../progress/progress_scope.dart';
+import '../theme/app_colors.dart';
+import '../theme/illustrations.dart';
+import '../widgets/gradient_button.dart';
+import '../widgets/tab_hero.dart';
 import 'candle_anatomy.dart';
 import 'lesson_model.dart';
 import 'rich_text.dart';
@@ -98,12 +102,9 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: LinearProgressIndicator(
-            value: (_index + (_checked ? 1 : 0.5)) / lesson.steps.length,
-            minHeight: 10,
-          ),
+        title: GradientProgressBar(
+          value: (_index + (_checked ? 1 : 0.5)) / lesson.steps.length,
+          height: 10,
         ),
       ),
       body: SafeArea(
@@ -119,15 +120,9 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
               _feedback(context, step),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-              child: SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: _canProceed(step) ? () => _onButton(step) : null,
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: Text(_buttonLabel(step, lesson)),
-                ),
+              child: GradientButton(
+                label: _buttonLabel(step, lesson),
+                onPressed: _canProceed(step) ? () => _onButton(step) : null,
               ),
             ),
           ],
@@ -283,27 +278,27 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
     final selected = _selected == i;
     Color? border;
     if (_checked && i == step.answer) {
-      border = const Color(0xFF26A69A);
+      border = AppColors.up;
     } else if (_checked && selected) {
-      border = theme.colorScheme.error;
+      border = AppColors.down;
     } else if (selected) {
-      border = theme.colorScheme.primary;
+      border = AppColors.gold;
     }
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
         color: selected
-            ? theme.colorScheme.primaryContainer.withValues(alpha: 0.5)
-            : theme.colorScheme.surfaceContainerLow,
+            ? AppColors.gold.withValues(alpha: 0.1)
+            : AppColors.surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
           side: BorderSide(
             color: border ?? theme.colorScheme.outlineVariant,
             width: border == null ? 1 : 2,
           ),
         ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
           onTap: _checked ? null : () => setState(() => _selected = i),
           child: Padding(
             padding: const EdgeInsets.all(14),
@@ -333,8 +328,8 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
               fromIndex: z.fromIndex,
               toIndex: z.toIndex,
               color: z.kind == ZoneKind.support
-                  ? Colors.indigo
-                  : Colors.deepOrange,
+                  ? AppColors.cyan
+                  : AppColors.orange,
               label: z.kind == ZoneKind.support ? 'Support' : 'Resistance',
             ),
     ];
@@ -385,9 +380,7 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
       SpotStep() => step.explanation,
       _ => '',
     };
-    final color = _wasCorrect
-        ? const Color(0xFF26A69A)
-        : Theme.of(context).colorScheme.error;
+    final color = _wasCorrect ? AppColors.up : AppColors.down;
     return Container(
       width: double.infinity,
       color: color.withValues(alpha: 0.12),
@@ -428,10 +421,12 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Icon(
-                Icons.emoji_events,
-                size: 72,
-                color: theme.colorScheme.primary,
+              Center(
+                child: SizedBox(
+                  width: 170,
+                  height: 170,
+                  child: CustomPaint(painter: TrophyArt(showRing: false)),
+                ),
               ),
               const SizedBox(height: 16),
               Text(
@@ -452,19 +447,22 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyLarge,
                 ),
-              Text(
-                _earnedXp > 0
-                    ? '+$_earnedXp XP'
-                    : 'Already completed: no new XP',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: theme.colorScheme.primary,
-                ),
+              const SizedBox(height: 8),
+              Center(
+                child: _earnedXp > 0
+                    ? GradientText(
+                        '+$_earnedXp XP',
+                        style: theme.textTheme.headlineMedium,
+                      )
+                    : Text(
+                        'Already completed: no new XP',
+                        style: theme.textTheme.titleMedium,
+                      ),
               ),
               const SizedBox(height: 32),
-              FilledButton(
+              GradientButton(
+                label: 'Back to lessons',
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Back to lessons'),
               ),
             ],
           ),

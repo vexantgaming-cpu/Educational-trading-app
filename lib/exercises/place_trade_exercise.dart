@@ -6,6 +6,8 @@ import 'package:market_sim/market_sim.dart';
 import '../chart/candle_chart.dart';
 import '../chart/chart_models.dart';
 import '../format.dart';
+import '../theme/app_colors.dart';
+import '../widgets/gradient_button.dart';
 import 'trade_scenario.dart';
 
 enum _Phase { planning, running, done }
@@ -256,7 +258,7 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
       PriceLine(
         id: 'entry',
         price: entry,
-        color: Colors.blueGrey,
+        color: AppColors.textMuted,
         label: planning ? 'Entry (current price)' : 'Entry',
         dashed: true,
       ),
@@ -283,7 +285,7 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
       high: _scenario.support.high,
       fromIndex: _scenario.support.fromIndex,
       toIndex: _scenario.support.toIndex,
-      color: Colors.indigo,
+      color: AppColors.cyan,
       label: 'Support zone',
     ),
     ChartZone(
@@ -291,7 +293,7 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
       high: _scenario.resistance.high,
       fromIndex: _scenario.resistance.fromIndex,
       toIndex: _scenario.resistance.toIndex,
-      color: Colors.deepOrange,
+      color: AppColors.orange,
       label: 'Resistance zone',
     ),
   ];
@@ -307,16 +309,14 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
           index: entryIndex,
           price: entryPrice,
           pointsUp: _side == Side.long,
-          color: Colors.blue,
+          color: AppColors.cyan,
         ),
       if (trade != null)
         ChartMarker(
           index: trade.exitIndex,
           price: trade.exitPrice,
           pointsUp: _side != Side.long,
-          color: trade.isWin
-              ? const Color(0xFF26A69A)
-              : const Color(0xFFEF5350),
+          color: trade.isWin ? AppColors.up : AppColors.down,
         ),
     ];
   }
@@ -379,14 +379,14 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
               child: _Metric(
                 label: 'If stopped out',
                 value: money(-size.riskAmount),
-                color: const Color(0xFFEF5350),
+                color: AppColors.down,
               ),
             ),
             Expanded(
               child: _Metric(
                 label: 'If target hit',
                 value: money(reward, signed: true),
-                color: const Color(0xFF26A69A),
+                color: AppColors.up,
               ),
             ),
           ],
@@ -429,10 +429,10 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
             ),
           ),
         const SizedBox(height: 14),
-        FilledButton.icon(
+        GradientButton(
+          label: 'Place trade',
+          icon: Icons.play_arrow,
           onPressed: _placeTrade,
-          icon: const Icon(Icons.play_arrow),
-          label: const Text('Place trade'),
         ),
       ],
     );
@@ -452,7 +452,7 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
         _Metric(
           label: 'Open profit / loss',
           value: money(pnl, signed: true),
-          color: pnl >= 0 ? const Color(0xFF26A69A) : const Color(0xFFEF5350),
+          color: pnl >= 0 ? AppColors.up : AppColors.down,
         ),
         const SizedBox(height: 8),
         Text(
@@ -490,9 +490,7 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
             Text(
               '${money(trade.netPnl, signed: true)}${r == null ? '' : '  (${rMultiple(r)})'}',
               style: theme.textTheme.titleMedium?.copyWith(
-                color: trade.isWin
-                    ? const Color(0xFF26A69A)
-                    : const Color(0xFFEF5350),
+                color: trade.isWin ? AppColors.up : AppColors.down,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -530,10 +528,10 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
                               : Icons.cancel,
                           size: 20,
                           color: check.passed
-                              ? const Color(0xFF26A69A)
+                              ? AppColors.up
                               : check.points > 0
-                              ? Colors.amber.shade700
-                              : const Color(0xFFEF5350),
+                              ? AppColors.gold
+                              : AppColors.down,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -567,10 +565,10 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
           style: theme.textTheme.bodySmall,
         ),
         const SizedBox(height: 14),
-        FilledButton.icon(
+        GradientButton(
+          label: 'Try another chart',
+          icon: Icons.refresh,
           onPressed: _nextChart,
-          icon: const Icon(Icons.refresh),
-          label: const Text('Try another chart'),
         ),
       ],
     );
@@ -595,7 +593,10 @@ class _Banner extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-      color: theme.colorScheme.secondaryContainer,
+      decoration: const BoxDecoration(
+        color: AppColors.surfaceHigh,
+        border: Border(left: BorderSide(color: AppColors.gold, width: 4)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -630,8 +631,8 @@ class _Metric extends StatelessWidget {
     final valueColor =
         color ??
         switch (good) {
-          true => const Color(0xFF26A69A),
-          false => Colors.amber.shade800,
+          true => AppColors.up,
+          false => AppColors.gold,
           null => theme.colorScheme.onSurface,
         };
     return Column(

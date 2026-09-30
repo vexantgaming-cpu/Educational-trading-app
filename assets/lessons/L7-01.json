@@ -1,0 +1,65 @@
+{
+  "id": "L7-01",
+  "title": "Your brain on money",
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Why trading feels so intense",
+      "text": "When money is on the line, your body reacts as if you're facing a threat. Stress hormones rise, your heart speeds up, and your brain pushes you to **act fast** instead of thinking clearly.\n\nThis happens to everyone, beginners and professionals alike. The goal isn't to feel nothing. It's to stop those feelings from making your decisions."
+    },
+    {
+      "type": "explain",
+      "title": "Fear and greed",
+      "text": "Two feelings drive most trading mistakes.\n\n**Fear**: of losing, of being wrong, of missing out. It makes you exit good trades too early, or jump into a move you didn't plan for.\n\n**Greed**: wanting more, faster. It makes you take trades that are too big, or skip your stop-loss.\n\nNeither feeling is \"bad\". The trouble starts when they replace your plan."
+    },
+    {
+      "type": "explain",
+      "title": "Losses hurt more than wins feel good",
+      "text": "Psychologists Daniel Kahneman and Amos Tversky found that people typically feel a loss about **twice as strongly** as a gain of the same size. This is called **loss aversion**.\n\nIn trading it shows up in two classic mistakes: **holding losing trades** and hoping they come back, and **selling winners too early** to lock in the good feeling."
+    },
+    {
+      "type": "quiz",
+      "question": "You're in a losing trade and feel the urge to move your stop-loss further away \"to give it room\". What's most likely going on?",
+      "options": [
+        "Loss aversion: you're trying to avoid the pain of taking the loss",
+        "The market has sent you a clear new signal",
+        "Moving stops is part of every good plan",
+        "Nothing: it's a purely logical decision"
+      ],
+      "answer": 0,
+      "explanation": "Moving a stop further away mid-trade is usually loss aversion in action. It turns a small, planned loss into a bigger, unplanned one."
+    },
+    {
+      "type": "explain",
+      "title": "Decide when you're calm",
+      "text": "The best defence is to make your decisions **before** you enter, while you're calm: where you get in, where you get out if you're wrong (stop-loss), where you take profit, and how much you risk.\n\nThen, during the trade, the plan decides, not your feelings. That's why every exercise in this app asks for a stop and a target **before** you place the trade."
+    },
+    {
+      "type": "quiz",
+      "question": "When is the best time to decide where your stop-loss goes?",
+      "options": [
+        "Before you enter the trade, while you're calm",
+        "Once the trade starts losing",
+        "When you feel nervous about the trade",
+        "After the trade is closed"
+      ],
+      "answer": 0,
+      "explanation": "Before entry, nothing is at stake yet, so you can think clearly. Once money is moving, emotions get a vote."
+    },
+    {
+      "type": "explain",
+      "title": "Name it to tame it",
+      "text": "Simply **noticing and naming** a feeling (\"I'm anxious\", \"I'm excited\", \"I want to win this back\") helps take the edge off it and gives you a moment to think.\n\nTry a 5-second check before every trade: **How do I feel right now? Am I following my plan?**"
+    },
+    {
+      "type": "recap",
+      "points": [
+        "Money triggers a **stress response** in everyone.",
+        "**Fear** and **greed** cause most mistakes when they replace the plan.",
+        "**Loss aversion**: losses feel about twice as strong as equal gains.",
+        "Decide entry, stop, target and size **while you're calm**.",
+        "Name the feeling, then check your plan."
+      ]
+    }
+  ]
+}

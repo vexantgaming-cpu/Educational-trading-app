@@ -57,7 +57,7 @@ Families policy scope).
 
 ## 3. Curriculum — "reading the market, whatever the instrument"
 
-Structured as a Duolingo-style path. ~60 lessons across 7 levels. Each lesson is
+Structured as a Duolingo-style path. 65 lessons across 8 levels. Each lesson is
 3–5 minutes: **explain → interact → mini-trade → recap**.
 
 ### Level 0 — Market Foundations · FREE
@@ -109,9 +109,20 @@ a fundamental vs technical overview.
 
 ### Level 6 — Your Trading Plan · PREMIUM
 Defining a setup with an entry checklist; the trade journal; reviewing your
-trades; backtesting basics and sample size; psychology (FOMO, revenge trading,
-overtrading, loss aversion); **from simulator to real money**: what changes, how
-to check a broker is regulated, and why to start tiny. Neutral, with no broker recommendations.
+trades; backtesting basics and sample size; writing your trading plan; **from
+simulator to real money**: what changes, how to check a broker is regulated, and
+why to start tiny. Neutral, with no broker recommendations.
+
+### Level 7 — Trading Psychology · 3 FREE + PREMIUM
+Free: **Your brain on money** (stress response, fear and greed, loss aversion,
+deciding while calm); **How to handle a losing trade** (good vs bad losses, the
+pause-review-reset routine, daily loss limits); **Knowing when to step away**
+(tilt, trading while tired or stressed, warning signs of harmful trading, where to
+get help: GamCare UK 0808 8020 133, US 1-800-MY-RESET, national helplines).
+Premium: fear and greed/FOMO, revenge trading and tilt, overconfidence after a
+winning streak, loss aversion (cutting winners, holding losers), discipline and
+routines, getting through drawdowns, patience. Helpline numbers change: re-check
+them before each release.
 
 > Content must be reviewed by an experienced trader or qualified professional before
 > launch. Every lesson carries the "educational, not financial advice" footer.
@@ -158,7 +169,8 @@ All exercises run on the app's own chart engine (§7) with scored hit-testing.
 | Feature | Free | Premium |
 |---|---|---|
 | Levels 0–2 (Foundations, Structure, Risk) | ✅ | ✅ |
-| Levels 3–6 (Patterns, Indicators, Context, Plan) | Preview lesson each | ✅ |
+| Level 7 Psychology: brain on money, handling losses, when to step away | ✅ | ✅ |
+| Levels 3–6 + the rest of Level 7 | Locked (preview later) | ✅ |
 | New monthly lesson packs | — | ✅ |
 | Daily Challenge | ✅ | ✅ + challenge history |
 | Practice Arena | 3 sessions/day, synthetic charts | Unlimited, real historical data, all timeframes, multi-timeframe view |
@@ -283,6 +295,17 @@ can add lessons without touching app code:
 
 Accessibility: colour-blind-safe candle themes (e.g. blue/orange, or hollow/filled),
 dynamic text size, screen-reader labels for chart summaries.
+
+### Visual design (agreed 30 Sep 2026)
+- **Dark-first** "night market" look: near-black background, layered dark surfaces,
+  a **gold → sunset-orange gradient** accent for calls to action and highlights,
+  violet for Premium. Inspired by crypto-exchange apps without copying any brand.
+- Market colours: up `#19C98B`, down `#FF4D6A`.
+- Fonts bundled in the app (no runtime download, GDPR-friendly): **Poppins** for
+  headings, **Inter** for body text, both under the SIL Open Font License.
+- Every tab opens with a **key visual** (hand-drawn vector art + headline).
+- Levels are **collapsible cards**, folded by default, each with its own icon and
+  colour, progress bar and Free / Premium / "3 free" badge.
 
 ---
 

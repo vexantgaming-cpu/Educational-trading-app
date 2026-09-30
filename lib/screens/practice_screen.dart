@@ -1,43 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:market_sim/market_sim.dart';
 
+import '../chart/candle_chart.dart';
 import '../data/curriculum.dart';
+import '../exercises/trade_scenario.dart';
+import '../theme/app_colors.dart';
+import '../theme/illustrations.dart';
+import '../widgets/gradient_button.dart';
+import '../widgets/tab_hero.dart';
 
 class PracticeScreen extends StatelessWidget {
   const PracticeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return CustomScrollView(
       slivers: [
-        SliverAppBar.large(title: const Text('Practice')),
+        const SliverToBoxAdapter(child: BrandBar()),
+        SliverToBoxAdapter(
+          child: TabHero(
+            title: 'Practice',
+            highlight: 'without risk',
+            subtitle: 'Trade with virtual money and learn from every result.',
+            art: PracticeArt(),
+            footer: const Row(
+              children: [
+                Pill(
+                  label: '\$10,000 virtual balance',
+                  icon: Icons.account_balance_wallet,
+                  color: AppColors.gold,
+                ),
+              ],
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            child: Text('EXERCISES', style: theme.textTheme.labelSmall),
+          ),
+        ),
         SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
           sliver: SliverList.list(
             children: [
               _PracticeCard(
                 icon: Icons.candlestick_chart,
+                colors: const [Color(0xFFFFC857), Color(0xFFFF7A2F)],
                 title: 'Place the trade',
                 body:
                     'Plan a trade at support: set your stop-loss and target, '
-                    'then watch it play out bar by bar.',
-                action: 'Start',
-                onTap: () => Navigator.of(context).pushNamed(placeTradeRoute),
+                    'then watch it play out candle by candle.',
+                preview: const _ChartPreview(),
+                onStart: () => Navigator.of(context).pushNamed(placeTradeRoute),
               ),
+              const SizedBox(height: 12),
               const _PracticeCard(
                 icon: Icons.today,
+                colors: [Color(0xFF38BDF8), Color(0xFF2563EB)],
                 title: 'Daily Challenge',
                 body:
                     'One chart, one trade, the same for everyone. Scored on '
                     'how well you plan, not on luck.',
-                action: 'Coming soon',
               ),
+              const SizedBox(height: 12),
               const _PracticeCard(
                 icon: Icons.replay,
+                colors: [Color(0xFF34D399), Color(0xFF059669)],
                 title: 'Practice Arena',
                 body:
-                    'Replay a market bar by bar with \$10,000 of virtual '
+                    'Replay a market candle by candle with \$10,000 of virtual '
                     'money. Buy, sell, set stops, reset any time.',
-                action: 'Coming soon',
               ),
             ],
           ),
@@ -50,45 +84,92 @@ class PracticeScreen extends StatelessWidget {
 class _PracticeCard extends StatelessWidget {
   const _PracticeCard({
     required this.icon,
+    required this.colors,
     required this.title,
     required this.body,
-    required this.action,
-    this.onTap,
+    this.preview,
+    this.onStart,
   });
 
   final IconData icon;
+  final List<Color> colors;
   final String title;
   final String body;
-  final String action;
-  final VoidCallback? onTap;
+  final Widget? preview;
+  final VoidCallback? onStart;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: theme.colorScheme.primary),
-                const SizedBox(width: 10),
-                Text(title, style: theme.textTheme.titleMedium),
-              ],
+    final available = onStart != null;
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: available
+              ? AppColors.gold.withValues(alpha: 0.45)
+              : AppColors.outline,
+        ),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              IconBadge(icon: icon, colors: colors, size: 44),
+              const SizedBox(width: 12),
+              Expanded(child: Text(title, style: theme.textTheme.titleMedium)),
+              if (!available) const Pill(label: 'Coming soon'),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            body,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppColors.textMuted,
             ),
-            const SizedBox(height: 8),
-            Text(body, style: theme.textTheme.bodyMedium),
-            const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerRight,
-              child: onTap == null
-                  ? Text(action, style: theme.textTheme.labelLarge)
-                  : FilledButton(onPressed: onTap, child: Text(action)),
+          ),
+          if (preview != null) ...[const SizedBox(height: 12), preview!],
+          if (available) ...[
+            const SizedBox(height: 14),
+            GradientButton(
+              label: 'Start',
+              icon: Icons.play_arrow,
+              onPressed: onStart,
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// A non-interactive glimpse of the exercise chart.
+class _ChartPreview extends StatelessWidget {
+  const _ChartPreview();
+
+  static final List<Candle> _candles = () {
+    final s = TradeScenario.supportBounce(7);
+    return s.scenario.candles.sublist(0, s.revealIndex + 1);
+  }();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 120,
+      padding: const EdgeInsets.fromLTRB(8, 8, 0, 8),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: IgnorePointer(
+        child: CandleChart(
+          candles: _candles,
+          visibleBars: 60,
+          futureSlots: 4,
+          showVolume: false,
         ),
       ),
     );

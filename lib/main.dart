@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'data/curriculum.dart';
 import 'exercises/place_trade_exercise.dart';
@@ -8,10 +9,12 @@ import 'progress/progress_scope.dart';
 import 'progress/progress_store.dart';
 import 'screens/learn_screen.dart';
 import 'screens/practice_screen.dart';
-import 'screens/profile_screen.dart';
+import 'screens/account_screen.dart';
+import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  _registerFontLicenses();
   final progress = await ProgressStore.load();
   runApp(TradingAcademyApp(progress: progress));
 }
@@ -21,8 +24,6 @@ class TradingAcademyApp extends StatelessWidget {
 
   final ProgressStore progress;
 
-  static const _seed = Color(0xFF1E6FD9);
-
   @override
   Widget build(BuildContext context) {
     return ProgressScope(
@@ -30,19 +31,11 @@ class TradingAcademyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Trading Academy',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: _seed),
-          useMaterial3: true,
-        ),
-        darkTheme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: _seed,
-            brightness: Brightness.dark,
-          ),
-          useMaterial3: true,
-        ),
+        theme: buildAppTheme(),
         routes: {
           '/': (_) => const HomeShell(),
+          '/practice': (_) => const HomeShell(initialTab: 1),
+          '/account': (_) => const HomeShell(initialTab: 2),
           placeTradeRoute: (_) => const PlaceTradeExercise(),
         },
         onGenerateRoute: _lessonRoute,
@@ -52,16 +45,18 @@ class TradingAcademyApp extends StatelessWidget {
 }
 
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  const HomeShell({super.key, this.initialTab = 0});
+
+  final int initialTab;
 
   @override
   State<HomeShell> createState() => _HomeShellState();
 }
 
 class _HomeShellState extends State<HomeShell> {
-  var _tab = 0;
+  late var _tab = widget.initialTab;
 
-  static const _screens = [LearnScreen(), PracticeScreen(), ProfileScreen()];
+  static const _screens = [LearnScreen(), PracticeScreen(), AccountScreen()];
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +79,7 @@ class _HomeShellState extends State<HomeShell> {
           NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
-            label: 'Profile',
+            label: 'Account',
           ),
         ],
       ),
@@ -107,4 +102,15 @@ Route<void>? _lessonRoute(RouteSettings settings) {
     builder: (_) =>
         LessonPlayerScreen(lessonId: uri.pathSegments[1], initialStep: step),
   );
+}
+
+/// The bundled fonts are under the SIL Open Font License; list them on the
+/// licences page.
+void _registerFontLicenses() {
+  LicenseRegistry.addLicense(() async* {
+    for (final font in ['Poppins', 'Inter']) {
+      final text = await rootBundle.loadString('assets/fonts/$font-OFL.txt');
+      yield LicenseEntryWithLineBreaks([font], text);
+    }
+  });
 }

@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import '../data/curriculum.dart';
 import '../lessons/lesson_player.dart';
 import '../progress/progress_scope.dart';
+import '../theme/app_colors.dart';
+import '../theme/illustrations.dart';
+import '../widgets/gradient_button.dart';
+import '../widgets/tab_hero.dart';
 
 class LearnScreen extends StatelessWidget {
   const LearnScreen({super.key});
@@ -10,110 +14,221 @@ class LearnScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final total = curriculum.fold<int>(0, (a, l) => a + l.lessons.length);
     final progress = ProgressScope.of(context);
+    final total = curriculum.fold<int>(0, (a, l) => a + l.lessons.length);
+    final done = progress.completedCount;
     return CustomScrollView(
       slivers: [
-        SliverAppBar.large(title: const Text('Learn')),
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: Text(
-              '$total bite-sized lessons that work for any market: stocks, '
-              'forex, crypto, commodities and indices.',
-              style: theme.textTheme.bodyLarge,
+          child: BrandBar(
+            trailing: Pill(
+              label: '${progress.xp} XP',
+              icon: Icons.bolt,
+              color: AppColors.gold,
             ),
           ),
         ),
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: Row(
+          child: TabHero(
+            title: 'Learn to read',
+            highlight: 'any market',
+            subtitle:
+                'Bite-sized lessons for stocks, forex, crypto, '
+                'commodities and indices.',
+            art: LearnArt(),
+            footer: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _Stat(icon: Icons.bolt, label: '${progress.xp} XP'),
-                const SizedBox(width: 12),
-                _Stat(
-                  icon: Icons.check_circle_outline,
-                  label: '${progress.completedCount} of $total done',
+                Row(
+                  children: [
+                    Text('Your progress', style: theme.textTheme.bodySmall),
+                    const Spacer(),
+                    Text(
+                      '$done of $total lessons',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.text,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 8),
+                GradientProgressBar(value: total == 0 ? 0 : done / total),
               ],
             ),
           ),
         ),
-        for (final level in curriculum) ...[
-          SliverToBoxAdapter(child: _LevelHeader(level: level)),
-          SliverList.builder(
-            itemCount: level.lessons.length,
-            itemBuilder: (context, i) => _LessonTile(
-              level: level,
-              lesson: level.lessons[i],
-              number: i + 1,
-            ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            child: Text('YOUR PATH', style: theme.textTheme.labelSmall),
           ),
-        ],
-        const SliverToBoxAdapter(child: SizedBox(height: 24)),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          sliver: SliverList.separated(
+            itemCount: curriculum.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            itemBuilder: (context, i) => LevelCard(level: curriculum[i]),
+          ),
+        ),
       ],
     );
   }
 }
 
-class _Stat extends StatelessWidget {
-  const _Stat({required this.icon, required this.label});
-
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Chip(
-      avatar: Icon(icon, size: 18, color: theme.colorScheme.primary),
-      label: Text(label),
-    );
-  }
-}
-
-class _LevelHeader extends StatelessWidget {
-  const _LevelHeader({required this.level});
+/// A level as a collapsible card: key visual, progress and access badge on
+/// top; lessons revealed on tap. Folded by default.
+class LevelCard extends StatefulWidget {
+  const LevelCard({super.key, required this.level});
 
   final Level level;
 
   @override
+  State<LevelCard> createState() => _LevelCardState();
+}
+
+class _LevelCardState extends State<LevelCard> {
+  var _expanded = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 4),
-      child: Row(
+    final level = widget.level;
+    final progress = ProgressScope.of(context);
+    final done = level.lessons
+        .where((l) => l.id != null && progress.isCompleted(l.id!))
+        .length;
+    final accent = level.colors.first;
+
+    return Material(
+      color: AppColors.surface,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: _expanded ? accent.withValues(alpha: 0.6) : AppColors.outline,
+        ),
+      ),
+      child: Column(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'LEVEL ${level.number}',
-                  style: theme.textTheme.labelSmall,
-                ),
-                Text(level.title, style: theme.textTheme.titleLarge),
-                Text(level.summary, style: theme.textTheme.bodySmall),
-              ],
+          InkWell(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                children: [
+                  IconBadge(icon: level.icon, colors: level.colors),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'LEVEL ${level.number}',
+                          style: theme.textTheme.labelSmall,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          level.title,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: GradientProgressBar(
+                                value: done / level.lessons.length,
+                                height: 6,
+                                gradient: LinearGradient(colors: level.colors),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              '$done/${level.lessons.length}',
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      _accessPill(level),
+                      const SizedBox(height: 10),
+                      AnimatedRotation(
+                        turns: _expanded ? 0.5 : 0,
+                        duration: const Duration(milliseconds: 220),
+                        child: const Icon(
+                          Icons.expand_more,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          Chip(
-            label: Text(level.premium ? 'Premium' : 'Free'),
-            avatar: Icon(
-              level.premium ? Icons.workspace_premium : Icons.lock_open,
-              size: 16,
-            ),
-            visualDensity: VisualDensity.compact,
+          AnimatedSize(
+            duration: const Duration(milliseconds: 240),
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topCenter,
+            child: _expanded
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Divider(height: 1),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                        child: Text(
+                          level.summary,
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                      for (var i = 0; i < level.lessons.length; i++)
+                        _LessonRow(
+                          level: level,
+                          lesson: level.lessons[i],
+                          number: i + 1,
+                        ),
+                      const SizedBox(height: 8),
+                    ],
+                  )
+                : const SizedBox(width: double.infinity),
           ),
         ],
       ),
     );
   }
+
+  Widget _accessPill(Level level) {
+    if (!level.premium) {
+      return const Pill(label: 'Free', color: AppColors.up);
+    }
+    final free = level.freeLessonCount;
+    if (free > 0) {
+      return Pill(
+        label: '$free free',
+        icon: Icons.lock_open,
+        color: AppColors.cyan,
+      );
+    }
+    return const Pill(
+      label: 'Premium',
+      icon: Icons.workspace_premium,
+      gradient: AppColors.premiumGradient,
+    );
+  }
 }
 
-class _LessonTile extends StatelessWidget {
-  const _LessonTile({
+class _LessonRow extends StatelessWidget {
+  const _LessonRow({
     required this.level,
     required this.lesson,
     required this.number,
@@ -126,56 +241,112 @@ class _LessonTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final playable = lesson.isPlayable;
+    final locked = level.isLocked(lesson);
+    final playable = lesson.isPlayable && !locked;
     final done =
         lesson.id != null && ProgressScope.of(context).isCompleted(lesson.id!);
-    final hasExercise = lesson.exercise != null && lesson.id == null;
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: done
-            ? const Color(0xFF26A69A)
-            : playable
-            ? theme.colorScheme.primary
-            : theme.colorScheme.surfaceContainerHighest,
-        foregroundColor: playable || done
-            ? Colors.white
-            : theme.colorScheme.onSurfaceVariant,
-        child: done ? const Icon(Icons.check) : Text('$number'),
-      ),
-      title: Text(lesson.title),
-      subtitle: Text(
-        done
-            ? '${lesson.minutes} min · Completed'
-            : hasExercise
-            ? '${lesson.minutes} min · Interactive exercise ready'
-            : '${lesson.minutes} min',
-      ),
-      trailing: Icon(
-        playable
-            ? (done ? Icons.replay : Icons.play_circle_fill)
-            : level.premium
-            ? Icons.lock_outline
-            : Icons.schedule,
-        color: playable ? theme.colorScheme.primary : null,
-      ),
-      onTap: () {
-        final navigator = Navigator.of(context);
-        if (lesson.id != null) {
-          navigator.push(
-            MaterialPageRoute<bool>(
-              builder: (_) => LessonPlayerScreen(lessonId: lesson.id!),
+
+    final Widget leading;
+    if (done) {
+      leading = const CircleAvatar(
+        radius: 16,
+        backgroundColor: AppColors.up,
+        child: Icon(Icons.check, size: 18, color: Colors.white),
+      );
+    } else if (locked) {
+      leading = CircleAvatar(
+        radius: 16,
+        backgroundColor: AppColors.violet.withValues(alpha: 0.15),
+        child: const Icon(Icons.lock, size: 16, color: AppColors.violet),
+      );
+    } else {
+      leading = Container(
+        width: 32,
+        height: 32,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: playable ? AppColors.primaryGradient : null,
+          color: playable ? null : AppColors.surfaceHighest,
+        ),
+        child: Text(
+          '$number',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: playable ? AppColors.onGold : AppColors.textMuted,
+          ),
+        ),
+      );
+    }
+
+    final subtitle = done
+        ? '${lesson.minutes} min · Completed'
+        : locked
+        ? '${lesson.minutes} min · Premium'
+        : playable
+        ? (lesson.id == null
+              ? '${lesson.minutes} min · Interactive exercise'
+              : '${lesson.minutes} min${lesson.free ? ' · Free preview' : ''}')
+        : '${lesson.minutes} min · Coming soon';
+
+    return InkWell(
+      onTap: () => _open(context, locked),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: Row(
+          children: [
+            leading,
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    lesson.title,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: playable || done
+                          ? AppColors.text
+                          : AppColors.textMuted,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(subtitle, style: theme.textTheme.bodySmall),
+                ],
+              ),
             ),
-          );
-        } else if (lesson.exercise != null) {
-          navigator.pushNamed(lesson.exercise!);
-        } else {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(content: Text('This lesson is coming soon.')),
-            );
-        }
-      },
+            if (playable)
+              Icon(
+                done ? Icons.replay : Icons.play_circle_fill,
+                color: AppColors.gold,
+                size: 28,
+              ),
+          ],
+        ),
+      ),
     );
+  }
+
+  void _open(BuildContext context, bool locked) {
+    final navigator = Navigator.of(context);
+    if (locked) {
+      _snack(context, 'Part of Premium. Coming soon.');
+    } else if (lesson.id != null) {
+      navigator.push(
+        MaterialPageRoute<bool>(
+          builder: (_) => LessonPlayerScreen(lessonId: lesson.id!),
+        ),
+      );
+    } else if (lesson.exercise != null) {
+      navigator.pushNamed(lesson.exercise!);
+    } else {
+      _snack(context, 'This lesson is coming soon.');
+    }
+  }
+
+  void _snack(BuildContext context, String text) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(text)));
   }
 }

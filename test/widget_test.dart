@@ -6,7 +6,7 @@ import 'package:trading_academy/main.dart';
 import 'package:trading_academy/progress/progress_store.dart';
 
 void main() {
-  testWidgets('home shows the learning path and navigates tabs', (
+  testWidgets('levels start folded, open on tap, and tabs navigate', (
     tester,
   ) async {
     SharedPreferences.setMockInitialValues({});
@@ -15,14 +15,27 @@ void main() {
     await tester.pumpWidget(TradingAcademyApp(progress: progress));
     expect(find.text('0 XP'), findsOneWidget);
     expect(find.text('Market Foundations'), findsOneWidget);
-    await tester.scrollUntilVisible(
-      find.text('Support and resistance are zones'),
-      300,
-    );
+
+    // Lessons are hidden until the level is opened.
+    final lesson = find.text('Support and resistance are zones');
+    expect(lesson, findsNothing);
+    await tester.scrollUntilVisible(find.text('Market Structure'), 300);
+    await tester.tap(find.text('Market Structure'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(lesson, 200);
+    expect(lesson, findsOneWidget);
+
+    // Level 7 exists and shows its free lessons badge.
+    await tester.scrollUntilVisible(find.text('Trading Psychology'), 300);
+    expect(find.text('3 free'), findsOneWidget);
 
     await tester.tap(find.text('Practice'));
     await tester.pumpAndSettle();
     expect(find.text('Place the trade'), findsOneWidget);
+
+    await tester.tap(find.text('Account'));
+    await tester.pumpAndSettle();
+    expect(find.text('Rookie'), findsOneWidget);
   });
 
   testWidgets('place-the-trade exercise runs to a scored result', (

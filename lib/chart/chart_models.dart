@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 /// A horizontal level drawn across the chart (entry, stop-loss, target...).
 class PriceLine {
   const PriceLine({
@@ -66,11 +68,11 @@ class ChartColors {
   factory ChartColors.of(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return ChartColors(
-      up: const Color(0xFF26A69A),
-      down: const Color(0xFFEF5350),
-      grid: scheme.outlineVariant.withValues(alpha: 0.5),
+      up: AppColors.up,
+      down: AppColors.down,
+      grid: scheme.outlineVariant.withValues(alpha: 0.55),
       text: scheme.onSurfaceVariant,
-      movingAverage: const Color(0xFFFFA726),
+      movingAverage: AppColors.gold,
       background: scheme.surface,
     );
   }
