@@ -33,8 +33,10 @@ Free lessons to start; a paid tier unlocks the full curriculum and practice tool
    the price itself rather than reacting to a name.
 3. **Risk management first, and always free.** Teaching position sizing and stop-losses
    is the most protective thing we can do for a beginner, so it stays out of the paywall.
-4. **Reward process, not luck.** Scores and badges come from *how* a trade was taken
-   (had a stop, sensible risk:reward, followed the plan), not from P&L alone.
+4. **Reward process, not luck.** In lessons and exercises, scores and badges come from
+   *how* a trade was taken (had a stop, sensible risk:reward, followed the plan). The
+   league game ranks by return, but only under risk rules that make gambling a losing
+   strategy (stop-loss required, max 5% risk per trade, weekly averages; see §5b).
 5. **Simulated money only.** No real trading, no broker, no purchasable virtual cash
    (see §9 for why).
 6. **Beginner-friendly by default.** Plain language, one concept per lesson, 3–5
@@ -159,8 +161,81 @@ All exercises run on the app's own chart engine (§7) with scored hit-testing.
   *"First stop-loss placed"* or *"10 trades with R:R ≥ 2"*.
 - **"Good loss" feedback**: "You respected your stop. That's a well-managed loss."
 - Opt-in daily reminder and "today's challenge is live" notification, capped at 1/day.
-- **Deliberately excluded:** loot boxes, buying virtual money, pure P&L leaderboards,
-  casino-style effects for big wins, streak-guilt messaging.
+- **Deliberately excluded:** loot boxes, buying virtual money, unrestricted P&L
+  leaderboards (league rankings always come with risk rules), prizes with real-world
+  value, casino-style effects for big wins, streak-guilt messaging.
+
+---
+
+## 5b. The League: trading game (agreed 30 Sep 2026)
+
+A competitive paper-money game on top of the lessons, inspired by chess.com's weekly
+leagues.
+
+**Daily loop:** each day the player picks **one market** for their **ranked session**.
+Every market shows its **morning headline**, which sets a bias. The session then plays
+out from 08:00 to 16:00 as 96 five-minute candles, at 1×–8× speed with pause. A
+scheduled release at **13:30** (inflation, jobs, inventories, earnings) pauses the
+replay with a "breaking" banner. Open trades close at 16:00. The day summary explains
+what the news did and why, lists every trade and adds coach notes. Unlimited **unranked
+practice sessions** use other days' charts.
+
+**Markets (9), with realistic retail specs:**
+
+| Market | Default spread | Contract | Max leverage (EU retail) |
+|---|---|---|---|
+| EUR/USD | 1.0 pip | 100,000 per lot | 30:1 |
+| GBP/USD | 1.5 pips | 100,000 per lot | 30:1 |
+| USD/JPY | 1.2 pips | 100,000 per lot (P&L converted from yen) | 30:1 |
+| Gold | \$0.30 | 100 oz per lot | 20:1 |
+| US Crude Oil | \$0.03 | 1,000 barrels per lot | 10:1 |
+| US 500 | 0.5 pts | \$1 per point | 20:1 |
+| US Tech 100 | 1.5 pts | \$1 per point | 20:1 |
+| Bitcoin | \$30 | 1 BTC | 2:1 |
+| Nova Robotics (fictional share) | \$0.04 + 0.05% commission | 1 share | 5:1 |
+
+**Execution model (accuracy):** candles are bid prices, and ask = bid + spread, as on
+MetaTrader-style platforms. Buys fill at the ask and sells at the bid. Long exits
+trigger on the bid, short exits on the ask. The spread is ×1.5 at the open and ×2–3
+around the release, so a widening spread can hit a stop. Gaps fill at the open, and
+limit and stop entries are supported. When a stop and a target are hit in the same
+candle, the stop counts first. There is a 50% margin close-out (EU retail rule),
+negative balance protection, and position sizing by risk % that converts pips and
+points into dollars.
+
+**News model:** all news is simulated and generic (no real companies; central banks
+are referred to generically). The morning bias is right about **60%** of the time
+(measured 57–70% per market over 200 days, `tool/calibrate_days.dart`). The other
+days are "sell the news" reversals, data surprises or priced-in ranges, which teaches
+that news is an edge, not a certainty. Simulated daily ranges match each market's
+typical volatility within about 7%.
+
+**Fairness:** a day's chart and news depend only on the date and the market, so every
+player trades the same market on the same day. Results can be re-simulated on a server
+from the player's orders.
+
+**Leagues:** Bronze → Silver → Gold → Platinum → Diamond → Master.
+- Weekly seasons (Monday–Sunday), groups of 30 players, ranked by **return % for the
+  week** (fair whatever the account size).
+- **Top 10 promote, bottom 10 demote.** Promotion needs at least 3 trading days in the
+  week. Nobody drops below Bronze or rises above Master.
+- Everyone starts in Bronze with **\$10,000** of paper money. The balance carries over
+  between weeks.
+- **Blown account** (equity below \$1,000) → restart in Bronze with \$10,000. A
+  player can also reset voluntarily, which works the same way.
+- **League rules:** every trade needs a stop-loss, and at most 5% of the account can
+  be risked per trade. One ranked session per day for everyone, so paying never buys
+  more ranked chances.
+
+**Status:** the game runs on the device. Until online leagues launch, a player's group
+is filled with **29 clearly labelled simulated rivals**, whose skill rises with the
+league. **Online leagues (next):** Firebase Auth, a Cloud Function that assigns groups
+of 30 per league each Monday, server re-simulation of submitted orders (anti-cheat),
+real leaderboards, and season-end promotion and demotion on the server.
+
+**Compliance notes:** paper money only, never purchasable or withdrawable, and **no
+prizes of monetary value** (real prizes could turn the league into a regulated contest
+or game of chance). Rankings are for fun and learning.
 
 ---
 

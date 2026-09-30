@@ -1,0 +1,6 @@
+# `dart test -p chrome` runs the same tests compiled to JavaScript, proving
+# the simulation gives identical results on phones and on the web.
+override_platforms:
+  chrome:
+    settings:
+      arguments: --no-sandbox --headless=new

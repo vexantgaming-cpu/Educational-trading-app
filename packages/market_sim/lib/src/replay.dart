@@ -1,12 +1,10 @@
-import 'dart:math' as math;
-
 import 'candle.dart';
 import 'instrument.dart';
 import 'risk.dart';
 
 enum OrderType { market, limit, stop }
 
-enum ExitReason { stopLoss, takeProfit, manual, endOfSession }
+enum ExitReason { stopLoss, takeProfit, manual, endOfSession, stopOut }
 
 class OrderRequest {
   const OrderRequest({
@@ -35,6 +33,8 @@ class OpenPosition {
     required this.entryPrice,
     required this.entryIndex,
     required this.entryFees,
+    required this.entrySpread,
+    required this.margin,
     required this.riskAmount,
     required this.initialStop,
     this.stopLoss,
@@ -43,9 +43,15 @@ class OpenPosition {
 
   final Side side;
   final double quantity;
+
+  /// Actual fill price (the ask for buys, the bid for sells).
   final double entryPrice;
   final int entryIndex;
   final double entryFees;
+  final double entrySpread;
+
+  /// Margin locked for this position, in account currency.
+  final double margin;
 
   /// Money at risk between entry and the initial stop (null without a stop).
   final double? riskAmount;
@@ -66,6 +72,7 @@ class ClosedTrade {
     required this.grossPnl,
     required this.fees,
     required this.riskAmount,
+    this.spreadCost = 0,
     this.initialStop,
     this.takeProfit,
   });
@@ -77,10 +84,16 @@ class ClosedTrade {
   final int exitIndex;
   final double exitPrice;
   final ExitReason exitReason;
+
+  /// Result from the fill prices (which already include the spread).
   final double grossPnl;
 
-  /// Spread + commission paid on entry and exit.
+  /// Commission paid on entry and exit.
   final double fees;
+
+  /// How much worse the fills were than the chart (bid) prices because of
+  /// the spread. Already inside [grossPnl]; shown for learning.
+  final double spreadCost;
   final double? riskAmount;
   final double? initialStop;
   final double? takeProfit;
@@ -122,32 +135,45 @@ class StepEvent {
   final ClosedTrade? closedTrade;
 }
 
-/// Deterministic bar-by-bar trading simulator.
+/// Deterministic bar-by-bar trading simulator with broker-style execution.
 ///
-/// Rules (identical everywhere, so results can be re-checked on a server):
-/// * Market orders fill at the current bar's close.
-/// * Limit/stop entries trigger when a later bar's range reaches the price,
-///   or at that bar's open if it gaps through.
-/// * Spread and commission are charged as explicit costs on entry and exit.
+/// Candle prices are bid prices, as on most trading platforms. Each bar has a
+/// spread (default: the instrument's; it can widen, e.g. around news), so
+/// ask = bid + spread and every quote stays on the tick grid:
+/// * Buys fill at the ask, sells at the bid. Market orders fill at the
+///   current bar's close.
+/// * Buy orders and the exits of short positions trigger on the ask; sell
+///   orders and the exits of long positions trigger on the bid. A widening
+///   spread can therefore hit a stop, just like with a real broker.
+/// * Orders that gap through their price fill at the bar's open.
 /// * If one bar reaches both stop-loss and take-profit, the stop-loss is
-///   assumed to come first (conservative).
-/// * On the bar an entry fills only the stop-loss is checked, because the
-///   order of prices inside a bar is unknown.
+///   assumed to come first (conservative). On the bar an entry fills, only
+///   the stop-loss is checked.
+/// * Commission is charged on entry and exit.
+/// * If equity falls below [stopOutLevel] × margin, the position is closed
+///   (the EU retail 50% margin close-out rule). The balance never goes below
+///   zero (negative balance protection).
 class ReplaySession {
   ReplaySession({
     required this.candles,
     required this.spec,
     this.startingBalance = 10000,
     int startIndex = 0,
+    List<double>? spreads,
+    this.stopOutLevel = 0.5,
   }) : assert(candles.isNotEmpty),
-       _index = math.min(startIndex, candles.length - 1),
+       assert(spreads == null || spreads.length == candles.length),
+       _spreads = spreads,
+       _index = startIndex.clamp(0, candles.length - 1),
        balance = startingBalance;
 
   final List<Candle> candles;
   final InstrumentSpec spec;
   final double startingBalance;
+  final double stopOutLevel;
+  final List<double>? _spreads;
 
-  /// Realised account balance (closed trades and paid costs).
+  /// Realised account balance (closed trades and paid commission).
   double balance;
   final List<ClosedTrade> trades = [];
 
@@ -157,22 +183,34 @@ class ReplaySession {
 
   int get currentIndex => _index;
   Candle get currentCandle => candles[_index];
+
+  /// Bid price at the close of the current bar.
   double get currentPrice => currentCandle.close;
+  double spreadAt(int index) => _spreads?[index] ?? spec.spread;
+  double get spread => spreadAt(_index);
+  double get bid => currentPrice;
+  double get ask => currentPrice + spread;
   bool get hasNextBar => _index < candles.length - 1;
   OpenPosition? get position => _position;
   OrderRequest? get pendingOrder => _pending;
   bool get isFlat => _position == null && _pending == null;
 
+  /// Price at which the open position could be closed right now.
+  double get exitPrice => _position?.side == Side.short ? ask : bid;
+
   double get unrealizedPnl {
     final p = _position;
     if (p == null) return 0;
-    return (currentPrice - p.entryPrice) *
-        p.side.sign *
-        p.quantity *
-        spec.contractSize;
+    return _pnl(p, exitPrice);
   }
 
   double get equity => balance + unrealizedPnl;
+  double get usedMargin => _position?.margin ?? 0;
+  double get freeMargin => equity - usedMargin;
+
+  /// Equity as a percentage of used margin (null when nothing is open).
+  double? get marginLevelPct =>
+      _position == null ? null : equity / _position!.margin * 100;
 
   void submit(OrderRequest order) {
     if (!isFlat) {
@@ -184,7 +222,10 @@ class ReplaySession {
     if (quantity <= 0) {
       throw const OrderRejected('The position size is too small.');
     }
-    final price = order.type == OrderType.market ? currentPrice : order.price;
+    final buy = order.side == Side.long;
+    final price = order.type == OrderType.market
+        ? (buy ? ask : bid)
+        : order.price;
     if (price == null) {
       throw const OrderRejected('Limit and stop orders need a price.');
     }
@@ -196,10 +237,13 @@ class ReplaySession {
       target: order.takeProfit,
     );
     if (levelError != null) throw OrderRejected(levelError);
-    if (spec.notional(price, quantity) / spec.maxLeverage > equity) {
+    final margin = spec.notionalInAccount(price, quantity) / spec.maxLeverage;
+    if (margin > freeMargin) {
       throw OrderRejected(
-        'Not enough margin: at ${spec.maxLeverage.toStringAsFixed(0)}:1 '
-        'leverage this position needs more than your account balance.',
+        'Not enough margin: this position needs '
+        '\$${margin.toStringAsFixed(2)} at '
+        '${spec.maxLeverage.toStringAsFixed(0)}:1 leverage, but only '
+        '\$${freeMargin.toStringAsFixed(2)} is free.',
       );
     }
 
@@ -212,7 +256,7 @@ class ReplaySession {
       takeProfit: order.takeProfit,
     );
     if (order.type == OrderType.market) {
-      _open(sized, currentPrice);
+      _open(sized, price);
     } else {
       _pending = sized;
     }
@@ -230,7 +274,7 @@ class ReplaySession {
     if (p == null) throw const OrderRejected('There is no open trade.');
     final error = Risk.levelError(
       side: p.side,
-      entry: currentPrice,
+      entry: exitPrice,
       stop: stopLoss,
       target: takeProfit,
     );
@@ -242,37 +286,41 @@ class ReplaySession {
       ..takeProfit = takeProfit;
   }
 
-  /// Closes the open position at the current price.
+  /// Closes the open position at the current bid (long) or ask (short).
   ClosedTrade closePosition() {
     if (_position == null) throw const OrderRejected('There is no open trade.');
-    return _close(currentPrice, ExitReason.manual);
+    return _close(exitPrice, ExitReason.manual);
   }
 
-  /// Reveals the next bar and processes fills, stops and targets.
+  /// Reveals the next bar and processes fills, stops, targets and margin.
   StepEvent step() {
     if (!hasNextBar) throw StateError('No more bars to replay.');
     _index++;
     final bar = currentCandle;
+    final spread = this.spread;
 
     final pending = _pending;
     if (pending != null) {
-      final fill = _triggerPrice(pending, bar);
+      final fill = _triggerPrice(pending, bar, spread);
       if (fill == null) return StepEvent(index: _index, candle: bar);
       _pending = null;
       final p = _open(pending, fill);
       ClosedTrade? closed;
       final stop = p.stopLoss;
       if (stop != null) {
+        final long = p.side == Side.long;
         final gappedThrough = (fill - stop) * p.side.sign <= 0;
-        final touched = p.side == Side.long
-            ? bar.low <= stop
-            : bar.high >= stop;
+        final touched = long ? bar.low <= stop : bar.high + spread >= stop;
         if (gappedThrough) {
-          closed = _close(fill, ExitReason.stopLoss);
+          closed = _close(
+            long ? fill - spread : fill + spread,
+            ExitReason.stopLoss,
+          );
         } else if (touched) {
           closed = _close(stop, ExitReason.stopLoss);
         }
       }
+      closed ??= _checkStopOut(bar, spread);
       return StepEvent(
         index: _index,
         candle: bar,
@@ -282,11 +330,8 @@ class ReplaySession {
     }
 
     if (_position != null) {
-      return StepEvent(
-        index: _index,
-        candle: bar,
-        closedTrade: _checkExits(bar),
-      );
+      final closed = _checkExits(bar, spread) ?? _checkStopOut(bar, spread);
+      return StepEvent(index: _index, candle: bar, closedTrade: closed);
     }
     return StepEvent(index: _index, candle: bar);
   }
@@ -306,41 +351,69 @@ class ReplaySession {
   ClosedTrade? finish() {
     _pending = null;
     if (_position == null) return null;
-    return _close(currentPrice, ExitReason.endOfSession);
+    return _close(exitPrice, ExitReason.endOfSession);
   }
 
-  ClosedTrade? _checkExits(Candle bar) {
+  ClosedTrade? _checkExits(Candle bar, double spread) {
     final p = _position!;
     final long = p.side == Side.long;
     final stop = p.stopLoss, target = p.takeProfit;
+    // Longs exit by selling at the bid; shorts by buying at the ask.
+    final shift = long ? 0.0 : spread;
+    final open = bar.open + shift;
+    final high = bar.high + shift;
+    final low = bar.low + shift;
 
-    // Gaps: the bar opens beyond a level, so it fills at the open.
-    if (stop != null && (long ? bar.open <= stop : bar.open >= stop)) {
-      return _close(bar.open, ExitReason.stopLoss);
+    if (stop != null && (long ? open <= stop : open >= stop)) {
+      return _close(open, ExitReason.stopLoss);
     }
-    if (target != null && (long ? bar.open >= target : bar.open <= target)) {
-      return _close(bar.open, ExitReason.takeProfit);
+    if (target != null && (long ? open >= target : open <= target)) {
+      return _close(open, ExitReason.takeProfit);
     }
-    final hitStop = stop != null && (long ? bar.low <= stop : bar.high >= stop);
-    final hitTarget =
-        target != null && (long ? bar.high >= target : bar.low <= target);
+    final hitStop = stop != null && (long ? low <= stop : high >= stop);
+    final hitTarget = target != null && (long ? high >= target : low <= target);
     if (hitStop) return _close(stop, ExitReason.stopLoss);
     if (hitTarget) return _close(target, ExitReason.takeProfit);
     return null;
   }
 
-  double? _triggerPrice(OrderRequest order, Candle bar) {
+  /// Closes the position if equity falls below the stop-out level during
+  /// the bar, at the price where that happens (or the open after a gap).
+  ClosedTrade? _checkStopOut(Candle bar, double spread) {
+    final p = _position;
+    if (p == null) return null;
+    final long = p.side == Side.long;
+    final worst = long ? bar.low : bar.high + spread;
+    final threshold = stopOutLevel * p.margin;
+    if (balance + _pnl(p, worst) >= threshold) return null;
+
+    // Solve balance + pnl(price) = threshold for the price.
+    final size = p.quantity * spec.contractSize * p.side.sign;
+    final target = threshold - balance;
+    final double stopOutPrice = spec.baseIsAccountCurrency
+        ? -p.entryPrice * size / (target - size)
+        : p.entryPrice + target / size;
+    final open = long ? bar.open : bar.open + spread;
+    final gapped = long ? open <= stopOutPrice : open >= stopOutPrice;
+    return _close(gapped ? open : stopOutPrice, ExitReason.stopOut);
+  }
+
+  double? _triggerPrice(OrderRequest order, Candle bar, double spread) {
     final p = order.price!;
     final buy = order.side == Side.long;
-    final limit = order.type == OrderType.limit;
+    // Buy orders trigger on the ask, sell orders on the bid.
+    final shift = buy ? spread : 0.0;
+    final open = bar.open + shift;
+    final high = bar.high + shift;
+    final low = bar.low + shift;
     // Buy limit / sell stop trigger on the way down; the others on the way up.
-    final fillsBelow = buy == limit;
+    final fillsBelow = buy == (order.type == OrderType.limit);
     if (fillsBelow) {
-      if (bar.open <= p) return bar.open;
-      if (bar.low <= p) return p;
+      if (open <= p) return open;
+      if (low <= p) return p;
     } else {
-      if (bar.open >= p) return bar.open;
-      if (bar.high >= p) return p;
+      if (open >= p) return open;
+      if (high >= p) return p;
     }
     return null;
   }
@@ -348,8 +421,9 @@ class ReplaySession {
   void _checkPendingPrice(Side side, OrderType type, double price) {
     if (type == OrderType.market) return;
     final buy = side == Side.long;
-    final below = price < currentPrice;
-    final above = price > currentPrice;
+    final reference = buy ? ask : bid;
+    final below = price < reference;
+    final above = price > reference;
     switch ((type, buy)) {
       case (OrderType.limit, true) when !below:
         throw const OrderRejected(
@@ -372,8 +446,16 @@ class ReplaySession {
     }
   }
 
+  double _pnl(OpenPosition p, double exit) => spec.toAccount(
+    (exit - p.entryPrice) * p.side.sign * p.quantity * spec.contractSize,
+    exit,
+  );
+
+  double _commission(double price, double quantity) =>
+      spec.notionalInAccount(price, quantity) * spec.commissionRate;
+
   OpenPosition _open(OrderRequest order, double price) {
-    final fees = _fees(price, order.quantity);
+    final fees = _commission(price, order.quantity);
     balance -= fees;
     final stop = order.stopLoss;
     return _position = OpenPosition(
@@ -382,9 +464,14 @@ class ReplaySession {
       entryPrice: price,
       entryIndex: _index,
       entryFees: fees,
+      entrySpread: spread,
+      margin: spec.notionalInAccount(price, order.quantity) / spec.maxLeverage,
       riskAmount: stop == null
           ? null
-          : (price - stop).abs() * order.quantity * spec.contractSize,
+          : spec.toAccount(
+              (price - stop).abs() * order.quantity * spec.contractSize,
+              stop,
+            ),
       initialStop: stop,
       stopLoss: stop,
       takeProfit: order.takeProfit,
@@ -393,10 +480,18 @@ class ReplaySession {
 
   ClosedTrade _close(double price, ExitReason reason) {
     final p = _position!;
-    final gross =
-        (price - p.entryPrice) * p.side.sign * p.quantity * spec.contractSize;
-    final exitFees = _fees(price, p.quantity);
+    final gross = _pnl(p, price);
+    final exitFees = _commission(price, p.quantity);
     balance += gross - exitFees;
+    if (balance < 0) balance = 0; // negative balance protection
+    // Candles are bids, so a long pays the spread when it buys at the ask
+    // and a short pays it when it buys back at the ask.
+    final spreadCost = spec.toAccount(
+      (p.side == Side.long ? p.entrySpread : spread) *
+          p.quantity *
+          spec.contractSize,
+      price,
+    );
     final trade = ClosedTrade(
       side: p.side,
       quantity: p.quantity,
@@ -407,6 +502,7 @@ class ReplaySession {
       exitReason: reason,
       grossPnl: gross,
       fees: p.entryFees + exitFees,
+      spreadCost: spreadCost,
       riskAmount: p.riskAmount,
       initialStop: p.initialStop,
       takeProfit: p.takeProfit,
@@ -415,8 +511,4 @@ class ReplaySession {
     _position = null;
     return trade;
   }
-
-  double _fees(double price, double quantity) =>
-      spec.notional(price, quantity) * spec.commissionRate +
-      spec.spread / 2 * quantity * spec.contractSize;
 }

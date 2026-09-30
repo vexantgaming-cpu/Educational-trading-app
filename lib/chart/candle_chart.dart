@@ -49,22 +49,34 @@ class _CandleChartState extends State<CandleChart> {
   String? _draggingId;
   ChartGeometry? _geometry;
 
+  /// Price range held still while a line is dragged, so the axis doesn't
+  /// rescale under the finger.
+  (double, double)? _frozenRange;
+
   @override
   Widget build(BuildContext context) {
     final colors = ChartColors.of(context);
     return LayoutBuilder(
       builder: (context, constraints) {
-        final geometry = ChartGeometry.fit(
+        var geometry = ChartGeometry.fit(
           size: constraints.biggest,
           candles: widget.candles,
           visibleBars: widget.visibleBars,
           futureSlots: widget.futureSlots,
           showVolume: widget.showVolume,
-          fixedLines: [
-            for (final l in widget.lines)
-              if (!l.draggable) l.price,
-          ],
+          fixedLines: [for (final l in widget.lines) l.price],
         );
+        final frozen = _frozenRange;
+        if (_draggingId != null && frozen != null) {
+          geometry = ChartGeometry(
+            size: geometry.size,
+            startIndex: geometry.startIndex,
+            slots: geometry.slots,
+            minPrice: frozen.$1,
+            maxPrice: frozen.$2,
+            showVolume: geometry.showVolume,
+          );
+        }
         _geometry = geometry;
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
@@ -84,7 +96,10 @@ class _CandleChartState extends State<CandleChart> {
           onVerticalDragUpdate: widget.onLineDragged == null
               ? null
               : _dragUpdate,
-          onVerticalDragEnd: (_) => setState(() => _draggingId = null),
+          onVerticalDragEnd: (_) => setState(() {
+            _draggingId = null;
+            _frozenRange = null;
+          }),
           child: CustomPaint(
             size: constraints.biggest,
             painter: _CandlePainter(
@@ -117,7 +132,12 @@ class _CandleChartState extends State<CandleChart> {
         nearest = line;
       }
     }
-    setState(() => _draggingId = nearest?.id);
+    setState(() {
+      _draggingId = nearest?.id;
+      _frozenRange = nearest == null
+          ? null
+          : (geometry.minPrice, geometry.maxPrice);
+    });
   }
 
   void _dragUpdate(DragUpdateDetails details) {

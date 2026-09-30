@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trading_academy/exercises/place_trade_exercise.dart';
+import 'package:trading_academy/game/game_store.dart';
 import 'package:trading_academy/main.dart';
 import 'package:trading_academy/progress/progress_store.dart';
 
@@ -11,8 +12,10 @@ void main() {
   ) async {
     SharedPreferences.setMockInitialValues({});
     ProgressStore.reset();
+    GameStore.reset();
     final progress = await ProgressStore.load();
-    await tester.pumpWidget(TradingAcademyApp(progress: progress));
+    final game = await GameStore.load(clock: () => DateTime(2026, 9, 30, 10));
+    await tester.pumpWidget(TradingAcademyApp(progress: progress, game: game));
     expect(find.text('0 XP'), findsOneWidget);
     expect(find.text('Market Foundations'), findsOneWidget);
 
@@ -32,6 +35,11 @@ void main() {
     await tester.tap(find.text('Practice'));
     await tester.pumpAndSettle();
     expect(find.text('Place the trade'), findsOneWidget);
+
+    await tester.tap(find.text('League'));
+    await tester.pumpAndSettle();
+    expect(find.text('Bronze'), findsWidgets);
+    expect(find.text('Pick today\'s market'), findsOneWidget);
 
     await tester.tap(find.text('Account'));
     await tester.pumpAndSettle();

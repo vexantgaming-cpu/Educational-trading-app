@@ -88,7 +88,11 @@ class Risk {
     required double stop,
     required InstrumentSpec spec,
   }) {
-    final riskPerQuantity = (entry - stop).abs() * spec.contractSize;
+    // The loss is realised at the stop price, so convert at that price.
+    final riskPerQuantity = spec.toAccount(
+      (entry - stop).abs() * spec.contractSize,
+      stop,
+    );
     if (riskPerQuantity <= 0 || balance <= 0 || entry <= 0) {
       return PositionSize.zero;
     }
@@ -96,7 +100,7 @@ class Risk {
       balance * riskPct / 100 / riskPerQuantity,
     );
     final maxByLeverage = spec.roundQuantityDown(
-      balance * spec.maxLeverage / (entry * spec.contractSize),
+      balance * spec.maxLeverage / spec.notionalInAccount(entry, 1),
     );
     var limited = false;
     if (quantity > maxByLeverage) {
@@ -104,7 +108,7 @@ class Risk {
       limited = true;
     }
     final riskAmount = quantity * riskPerQuantity;
-    final notional = spec.notional(entry, quantity);
+    final notional = spec.notionalInAccount(entry, quantity);
     return PositionSize(
       quantity: quantity,
       riskAmount: riskAmount,

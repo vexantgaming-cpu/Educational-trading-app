@@ -21,6 +21,9 @@ jobs:
           dart pub get
           dart analyze
           dart test
+      - name: Simulation engine tests compiled to JavaScript (web = phone)
+        working-directory: packages/market_sim
+        run: dart test -p chrome
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test

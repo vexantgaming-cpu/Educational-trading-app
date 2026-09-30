@@ -4,6 +4,7 @@ import 'package:market_sim/market_sim.dart';
 import '../chart/candle_chart.dart';
 import '../data/curriculum.dart';
 import '../exercises/trade_scenario.dart';
+import '../game/market_picker_screen.dart';
 import '../theme/app_colors.dart';
 import '../theme/illustrations.dart';
 import '../widgets/gradient_button.dart';
@@ -65,13 +66,18 @@ class PracticeScreen extends StatelessWidget {
                     'how well you plan, not on luck.',
               ),
               const SizedBox(height: 12),
-              const _PracticeCard(
+              _PracticeCard(
                 icon: Icons.replay,
-                colors: [Color(0xFF34D399), Color(0xFF059669)],
+                colors: const [Color(0xFF34D399), Color(0xFF059669)],
                 title: 'Practice Arena',
                 body:
-                    'Replay a market candle by candle with \$10,000 of virtual '
-                    'money. Buy, sell, set stops, reset any time.',
+                    'Trade a full market day with \$10,000 of virtual money: '
+                    'read the news, buy at the ask, sell at the bid. Unranked.',
+                onStart: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const MarketPickerScreen(ranked: false),
+                  ),
+                ),
               ),
             ],
           ),

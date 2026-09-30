@@ -93,6 +93,27 @@ void main() {
       expect(size.riskAmount, closeTo(100, 1e-6));
     });
 
+    test('USD/JPY: risk is converted from yen at the stop price', () {
+      final size = Risk.positionSize(
+        balance: 10000,
+        riskPct: 1,
+        entry: 150,
+        stop: 149.5,
+        spec: GameInstruments.usdJpy,
+      );
+      // 50 pips × 100 000 / 149.5 = \$334.45 per lot → 0.29 lots.
+      expect(size.quantity, 0.29);
+      expect(size.riskAmount, closeTo(0.29 * 0.5 * 100000 / 149.5, 1e-6));
+    });
+
+    test('pip values and distance labels', () {
+      expect(GameInstruments.eurUsd.pipValue(1.1), closeTo(10, 1e-9));
+      expect(GameInstruments.usdJpy.pipValue(150), closeTo(1000 / 150, 1e-9));
+      expect(GameInstruments.eurUsd.formatDistance(0.0025), '25.0 pips');
+      expect(GameInstruments.us500.formatDistance(12.5), '12.5 pts');
+      expect(GameInstruments.gold.formatDistance(4.2), '\$4.20');
+    });
+
     test('caps the size at the maximum leverage', () {
       // A 0.10 stop would allow 1 000 shares ($100k), but 5:1 caps it at $50k.
       final size = Risk.positionSize(

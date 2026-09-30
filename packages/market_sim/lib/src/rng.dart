@@ -14,8 +14,8 @@ class SeededRandom {
   int nextUint32() {
     _state = (_state + 0x6D2B79F5) & 0xffffffff;
     var t = _state;
-    t = _imul(t ^ (t >> 15), t | 1);
-    t = (t ^ ((t + _imul(t ^ (t >> 7), t | 61)) & 0xffffffff)) & 0xffffffff;
+    t = mul32(t ^ (t >> 15), t | 1);
+    t = (t ^ ((t + mul32(t ^ (t >> 7), t | 61)) & 0xffffffff)) & 0xffffffff;
     return (t ^ (t >> 14)) & 0xffffffff;
   }
 
@@ -46,11 +46,12 @@ class SeededRandom {
     _spareGaussian = radius * math.sin(2 * math.pi * u2);
     return radius * math.cos(2 * math.pi * u2);
   }
+}
 
-  /// 32-bit multiply without relying on 64-bit ints (web-safe Math.imul).
-  static int _imul(int a, int b) {
-    final al = a & 0xffff, ah = (a >> 16) & 0xffff;
-    final bl = b & 0xffff, bh = (b >> 16) & 0xffff;
-    return (al * bl + (((ah * bl + al * bh) & 0xffff) << 16)) & 0xffffffff;
-  }
+/// 32-bit multiply (like JavaScript's Math.imul), exact on the Dart VM and on
+/// the web, where ints above 2^53 lose precision.
+int mul32(int a, int b) {
+  final al = a & 0xffff, ah = (a >> 16) & 0xffff;
+  final bl = b & 0xffff, bh = (b >> 16) & 0xffff;
+  return (al * bl + (((ah * bl + al * bh) & 0xffff) << 16)) & 0xffffffff;
 }

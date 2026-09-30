@@ -4,9 +4,17 @@ import 'package:flutter/services.dart';
 
 import 'data/curriculum.dart';
 import 'exercises/place_trade_exercise.dart';
+import 'game/game_scope.dart';
+import 'game/game_store.dart';
+import 'game/league_screen.dart';
+import 'game/session_summary_screen.dart';
+import 'game/trading_session_screen.dart';
 import 'lessons/lesson_player.dart';
 import 'progress/progress_scope.dart';
 import 'progress/progress_store.dart';
+
+import 'package:market_sim/market_sim.dart';
+
 import 'screens/learn_screen.dart';
 import 'screens/practice_screen.dart';
 import 'screens/account_screen.dart';
@@ -16,29 +24,39 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _registerFontLicenses();
   final progress = await ProgressStore.load();
-  runApp(TradingAcademyApp(progress: progress));
+  final game = await GameStore.load();
+  runApp(TradingAcademyApp(progress: progress, game: game));
 }
 
 class TradingAcademyApp extends StatelessWidget {
-  const TradingAcademyApp({super.key, required this.progress});
+  const TradingAcademyApp({
+    super.key,
+    required this.progress,
+    required this.game,
+  });
 
   final ProgressStore progress;
+  final GameStore game;
 
   @override
   Widget build(BuildContext context) {
     return ProgressScope(
       store: progress,
-      child: MaterialApp(
-        title: 'Trading Academy',
-        debugShowCheckedModeBanner: false,
-        theme: buildAppTheme(),
-        routes: {
-          '/': (_) => const HomeShell(),
-          '/practice': (_) => const HomeShell(initialTab: 1),
-          '/account': (_) => const HomeShell(initialTab: 2),
-          placeTradeRoute: (_) => const PlaceTradeExercise(),
-        },
-        onGenerateRoute: _lessonRoute,
+      child: GameScope(
+        store: game,
+        child: MaterialApp(
+          title: 'Trading Academy',
+          debugShowCheckedModeBanner: false,
+          theme: buildAppTheme(),
+          routes: {
+            '/': (_) => const HomeShell(),
+            '/practice': (_) => const HomeShell(initialTab: 1),
+            '/league': (_) => const HomeShell(initialTab: 2),
+            '/account': (_) => const HomeShell(initialTab: 3),
+            placeTradeRoute: (_) => const PlaceTradeExercise(),
+          },
+          onGenerateRoute: _generateRoute,
+        ),
       ),
     );
   }
@@ -56,7 +74,12 @@ class HomeShell extends StatefulWidget {
 class _HomeShellState extends State<HomeShell> {
   late var _tab = widget.initialTab;
 
-  static const _screens = [LearnScreen(), PracticeScreen(), AccountScreen()];
+  static const _screens = [
+    LearnScreen(),
+    PracticeScreen(),
+    LeagueScreen(),
+    AccountScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +100,11 @@ class _HomeShellState extends State<HomeShell> {
             label: 'Practice',
           ),
           NavigationDestination(
+            icon: Icon(Icons.emoji_events_outlined),
+            selectedIcon: Icon(Icons.emoji_events),
+            label: 'League',
+          ),
+          NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
             label: 'Account',
@@ -88,9 +116,26 @@ class _HomeShellState extends State<HomeShell> {
 }
 
 /// `/lesson/<id>` opens a lesson directly (deep links, reminders). In
-/// non-release builds `?step=N` jumps to a step, for previews and QA.
-Route<void>? _lessonRoute(RouteSettings settings) {
+/// non-release builds `?step=N` jumps to a step, and `/play/<SYMBOL>?day=N`
+/// opens an unranked session, for previews and QA.
+Route<void>? _generateRoute(RouteSettings settings) {
   final uri = Uri.parse(settings.name ?? '');
+  if (!kReleaseMode &&
+      uri.pathSegments.length == 2 &&
+      uri.pathSegments.first == 'play') {
+    final market = GameMarkets.bySymbol(uri.pathSegments[1]);
+    if (market == null) return null;
+    return MaterialPageRoute(
+      settings: settings,
+      builder: (_) => TradingSessionScreen(
+        market: market,
+        dayNumber: int.tryParse(uri.queryParameters['day'] ?? '') ?? 272,
+        ranked: false,
+        startingBalance: LeagueRules.startingBalance,
+        onComplete: (result) async => SessionSummaryScreen(result: result),
+      ),
+    );
+  }
   if (uri.pathSegments.length != 2 || uri.pathSegments.first != 'lesson') {
     return null;
   }
