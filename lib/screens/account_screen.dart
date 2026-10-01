@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/curriculum.dart';
 import '../progress/progress_scope.dart';
+import '../settings/settings_store.dart';
 import '../theme/app_colors.dart';
 import '../theme/illustrations.dart';
 import '../widgets/gradient_button.dart';
@@ -48,7 +49,7 @@ class AccountScreen extends StatelessWidget {
             subtitle: next == null
                 ? 'Top rank reached. Keep practising!'
                 : '${next.$1 - xp} XP to ${next.$2}.',
-            art: TrophyArt(progress: toNext),
+            art: TrophyArt(context.palette, progress: toNext),
             footer: GradientProgressBar(value: toNext),
           ),
         ),
@@ -94,14 +95,16 @@ class AccountScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           sliver: SliverToBoxAdapter(
             child: Material(
-              color: AppColors.surface,
+              color: context.palette.surface,
               clipBehavior: Clip.antiAlias,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
-                side: const BorderSide(color: AppColors.outline),
+                side: BorderSide(color: context.palette.outline),
               ),
               child: Column(
                 children: [
+                  const _AppearanceRow(),
+                  const Divider(indent: 56),
                   const _SettingRow(
                     icon: Icons.notifications_outlined,
                     title: 'Daily reminder',
@@ -163,14 +166,14 @@ class _StatTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.palette.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.outline),
+        border: Border.all(color: context.palette.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.gold, size: 20),
+          Icon(icon, color: context.palette.gold, size: 20),
           const SizedBox(height: 8),
           Text(
             value,
@@ -193,21 +196,25 @@ class _PremiumCard extends StatelessWidget {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF2A1B4D), Color(0xFF17122B)],
+        gradient: LinearGradient(
+          colors: context.palette.isDark
+              ? const [Color(0xFF2A1B4D), Color(0xFF17122B)]
+              : const [Color(0xFFF4EFFF), Color(0xFFE9E0FF)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        border: Border.all(color: AppColors.violet.withValues(alpha: 0.45)),
+        border: Border.all(
+          color: context.palette.violet.withValues(alpha: 0.45),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
               IconBadge(
                 icon: Icons.workspace_premium,
-                colors: [Color(0xFFC4B5FD), AppColors.violetDeep],
+                colors: [Color(0xFFC4B5FD), context.palette.violetDeep],
                 size: 40,
               ),
               SizedBox(width: 12),
@@ -221,7 +228,7 @@ class _PremiumCard extends StatelessWidget {
             'Unlock Levels 3–7, unlimited practice with real historical charts '
             'and advanced trade statistics.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.textMuted,
+              color: context.palette.textMuted,
             ),
           ),
         ],
@@ -250,8 +257,75 @@ class _SettingRow extends StatelessWidget {
       title: Text(title),
       trailing: value != null
           ? Text(value!, style: Theme.of(context).textTheme.bodySmall)
-          : const Icon(Icons.chevron_right, color: AppColors.textMuted),
+          : Icon(Icons.chevron_right, color: context.palette.textMuted),
       onTap: onTap,
     );
   }
+}
+
+/// Dark / Light / Automatic (follows the phone's setting).
+class _AppearanceRow extends StatelessWidget {
+  const _AppearanceRow();
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = SettingsScope.of(context);
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.palette_outlined, color: context.palette.textMuted),
+              const SizedBox(width: 16),
+              Text('Appearance', style: theme.textTheme.bodyLarge),
+            ],
+          ),
+          const SizedBox(height: 10),
+          SegmentedButton<ThemeMode>(
+            showSelectedIcon: false,
+            style: const ButtonStyle(visualDensity: VisualDensity.compact),
+            segments: const [
+              ButtonSegment(
+                value: ThemeMode.dark,
+                icon: Icon(Icons.dark_mode_outlined, size: 18),
+                label: _OneLine('Dark'),
+              ),
+              ButtonSegment(
+                value: ThemeMode.light,
+                icon: Icon(Icons.light_mode_outlined, size: 18),
+                label: _OneLine('Light'),
+              ),
+              ButtonSegment(
+                value: ThemeMode.system,
+                icon: Icon(Icons.brightness_auto_outlined, size: 18),
+                label: _OneLine('Auto'),
+              ),
+            ],
+            selected: {settings.themeMode},
+            onSelectionChanged: (s) => settings.setThemeMode(s.first),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Auto follows your phone\'s light or dark setting.',
+            style: theme.textTheme.bodySmall,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OneLine extends StatelessWidget {
+  const _OneLine(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => FittedBox(
+    fit: BoxFit.scaleDown,
+    child: Text(text, maxLines: 1, softWrap: false),
+  );
 }

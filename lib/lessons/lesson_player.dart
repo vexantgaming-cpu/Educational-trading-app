@@ -278,18 +278,18 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
     final selected = _selected == i;
     Color? border;
     if (_checked && i == step.answer) {
-      border = AppColors.up;
+      border = context.palette.up;
     } else if (_checked && selected) {
-      border = AppColors.down;
+      border = context.palette.down;
     } else if (selected) {
-      border = AppColors.gold;
+      border = context.palette.gold;
     }
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
         color: selected
-            ? AppColors.gold.withValues(alpha: 0.1)
-            : AppColors.surface,
+            ? context.palette.gold.withValues(alpha: 0.1)
+            : context.palette.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
           side: BorderSide(
@@ -328,8 +328,8 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
               fromIndex: z.fromIndex,
               toIndex: z.toIndex,
               color: z.kind == ZoneKind.support
-                  ? AppColors.cyan
-                  : AppColors.orange,
+                  ? context.palette.cyan
+                  : context.palette.orange,
               label: z.kind == ZoneKind.support ? 'Support' : 'Resistance',
             ),
     ];
@@ -380,7 +380,7 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
       SpotStep() => step.explanation,
       _ => '',
     };
-    final color = _wasCorrect ? AppColors.up : AppColors.down;
+    final color = _wasCorrect ? context.palette.up : context.palette.down;
     return Container(
       width: double.infinity,
       color: color.withValues(alpha: 0.12),
@@ -425,7 +425,9 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                 child: SizedBox(
                   width: 170,
                   height: 170,
-                  child: CustomPaint(painter: TrophyArt(showRing: false)),
+                  child: CustomPaint(
+                    painter: TrophyArt(context.palette, showRing: false),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),

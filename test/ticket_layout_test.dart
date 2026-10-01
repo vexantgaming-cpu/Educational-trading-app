@@ -8,6 +8,13 @@ import 'package:upwiq/game/game_store.dart';
 import 'package:upwiq/game/league_screen.dart';
 import 'package:upwiq/game/market_picker_screen.dart';
 import 'package:upwiq/game/trading_session_screen.dart';
+import 'package:upwiq/progress/progress_scope.dart';
+import 'package:upwiq/progress/progress_store.dart';
+import 'package:upwiq/screens/account_screen.dart';
+import 'package:upwiq/screens/learn_screen.dart';
+import 'package:upwiq/screens/practice_screen.dart';
+import 'package:upwiq/settings/settings_store.dart';
+import 'package:upwiq/theme/app_colors.dart';
 import 'package:upwiq/theme/app_theme.dart';
 
 import 'support/fonts.dart';
@@ -127,6 +134,48 @@ void main() {
         expectSingleLine(tester, 'Break-even');
         expect(tester.takeException(), isNull, reason: 'layout overflow');
       });
+
+      for (final palette in [AppPalette.dark, AppPalette.light]) {
+        testWidgets('learn, practice and account tabs fit at $name '
+            '(${palette.isDark ? 'dark' : 'light'})', (tester) async {
+          tester.view.physicalSize = Size(size.$1 * 3, size.$2 * 3);
+          tester.view.devicePixelRatio = 3;
+          addTearDown(tester.view.reset);
+          ProgressStore.reset();
+          SettingsStore.reset();
+          final progress = await ProgressStore.load();
+          final settings = await SettingsStore.load();
+          for (final tab in const [
+            LearnScreen(),
+            PracticeScreen(),
+            AccountScreen(),
+          ]) {
+            await tester.pumpWidget(
+              SettingsScope(
+                store: settings,
+                child: ProgressScope(
+                  store: progress,
+                  child: MaterialApp(
+                    theme: buildAppTheme(palette),
+                    builder: (context, child) => MediaQuery(
+                      data: MediaQuery.of(context)
+                          .copyWith(textScaler: TextScaler.linear(scale)),
+                      child: child!,
+                    ),
+                    home: Scaffold(body: tab),
+                  ),
+                ),
+              ),
+            );
+            await tester.pump();
+            expect(
+              tester.takeException(),
+              isNull,
+              reason: '${tab.runtimeType} overflow',
+            );
+          }
+        });
+      }
 
       testWidgets('league tab and market picker fit at $name', (tester) async {
         final game = await store();

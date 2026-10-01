@@ -32,9 +32,9 @@ class TabHero extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       decoration: BoxDecoration(
-        gradient: AppColors.heroGradient,
+        gradient: context.palette.heroGradient,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.outline),
+        border: Border.all(color: context.palette.outline),
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -49,8 +49,8 @@ class TabHero extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppColors.gold.withValues(alpha: 0.14),
-                    AppColors.gold.withValues(alpha: 0),
+                    context.palette.gold.withValues(alpha: 0.14),
+                    context.palette.gold.withValues(alpha: 0),
                   ],
                 ),
               ),
@@ -74,7 +74,7 @@ class TabHero extends StatelessWidget {
                           Text(
                             subtitle,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: AppColors.textMuted,
+                              color: context.palette.textMuted,
                             ),
                           ),
                         ],
@@ -118,8 +118,8 @@ class GradientProgressBar extends StatelessWidget {
         height: height,
         child: Stack(
           children: [
-            const Positioned.fill(
-              child: ColoredBox(color: AppColors.surfaceHighest),
+            Positioned.fill(
+              child: ColoredBox(color: context.palette.surfaceHighest),
             ),
             FractionallySizedBox(
               widthFactor: value.clamp(0.0, 1.0),

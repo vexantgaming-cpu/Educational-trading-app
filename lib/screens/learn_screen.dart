@@ -24,7 +24,7 @@ class LearnScreen extends StatelessWidget {
             trailing: Pill(
               label: '${progress.xp} XP',
               icon: Icons.bolt,
-              color: AppColors.gold,
+              color: context.palette.gold,
             ),
           ),
         ),
@@ -35,18 +35,26 @@ class LearnScreen extends StatelessWidget {
             subtitle:
                 'Bite-sized lessons for stocks, forex, crypto, '
                 'commodities and indices.',
-            art: LearnArt(),
+            art: LearnArt(context.palette),
             footer: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Text('Your progress', style: theme.textTheme.bodySmall),
-                    const Spacer(),
+                    Expanded(
+                      child: Text(
+                        'Your progress',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                     Text(
                       '$done of $total lessons',
+                      maxLines: 1,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.text,
+                        color: context.palette.text,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -102,12 +110,14 @@ class _LevelCardState extends State<LevelCard> {
     final accent = level.colors.first;
 
     return Material(
-      color: AppColors.surface,
+      color: context.palette.surface,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
-          color: _expanded ? accent.withValues(alpha: 0.6) : AppColors.outline,
+          color: _expanded
+              ? accent.withValues(alpha: 0.6)
+              : context.palette.outline,
         ),
       ),
       child: Column(
@@ -164,9 +174,9 @@ class _LevelCardState extends State<LevelCard> {
                       AnimatedRotation(
                         turns: _expanded ? 0.5 : 0,
                         duration: const Duration(milliseconds: 220),
-                        child: const Icon(
+                        child: Icon(
                           Icons.expand_more,
-                          color: AppColors.textMuted,
+                          color: context.palette.textMuted,
                         ),
                       ),
                     ],
@@ -209,14 +219,14 @@ class _LevelCardState extends State<LevelCard> {
 
   Widget _accessPill(Level level) {
     if (!level.premium) {
-      return const Pill(label: 'Free', color: AppColors.up);
+      return Pill(label: 'Free', color: context.palette.up);
     }
     final free = level.freeLessonCount;
     if (free > 0) {
       return Pill(
         label: '$free free',
         icon: Icons.lock_open,
-        color: AppColors.cyan,
+        color: context.palette.cyan,
       );
     }
     return const Pill(
@@ -248,16 +258,16 @@ class _LessonRow extends StatelessWidget {
 
     final Widget leading;
     if (done) {
-      leading = const CircleAvatar(
+      leading = CircleAvatar(
         radius: 16,
-        backgroundColor: AppColors.up,
+        backgroundColor: context.palette.up,
         child: Icon(Icons.check, size: 18, color: Colors.white),
       );
     } else if (locked) {
       leading = CircleAvatar(
         radius: 16,
-        backgroundColor: AppColors.violet.withValues(alpha: 0.15),
-        child: const Icon(Icons.lock, size: 16, color: AppColors.violet),
+        backgroundColor: context.palette.violet.withValues(alpha: 0.15),
+        child: Icon(Icons.lock, size: 16, color: context.palette.violet),
       );
     } else {
       leading = Container(
@@ -267,13 +277,13 @@ class _LessonRow extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: playable ? AppColors.primaryGradient : null,
-          color: playable ? null : AppColors.surfaceHighest,
+          color: playable ? null : context.palette.surfaceHighest,
         ),
         child: Text(
           '$number',
           style: TextStyle(
             fontWeight: FontWeight.w700,
-            color: playable ? AppColors.onGold : AppColors.textMuted,
+            color: playable ? AppColors.onGold : context.palette.textMuted,
           ),
         ),
       );
@@ -306,8 +316,8 @@ class _LessonRow extends StatelessWidget {
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: playable || done
-                          ? AppColors.text
-                          : AppColors.textMuted,
+                          ? context.palette.text
+                          : context.palette.textMuted,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -318,7 +328,7 @@ class _LessonRow extends StatelessWidget {
             if (playable)
               Icon(
                 done ? Icons.replay : Icons.play_circle_fill,
-                color: AppColors.gold,
+                color: context.palette.gold,
                 size: 28,
               ),
           ],

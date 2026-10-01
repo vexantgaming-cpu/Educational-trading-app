@@ -378,6 +378,12 @@ dynamic text size, screen-reader labels for chart summaries.
 - Market colours: up `#19C98B`, down `#FF4D6A`.
 - Fonts bundled in the app (no runtime download, GDPR-friendly): **Poppins** for
   headings, **Inter** for body text, both under the SIL Open Font License.
+- **Light theme** too (added 1 Oct 2026): Account → Appearance → Dark / Light / Auto
+  (Auto follows the phone). Dark stays the default. Light uses a soft grey background,
+  white cards and deeper accents (text gold `#A86500`, up `#06855C`, down `#D92D4A`,
+  cyan `#0A7EA4`, violet `#6D28D9`), so text keeps at least 4.5:1 contrast on cards; an
+  automated test checks contrast for both palettes. The gold → orange button gradient is
+  the same in both themes.
 - Every tab opens with a **key visual** (hand-drawn vector art + headline).
 - Levels are **collapsible cards**, folded by default, each with its own icon and
   colour, progress bar and Free / Premium / "3 free" badge.

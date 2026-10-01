@@ -258,7 +258,7 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
       PriceLine(
         id: 'entry',
         price: entry,
-        color: AppColors.textMuted,
+        color: context.palette.textMuted,
         label: planning ? 'Entry (current price)' : 'Entry',
         dashed: true,
       ),
@@ -285,7 +285,7 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
       high: _scenario.support.high,
       fromIndex: _scenario.support.fromIndex,
       toIndex: _scenario.support.toIndex,
-      color: AppColors.cyan,
+      color: context.palette.cyan,
       label: 'Support zone',
     ),
     ChartZone(
@@ -293,7 +293,7 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
       high: _scenario.resistance.high,
       fromIndex: _scenario.resistance.fromIndex,
       toIndex: _scenario.resistance.toIndex,
-      color: AppColors.orange,
+      color: context.palette.orange,
       label: 'Resistance zone',
     ),
   ];
@@ -309,14 +309,14 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
           index: entryIndex,
           price: entryPrice,
           pointsUp: _side == Side.long,
-          color: AppColors.cyan,
+          color: context.palette.cyan,
         ),
       if (trade != null)
         ChartMarker(
           index: trade.exitIndex,
           price: trade.exitPrice,
           pointsUp: _side != Side.long,
-          color: trade.isWin ? AppColors.up : AppColors.down,
+          color: trade.isWin ? context.palette.up : context.palette.down,
         ),
     ];
   }
@@ -379,14 +379,14 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
               child: _Metric(
                 label: 'If stopped out',
                 value: money(-size.riskAmount),
-                color: AppColors.down,
+                color: context.palette.down,
               ),
             ),
             Expanded(
               child: _Metric(
                 label: 'If target hit',
                 value: money(reward, signed: true),
-                color: AppColors.up,
+                color: context.palette.up,
               ),
             ),
           ],
@@ -452,7 +452,7 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
         _Metric(
           label: 'Open profit / loss',
           value: money(pnl, signed: true),
-          color: pnl >= 0 ? AppColors.up : AppColors.down,
+          color: pnl >= 0 ? context.palette.up : context.palette.down,
         ),
         const SizedBox(height: 8),
         Text(
@@ -490,7 +490,7 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
             Text(
               '${money(trade.netPnl, signed: true)}${r == null ? '' : '  (${rMultiple(r)})'}',
               style: theme.textTheme.titleMedium?.copyWith(
-                color: trade.isWin ? AppColors.up : AppColors.down,
+                color: trade.isWin ? context.palette.up : context.palette.down,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -528,10 +528,10 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
                               : Icons.cancel,
                           size: 20,
                           color: check.passed
-                              ? AppColors.up
+                              ? context.palette.up
                               : check.points > 0
-                              ? AppColors.gold
-                              : AppColors.down,
+                              ? context.palette.gold
+                              : context.palette.down,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -593,9 +593,9 @@ class _Banner extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-      decoration: const BoxDecoration(
-        color: AppColors.surfaceHigh,
-        border: Border(left: BorderSide(color: AppColors.gold, width: 4)),
+      decoration: BoxDecoration(
+        color: context.palette.surfaceHigh,
+        border: Border(left: BorderSide(color: context.palette.gold, width: 4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -631,8 +631,8 @@ class _Metric extends StatelessWidget {
     final valueColor =
         color ??
         switch (good) {
-          true => AppColors.up,
-          false => AppColors.gold,
+          true => context.palette.up,
+          false => context.palette.gold,
           null => theme.colorScheme.onSurface,
         };
     return Column(

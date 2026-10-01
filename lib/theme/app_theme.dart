@@ -1,33 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'app_colors.dart';
 
 const headingFont = 'Poppins';
 const bodyFont = 'Inter';
 
-ThemeData buildAppTheme() {
-  const scheme = ColorScheme.dark(
-    primary: AppColors.gold,
+ThemeData buildAppTheme([AppPalette p = AppPalette.dark]) {
+  final dark = p.isDark;
+  final scheme = ColorScheme(
+    brightness: p.brightness,
+    primary: p.gold,
     onPrimary: AppColors.onGold,
-    primaryContainer: Color(0xFF3A2A0A),
-    onPrimaryContainer: AppColors.gold,
-    secondary: AppColors.cyan,
-    onSecondary: Color(0xFF04141B),
-    secondaryContainer: Color(0xFF0F2A36),
-    onSecondaryContainer: AppColors.cyan,
-    tertiary: AppColors.violet,
-    onTertiary: Color(0xFF160B33),
-    surface: AppColors.background,
-    onSurface: AppColors.text,
-    onSurfaceVariant: AppColors.textMuted,
-    surfaceContainerLowest: AppColors.background,
-    surfaceContainerLow: AppColors.surface,
-    surfaceContainer: AppColors.surface,
-    surfaceContainerHigh: AppColors.surfaceHigh,
-    surfaceContainerHighest: AppColors.surfaceHighest,
-    outline: AppColors.outline,
-    outlineVariant: AppColors.outline,
-    error: AppColors.down,
+    primaryContainer: dark ? const Color(0xFF3A2A0A) : const Color(0xFFFFEFD2),
+    onPrimaryContainer: p.gold,
+    secondary: p.cyan,
+    onSecondary: dark ? const Color(0xFF04141B) : Colors.white,
+    secondaryContainer: dark
+        ? const Color(0xFF0F2A36)
+        : const Color(0xFFDDF3FA),
+    onSecondaryContainer: p.cyan,
+    tertiary: p.violet,
+    onTertiary: dark ? const Color(0xFF160B33) : Colors.white,
+    surface: p.background,
+    onSurface: p.text,
+    onSurfaceVariant: p.textMuted,
+    surfaceContainerLowest: p.background,
+    surfaceContainerLow: p.surface,
+    surfaceContainer: p.surface,
+    surfaceContainerHigh: p.surfaceHigh,
+    surfaceContainerHighest: p.surfaceHighest,
+    outline: p.outline,
+    outlineVariant: p.outline,
+    error: p.down,
     onError: Colors.white,
   );
 
@@ -41,12 +46,14 @@ ThemeData buildAppTheme() {
       (style ?? const TextStyle()).copyWith(
         fontFamily: headingFont,
         fontWeight: weight,
-        color: AppColors.text,
+        color: p.text,
         letterSpacing: -0.2,
       );
+  final overlay = dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark;
 
   return base.copyWith(
-    scaffoldBackgroundColor: AppColors.background,
+    extensions: [p],
+    scaffoldBackgroundColor: p.background,
     textTheme: text.copyWith(
       displaySmall: heading(text.displaySmall, FontWeight.w700),
       headlineLarge: heading(text.headlineLarge, FontWeight.w700),
@@ -54,46 +61,45 @@ ThemeData buildAppTheme() {
       headlineSmall: heading(text.headlineSmall, FontWeight.w600),
       titleLarge: heading(text.titleLarge, FontWeight.w600),
       titleMedium: heading(text.titleMedium, FontWeight.w600),
-      bodyLarge: text.bodyLarge?.copyWith(height: 1.45, color: AppColors.text),
-      bodyMedium: text.bodyMedium?.copyWith(height: 1.4, color: AppColors.text),
-      bodySmall: text.bodySmall?.copyWith(color: AppColors.textMuted),
+      bodyLarge: text.bodyLarge?.copyWith(height: 1.45, color: p.text),
+      bodyMedium: text.bodyMedium?.copyWith(height: 1.4, color: p.text),
+      bodySmall: text.bodySmall?.copyWith(color: p.textMuted),
       labelSmall: text.labelSmall?.copyWith(
-        color: AppColors.textMuted,
+        color: p.textMuted,
         letterSpacing: 1.1,
         fontWeight: FontWeight.w600,
       ),
     ),
-    appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.background,
+    appBarTheme: AppBarTheme(
+      backgroundColor: p.background,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       centerTitle: false,
+      systemOverlayStyle: overlay,
       titleTextStyle: TextStyle(
         fontFamily: headingFont,
         fontSize: 20,
         fontWeight: FontWeight.w600,
-        color: AppColors.text,
+        color: p.text,
       ),
     ),
     cardTheme: CardThemeData(
-      color: AppColors.surface,
+      color: p.surface,
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(color: AppColors.outline),
+        side: BorderSide(color: p.outline),
       ),
     ),
     navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: const Color(0xFF0E131A),
+      backgroundColor: p.navBar,
       surfaceTintColor: Colors.transparent,
-      indicatorColor: AppColors.gold.withValues(alpha: 0.16),
+      indicatorColor: p.gold.withValues(alpha: dark ? 0.16 : 0.14),
       height: 68,
       iconTheme: WidgetStateProperty.resolveWith(
         (states) => IconThemeData(
-          color: states.contains(WidgetState.selected)
-              ? AppColors.gold
-              : AppColors.textMuted,
+          color: states.contains(WidgetState.selected) ? p.gold : p.textMuted,
         ),
       ),
       labelTextStyle: WidgetStateProperty.resolveWith(
@@ -103,18 +109,16 @@ ThemeData buildAppTheme() {
           fontWeight: states.contains(WidgetState.selected)
               ? FontWeight.w600
               : FontWeight.w500,
-          color: states.contains(WidgetState.selected)
-              ? AppColors.gold
-              : AppColors.textMuted,
+          color: states.contains(WidgetState.selected) ? p.gold : p.textMuted,
         ),
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: AppColors.gold,
+        backgroundColor: AppColors.gradientGold,
         foregroundColor: AppColors.onGold,
-        disabledBackgroundColor: AppColors.surfaceHighest,
-        disabledForegroundColor: AppColors.textMuted,
+        disabledBackgroundColor: p.surfaceHighest,
+        disabledForegroundColor: p.textMuted,
         minimumSize: const Size(0, 50),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         textStyle: const TextStyle(
@@ -126,9 +130,9 @@ ThemeData buildAppTheme() {
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.gold,
+        foregroundColor: p.gold,
         minimumSize: const Size(0, 48),
-        side: BorderSide(color: AppColors.gold.withValues(alpha: 0.5)),
+        side: BorderSide(color: p.gold.withValues(alpha: 0.5)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         textStyle: const TextStyle(
           fontFamily: headingFont,
@@ -137,45 +141,49 @@ ThemeData buildAppTheme() {
         ),
       ),
     ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(foregroundColor: p.gold),
+    ),
     chipTheme: ChipThemeData(
-      backgroundColor: AppColors.surfaceHigh,
-      selectedColor: AppColors.gold.withValues(alpha: 0.18),
-      side: const BorderSide(color: AppColors.outline),
-      labelStyle: const TextStyle(
+      backgroundColor: p.surfaceHigh,
+      selectedColor: p.gold.withValues(alpha: 0.18),
+      side: BorderSide(color: p.outline),
+      labelStyle: TextStyle(
         fontFamily: bodyFont,
-        color: AppColors.text,
+        color: p.text,
         fontWeight: FontWeight.w500,
       ),
-      checkmarkColor: AppColors.gold,
+      checkmarkColor: p.gold,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
     segmentedButtonTheme: SegmentedButtonThemeData(
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
-              ? AppColors.gold.withValues(alpha: 0.16)
-              : AppColors.surface,
+              ? p.gold.withValues(alpha: 0.16)
+              : p.surface,
         ),
         foregroundColor: WidgetStateProperty.resolveWith(
-          (states) => states.contains(WidgetState.selected)
-              ? AppColors.gold
-              : AppColors.textMuted,
+          (states) =>
+              states.contains(WidgetState.selected) ? p.gold : p.textMuted,
         ),
-        side: const WidgetStatePropertyAll(
-          BorderSide(color: AppColors.outline),
-        ),
+        side: WidgetStatePropertyAll(BorderSide(color: p.outline)),
       ),
     ),
-    progressIndicatorTheme: const ProgressIndicatorThemeData(
-      color: AppColors.gold,
-      linearTrackColor: AppColors.surfaceHighest,
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: p.gold,
+      linearTrackColor: p.surfaceHighest,
     ),
-    snackBarTheme: const SnackBarThemeData(
-      backgroundColor: AppColors.surfaceHighest,
-      contentTextStyle: TextStyle(fontFamily: bodyFont, color: AppColors.text),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: dark ? p.surfaceHighest : const Color(0xFF1F2937),
+      contentTextStyle: TextStyle(
+        fontFamily: bodyFont,
+        color: dark ? p.text : Colors.white,
+      ),
       behavior: SnackBarBehavior.floating,
     ),
-    dividerTheme: const DividerThemeData(color: AppColors.outline, space: 1),
-    listTileTheme: const ListTileThemeData(iconColor: AppColors.textMuted),
+    dialogTheme: DialogThemeData(backgroundColor: p.surface),
+    dividerTheme: DividerThemeData(color: p.outline, space: 1),
+    listTileTheme: ListTileThemeData(iconColor: p.textMuted),
   );
 }

@@ -63,7 +63,7 @@ but clearly its own brand.
 The app is built (Flutter) with this system. Refine it, don't replace it, unless you
 show a clearly better option side by side.
 
-### Colours (dark-first)
+### Colours: dark theme (default)
 | Token | Hex | Use |
 |---|---|---|
 | background | `#0B0F15` | App background |
@@ -80,6 +80,28 @@ show a clearly better option side by side.
 | down (market red) | `#FF4D6A` | Falling candles, loss, "Sell", stop-loss |
 | cyan | `#3CC8F0` | Info, support zones, entry markers |
 | violet / violetDeep | `#A78BFA` / `#7C3AED` | **Premium** only |
+
+### Colours: light theme (the app also has a light mode, switchable in Account)
+| Token | Hex | Notes |
+|---|---|---|
+| background | `#F5F7FB` | Soft cool grey |
+| surface | `#FFFFFF` | Cards |
+| surfaceHigh | `#EEF1F6` | Raised elements, banners |
+| surfaceHighest | `#E3E8F0` | Tracks, disabled |
+| outline | `#D8DEE8` | Borders |
+| text | `#111827` | Primary text |
+| textMuted | `#5B6577` | Secondary text |
+| gold (text/icons) | `#A86500` | Deeper gold for readable text on white |
+| orange (text) | `#C2410C` | Warnings, breaking news |
+| up | `#06855C` | Market green |
+| down | `#D92D4A` | Market red |
+| cyan | `#0A7EA4` | Info |
+| violet / violetDeep | `#6D28D9` / `#5B21B6` | Premium |
+| hero card gradient | `#FFFFFF → #EEF2F8` | |
+
+Every text colour above is checked for at least 4.5:1 contrast on cards (WCAG AA).
+The **gold → orange gradient on buttons is identical in both themes** (bright
+`#FFB627 → #FF7A2F` with dark text `#1B1203`).
 
 - **Signature:** the **gold → orange gradient** (`#FFB627 → #FF7A2F`, top-left to
   bottom-right) on primary buttons, highlights and the logo.
@@ -124,12 +146,14 @@ Please produce the deck in this order (one topic per slide unless noted):
 2. **Brand story** — one-liner, mission, audience, the name's meaning.
 3. **Brand personality** — the "we are / we are not" table, mood words, a mood board.
 4. **Logo exploration** — 3 directions (see §6), then the **recommended logo**:
-   wordmark, symbol, lockups (horizontal + stacked), on dark and light backgrounds.
+   wordmark, symbol, lockups (horizontal + stacked), on dark **and light** backgrounds
+   (the app has both themes).
 5. **Logo usage** — clear space, minimum sizes, do's and don'ts.
 6. **App icon** — final icon + Android **adaptive icon** (foreground/background layers)
    and **monochrome themed icon**; shown on a home screen.
-7. **Colour system** — palette above, gradients, usage proportions, and a
-   **contrast check** (WCAG AA for text). Suggest refinements if any token fails.
+7. **Colour system** — both palettes above (dark and light), gradients, usage
+   proportions, and a **contrast check** (WCAG AA for text). Suggest refinements if any
+   token fails.
 8. **Typography** — type scale (display → caption) with sizes/weights/line heights.
 9. **Iconography & illustration** — style rules + the 4 tab key visuals (§7).
 10. **Level badges** — all 8 level tiles.
@@ -138,7 +162,9 @@ Please produce the deck in this order (one topic per slide unless noted):
     (Free / Premium / "3 free" / Coming soon), cards, collapsible level card, stepper,
     segmented control, bid/ask ticker, news card, leaderboard row (promotion zone green,
     demotion zone red, "You" highlighted gold), chart line styles (§8).
-13–14. **Key screens** (2 slides, phone frames 393 × 852) — see §9.
+13–14. **Key screens** (2 slides, phone frames 393 × 852) — see §9. Show the main
+    screens in **dark**, and at least the Learn tab, League tab and trading session in
+    **light** too.
 15. **Motion** — short notes for: level card expand, XP gained, lesson complete, league
     promotion, "breaking news" banner.
 16. **Google Play assets** — icon, feature graphic, screenshot set (§10).
@@ -183,7 +209,8 @@ from the palette; no photography; no people required (if people appear: diverse,
 
 ## 9. Key screens to mock up
 
-Use realistic content (below). Phone frame 393 × 852, dark theme.
+Use realistic content (below). Phone frame 393 × 852. Dark theme first; light variants
+as listed in §5. The Account screen has an **Appearance** switch (Dark / Light / Auto).
 
 1. **Learn tab** — brand bar (logo + "120 XP" pill), hero card, progress bar
    ("3 of 65 lessons"), "YOUR PATH": collapsible level cards (Level 0 open showing lessons
@@ -246,8 +273,9 @@ Use realistic content (below). Phone frame 393 × 852, dark theme.
   108 × 108 dp layers (foreground with the symbol inside the 66 dp safe zone, background
   solid/gradient) + a monochrome version.
 - **Illustrations:** SVG, each on a transparent background, in a square artboard.
-- **Tokens:** a table (or JSON) of every colour, gradient, font size/weight, radius and
-  spacing value, using the token names in §4 (add new ones if needed).
+- **Tokens:** a table (or JSON) of every colour (for **both** themes), gradient, font
+  size/weight, radius and spacing value, using the token names in §4 (add new ones if
+  needed).
 - **Store assets:** final PNG/JPEG files at the sizes in §10.
 - Keep layer and file names in English, lowercase-with-hyphens (e.g. `app-icon-foreground.svg`).
 

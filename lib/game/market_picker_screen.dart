@@ -46,7 +46,7 @@ class _MarketPickerScreenState extends State<MarketPickerScreen> {
                       'session from 08:00 to 16:00. Your result counts for the league.'
                 : 'Trade any market with a separate \$10,000. Nothing here affects your league account.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.textMuted,
+              color: context.palette.textMuted,
             ),
           ),
           const SizedBox(height: 14),
@@ -112,11 +112,11 @@ class _MarketCard extends StatelessWidget {
       NewsImpact.high => 3,
     };
     return Material(
-      color: AppColors.surface,
+      color: context.palette.surface,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
-        side: const BorderSide(color: AppColors.outline),
+        side: BorderSide(color: context.palette.outline),
       ),
       child: InkWell(
         onTap: onTap,
@@ -170,8 +170,8 @@ class _MarketCard extends StatelessWidget {
                         Icons.circle,
                         size: 7,
                         color: i < dots
-                            ? AppColors.gold
-                            : AppColors.surfaceHighest,
+                            ? context.palette.gold
+                            : context.palette.surfaceHighest,
                       ),
                     ),
                 ],
@@ -186,10 +186,10 @@ class _MarketCard extends StatelessWidget {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.schedule,
                     size: 14,
-                    color: AppColors.textMuted,
+                    color: context.palette.textMuted,
                   ),
                   const SizedBox(width: 4),
                   Expanded(

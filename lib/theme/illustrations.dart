@@ -72,10 +72,20 @@ Paint _goldStroke(Rect bounds, double width) => Paint()
 
 /// Learn: an open book with candles rising out of it and a trend arrow.
 class LearnArt extends CustomPainter {
+  LearnArt(this.palette);
+
+  final AppPalette palette;
+
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width, h = size.height;
-    _glow(canvas, size, Offset(w * 0.55, h * 0.45), AppColors.gold, w * 0.55);
+    _glow(
+      canvas,
+      size,
+      Offset(w * 0.55, h * 0.45),
+      AppColors.gradientGold,
+      w * 0.55,
+    );
 
     // Book.
     final cx = w * 0.5;
@@ -92,8 +102,8 @@ class LearnArt extends CustomPainter {
       ..quadraticBezierTo(w * 0.68, h * 0.83, cx, h * 0.93)
       ..close();
     final pageFill = Paint()
-      ..shader = const LinearGradient(
-        colors: [AppColors.surfaceHighest, AppColors.surfaceHigh],
+      ..shader = LinearGradient(
+        colors: [palette.surfaceHighest, palette.surfaceHigh],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
       ).createShader(Rect.fromLTWH(0, h * 0.58, w, h * 0.36));
@@ -103,7 +113,7 @@ class LearnArt extends CustomPainter {
     canvas.drawPath(left, edge);
     canvas.drawPath(right, edge);
     final lines = Paint()
-      ..color = AppColors.textMuted.withValues(alpha: 0.45)
+      ..color = palette.textMuted.withValues(alpha: 0.45)
       ..strokeWidth = 1.4
       ..strokeCap = StrokeCap.round;
     for (var i = 0; i < 3; i++) {
@@ -130,7 +140,7 @@ class LearnArt extends CustomPainter {
       h * 0.58,
       h * 0.62,
       cw,
-      AppColors.up,
+      palette.up,
     );
     _candle(
       canvas,
@@ -140,7 +150,7 @@ class LearnArt extends CustomPainter {
       h * 0.49,
       h * 0.54,
       cw,
-      AppColors.down,
+      palette.down,
     );
     _candle(
       canvas,
@@ -150,7 +160,7 @@ class LearnArt extends CustomPainter {
       h * 0.45,
       h * 0.5,
       cw,
-      AppColors.up,
+      palette.up,
     );
     _candle(
       canvas,
@@ -160,7 +170,7 @@ class LearnArt extends CustomPainter {
       h * 0.33,
       h * 0.38,
       cw,
-      AppColors.up,
+      palette.up,
     );
 
     // Trend arrow.
@@ -176,34 +186,44 @@ class LearnArt extends CustomPainter {
       ..lineTo(w * 0.84, h * 0.2);
     canvas.drawPath(head, _goldStroke(bounds, 3.2));
 
-    _sparkle(canvas, Offset(w * 0.9, h * 0.34), w * 0.04, AppColors.gold);
-    _sparkle(canvas, Offset(w * 0.12, h * 0.26), w * 0.03, AppColors.cyan);
+    _sparkle(
+      canvas,
+      Offset(w * 0.9, h * 0.34),
+      w * 0.04,
+      AppColors.gradientGold,
+    );
+    _sparkle(canvas, Offset(w * 0.12, h * 0.26), w * 0.03, palette.cyan);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =>
+      (oldDelegate as dynamic).palette != palette;
 }
 
 /// Practice: a phone with a live chart, stop/target lines, a crosshair and a
 /// virtual coin.
 class PracticeArt extends CustomPainter {
+  PracticeArt(this.palette);
+
+  final AppPalette palette;
+
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width, h = size.height;
-    _glow(canvas, size, Offset(w * 0.5, h * 0.5), AppColors.cyan, w * 0.55);
+    _glow(canvas, size, Offset(w * 0.5, h * 0.5), palette.cyan, w * 0.55);
 
     final phone = RRect.fromRectAndRadius(
       Rect.fromLTRB(w * 0.22, h * 0.05, w * 0.76, h * 0.95),
       Radius.circular(w * 0.1),
     );
-    canvas.drawRRect(phone, Paint()..color = AppColors.surfaceHigh);
+    canvas.drawRRect(phone, Paint()..color = palette.surfaceHigh);
     canvas.drawRRect(phone, _goldStroke(phone.outerRect, 2));
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(w * 0.43, h * 0.08, w * 0.12, h * 0.018),
         const Radius.circular(4),
       ),
-      Paint()..color = AppColors.outline,
+      Paint()..color = palette.outline,
     );
 
     // Levels.
@@ -216,13 +236,13 @@ class PracticeArt extends CustomPainter {
       }
     }
 
-    dashed(h * 0.24, AppColors.up);
-    dashed(h * 0.74, AppColors.down);
+    dashed(h * 0.24, palette.up);
+    dashed(h * 0.74, palette.down);
     canvas.drawLine(
       Offset(w * 0.27, h * 0.55),
       Offset(w * 0.71, h * 0.55),
       Paint()
-        ..color = AppColors.cyan.withValues(alpha: 0.8)
+        ..color = palette.cyan.withValues(alpha: 0.8)
         ..strokeWidth = 1.2,
     );
 
@@ -247,18 +267,22 @@ class PracticeArt extends CustomPainter {
         h * bb,
         h * wb,
         cw,
-        up ? AppColors.up : AppColors.down,
+        up ? palette.up : palette.down,
       );
     }
 
     // Crosshair.
     final target = Offset(w * 0.5, h * 0.55);
     final ring = Paint()
-      ..color = AppColors.gold
+      ..color = AppColors.gradientGold
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     canvas.drawCircle(target, w * 0.075, ring);
-    canvas.drawCircle(target, w * 0.02, Paint()..color = AppColors.gold);
+    canvas.drawCircle(
+      target,
+      w * 0.02,
+      Paint()..color = AppColors.gradientGold,
+    );
     for (final d in [
       const Offset(1, 0),
       const Offset(-1, 0),
@@ -299,7 +323,7 @@ class PracticeArt extends CustomPainter {
 
     // Up badge.
     final badge = Offset(w * 0.16, h * 0.22);
-    canvas.drawCircle(badge, w * 0.085, Paint()..color = AppColors.up);
+    canvas.drawCircle(badge, w * 0.085, Paint()..color = palette.up);
     final arrow = Paint()
       ..color = Colors.white
       ..strokeWidth = 2.4
@@ -322,13 +346,15 @@ class PracticeArt extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =>
+      (oldDelegate as dynamic).palette != palette;
 }
 
 /// Account / achievements: a trophy inside a progress ring, with confetti.
 class TrophyArt extends CustomPainter {
-  TrophyArt({this.progress = 0.72, this.showRing = true});
+  TrophyArt(this.palette, {this.progress = 0.72, this.showRing = true});
 
+  final AppPalette palette;
   final double progress;
   final bool showRing;
 
@@ -336,7 +362,7 @@ class TrophyArt extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final w = size.width, h = size.height;
     final center = Offset(w * 0.5, h * 0.48);
-    _glow(canvas, size, center, AppColors.violet, w * 0.55);
+    _glow(canvas, size, center, palette.violet, w * 0.55);
 
     if (showRing) {
       final r = w * 0.4;
@@ -345,7 +371,7 @@ class TrophyArt extends CustomPainter {
         center,
         r,
         Paint()
-          ..color = AppColors.surfaceHighest
+          ..color = palette.surfaceHighest
           ..style = PaintingStyle.stroke
           ..strokeWidth = 7,
       );
@@ -356,7 +382,11 @@ class TrophyArt extends CustomPainter {
         false,
         Paint()
           ..shader = const SweepGradient(
-            colors: [AppColors.gold, AppColors.orange, AppColors.gold],
+            colors: [
+              AppColors.gradientGold,
+              AppColors.gradientOrange,
+              AppColors.gradientGold,
+            ],
           ).createShader(rect)
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round
@@ -412,13 +442,13 @@ class TrophyArt extends CustomPainter {
     );
 
     // Confetti.
-    const confetti = [
-      (0.14, 0.2, AppColors.cyan),
-      (0.86, 0.18, AppColors.up),
-      (0.9, 0.62, AppColors.violet),
-      (0.1, 0.7, AppColors.orange),
-      (0.22, 0.9, AppColors.gold),
-      (0.8, 0.9, AppColors.cyan),
+    final confetti = [
+      (0.14, 0.2, palette.cyan),
+      (0.86, 0.18, palette.up),
+      (0.9, 0.62, palette.violet),
+      (0.1, 0.7, AppColors.gradientOrange),
+      (0.22, 0.9, AppColors.gradientGold),
+      (0.8, 0.9, palette.cyan),
     ];
     for (final (x, y, c) in confetti) {
       canvas.drawRRect(
@@ -437,5 +467,7 @@ class TrophyArt extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant TrophyArt oldDelegate) =>
-      oldDelegate.progress != progress || oldDelegate.showRing != showRing;
+      oldDelegate.progress != progress ||
+      oldDelegate.showRing != showRing ||
+      oldDelegate.palette != palette;
 }

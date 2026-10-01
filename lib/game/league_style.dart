@@ -44,9 +44,10 @@ String assetClassLabel(AssetClass c) => switch (c) {
 
 /// A league crest: gradient shield with a star and chevrons for the level.
 class LeagueBadgeArt extends CustomPainter {
-  LeagueBadgeArt(this.league, {this.glow = true});
+  LeagueBadgeArt(this.league, this.palette, {this.glow = true});
 
   final League league;
+  final AppPalette palette;
   final bool glow;
 
   @override
@@ -105,7 +106,10 @@ class LeagueBadgeArt extends CustomPainter {
       ..close();
     canvas.drawPath(
       inner,
-      Paint()..color = AppColors.background.withValues(alpha: 0.35),
+      Paint()
+        ..color = palette.background.withValues(
+          alpha: palette.isDark ? 0.35 : 0.18,
+        ),
     );
 
     // Star.
@@ -149,7 +153,8 @@ class LeagueBadgeArt extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant LeagueBadgeArt old) => old.league != league;
+  bool shouldRepaint(covariant LeagueBadgeArt old) =>
+      old.league != league || old.palette != palette;
 }
 
 /// Round avatar with initials, coloured from a seed.
@@ -177,7 +182,7 @@ class TraderAvatar extends StatelessWidget {
       Color(0xFFFACC15),
       Color(0xFFF87171),
     ];
-    final color = isYou ? AppColors.gold : palette[seed % palette.length];
+    final color = isYou ? context.palette.gold : palette[seed % palette.length];
     final initials = name.replaceAll(RegExp(r'[^A-Z]'), '');
     return CircleAvatar(
       radius: 16,

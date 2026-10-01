@@ -9,7 +9,7 @@ Flutter. Educational only: no real trading, no financial advice.
 - Status: **Phase 1 in progress.** Done: simulation engine, chart, lesson player,
   11 lessons (all of Level 0, "Support and resistance are zones", and the 3 free
   Trading Psychology lessons), the "Place the trade" exercise, XP, ranks and
-  progress saved on the device, dark gold/orange visual theme, and **the League**:
+  progress saved on the device, dark and light themes (switch in Account), and **the League**:
   a daily trading game with news, realistic execution, weekly leagues and a leaderboard
   (simulated rivals until online leagues launch). See `docs/PLAN.md` §5b.
 

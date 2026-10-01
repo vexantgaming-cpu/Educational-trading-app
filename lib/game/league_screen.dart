@@ -40,7 +40,7 @@ class _LeagueScreenState extends State<LeagueScreen> {
             highlight: 'League',
             subtitle:
                 'Week ${store.seasonId % 100} · ends in ${ends.inDays}d ${ends.inHours % 24}h',
-            art: LeagueBadgeArt(store.league),
+            art: LeagueBadgeArt(store.league, context.palette),
             footer: Wrap(
               spacing: 8,
               runSpacing: 6,
@@ -48,14 +48,14 @@ class _LeagueScreenState extends State<LeagueScreen> {
                 Pill(
                   label: 'Rank #${you.rank} of ${LeagueRules.groupSize}',
                   icon: Icons.leaderboard,
-                  color: AppColors.gold,
+                  color: context.palette.gold,
                 ),
                 Pill(
                   label:
                       '${store.seasonReturnPct >= 0 ? '+' : ''}${store.seasonReturnPct.toStringAsFixed(2)}% this week',
                   color: store.seasonReturnPct >= 0
-                      ? AppColors.up
-                      : AppColors.down,
+                      ? context.palette.up
+                      : context.palette.down,
                 ),
               ],
             ),
@@ -152,7 +152,9 @@ class _LeagueScreenState extends State<LeagueScreen> {
             icon: SizedBox(
               width: 72,
               height: 72,
-              child: CustomPaint(painter: LeagueBadgeArt(report.to)),
+              child: CustomPaint(
+                painter: LeagueBadgeArt(report.to, context.palette),
+              ),
             ),
             title: Text(title),
             content: Text(body),
@@ -205,12 +207,12 @@ class _TodayCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.palette.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: done
-              ? AppColors.outline
-              : AppColors.gold.withValues(alpha: 0.5),
+              ? context.palette.outline
+              : context.palette.gold.withValues(alpha: 0.5),
         ),
       ),
       child: Column(
@@ -289,7 +291,7 @@ class _AccountCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.titleMedium?.copyWith(
               fontSize: 16,
-              color: color ?? AppColors.text,
+              color: color ?? context.palette.text,
             ),
           ),
         ],
@@ -299,9 +301,9 @@ class _AccountCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.palette.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.outline),
+        border: Border.all(color: context.palette.outline),
       ),
       child: Row(
         children: [
@@ -309,7 +311,7 @@ class _AccountCard extends StatelessWidget {
           tile(
             'WEEK P&L',
             money(pnl, signed: true),
-            pnl >= 0 ? AppColors.up : AppColors.down,
+            pnl >= 0 ? context.palette.up : context.palette.down,
           ),
           tile('DAYS TRADED', '${store.seasonDaysPlayed} / 7'),
         ],
@@ -341,7 +343,11 @@ class _Ladder extends StatelessWidget {
                     width: league == current ? 50 : 38,
                     height: league == current ? 50 : 38,
                     child: CustomPaint(
-                      painter: LeagueBadgeArt(league, glow: league == current),
+                      painter: LeagueBadgeArt(
+                        league,
+                        context.palette,
+                        glow: league == current,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -349,8 +355,8 @@ class _Ladder extends StatelessWidget {
                     league.title,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: league == current
-                          ? AppColors.gold
-                          : AppColors.textMuted,
+                          ? context.palette.gold
+                          : context.palette.textMuted,
                       fontWeight: league == current ? FontWeight.w700 : null,
                     ),
                   ),
@@ -382,12 +388,12 @@ class _Rules extends StatelessWidget {
       data: theme.copyWith(dividerColor: Colors.transparent),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: context.palette.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.outline),
+          border: Border.all(color: context.palette.outline),
         ),
         child: ExpansionTile(
-          leading: const Icon(Icons.gavel, color: AppColors.gold),
+          leading: Icon(Icons.gavel, color: context.palette.gold),
           title: Text('League rules', style: theme.textTheme.titleMedium),
           childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           children: [
@@ -397,9 +403,13 @@ class _Rules extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 6),
-                      child: Icon(Icons.circle, size: 6, color: AppColors.gold),
+                      child: Icon(
+                        Icons.circle,
+                        size: 6,
+                        color: context.palette.gold,
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(child: Text(r, style: theme.textTheme.bodyMedium)),

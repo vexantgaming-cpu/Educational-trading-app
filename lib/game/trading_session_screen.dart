@@ -399,7 +399,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
               tooltip: _playing ? 'Pause' : 'Play',
               onPressed: _togglePlay,
               style: IconButton.styleFrom(
-                backgroundColor: AppColors.gold,
+                backgroundColor: AppColors.gradientGold,
                 foregroundColor: AppColors.onGold,
               ),
               icon: Icon(_playing ? Icons.pause : Icons.play_arrow),
@@ -431,9 +431,11 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
                 SizedBox(
                   height: (constraints.maxHeight * 0.42).clamp(170.0, 292.0),
                   child: DecoratedBox(
-                    decoration: const BoxDecoration(
-                      color: AppColors.surface,
-                      border: Border(top: BorderSide(color: AppColors.outline)),
+                    decoration: BoxDecoration(
+                      color: context.palette.surface,
+                      border: Border(
+                        top: BorderSide(color: context.palette.outline),
+                      ),
                     ),
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
@@ -484,7 +486,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
       padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
       child: Row(
         children: [
-          box('SELL · BID', _s.bid, AppColors.down),
+          box('SELL · BID', _s.bid, context.palette.down),
           SizedBox(
             width: 92,
             child: Column(
@@ -504,14 +506,16 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: wide ? AppColors.orange : AppColors.textMuted,
+                    color: wide
+                        ? context.palette.orange
+                        : context.palette.textMuted,
                     fontWeight: wide ? FontWeight.w700 : null,
                   ),
                 ),
               ],
             ),
           ),
-          box('BUY · ASK', _s.ask, AppColors.up),
+          box('BUY · ASK', _s.ask, context.palette.up),
         ],
       ),
     );
@@ -533,11 +537,13 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 12),
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
       decoration: BoxDecoration(
-        color: AppColors.surfaceHigh,
+        color: context.palette.surfaceHigh,
         borderRadius: BorderRadius.circular(12),
         border: Border(
           left: BorderSide(
-            color: _eventRevealed ? AppColors.orange : AppColors.gold,
+            color: _eventRevealed
+                ? context.palette.orange
+                : context.palette.gold,
             width: 4,
           ),
         ),
@@ -562,7 +568,9 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
                   child: Icon(
                     Icons.circle,
                     size: 7,
-                    color: i < dots ? AppColors.gold : AppColors.surfaceHighest,
+                    color: i < dots
+                        ? context.palette.gold
+                        : context.palette.surfaceHighest,
                   ),
                 ),
               const Spacer(),
@@ -582,7 +590,9 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
           Text(
             (_eventRevealed ? 'BREAKING ' : '') + eventLine,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: _eventRevealed ? AppColors.orange : AppColors.textMuted,
+              color: _eventRevealed
+                  ? context.palette.orange
+                  : context.palette.textMuted,
               fontWeight: _eventRevealed ? FontWeight.w700 : null,
             ),
           ),
@@ -612,7 +622,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
                 value,
                 maxLines: 1,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: color ?? AppColors.text,
+                  color: color ?? context.palette.text,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -631,12 +641,12 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
           item(
             'TODAY',
             money(today, signed: true),
-            today >= 0 ? AppColors.up : AppColors.down,
+            today >= 0 ? context.palette.up : context.palette.down,
           ),
           item(
             'MARGIN LVL',
             level == null ? '—' : '${level.toStringAsFixed(0)}%',
-            level != null && level < 150 ? AppColors.down : null,
+            level != null && level < 150 ? context.palette.down : null,
           ),
         ],
       ),
@@ -654,7 +664,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
     final margin = _spec.notionalInAccount(_entry, qty) / _spec.maxLeverage;
     final problem = _ruleProblem;
     final buy = _side == Side.long;
-    final color = buy ? AppColors.up : AppColors.down;
+    final color = buy ? context.palette.up : context.palette.down;
     final label = _type == OrderType.market
         ? '${buy ? 'BUY' : 'SELL'} ${quantity(qty)} @ ${_price(_entry)}'
         : 'Place ${_orderName(_side, _type).toLowerCase()} @ ${_price(_entry)}';
@@ -716,7 +726,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
               child: _Stepper(
                 label: 'Stop-loss',
                 value: _spec.formatDistance(_slDist),
-                color: AppColors.down,
+                color: context.palette.down,
                 onMinus: () => setState(
                   () => _slDist = _spec.roundPrice(
                     math.max(_distStep, _slDist - _distStep),
@@ -732,7 +742,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
               child: _Stepper(
                 label: _useTp ? 'Take-profit' : 'Take-profit (off)',
                 value: _useTp ? _spec.formatDistance(_tpDist) : '—',
-                color: AppColors.up,
+                color: context.palette.up,
                 onLabelTap: () => setState(() => _useTp = !_useTp),
                 onMinus: _useTp
                     ? () => setState(
@@ -757,7 +767,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
               child: _Stepper(
                 label: 'Size (${_spec.quantityUnit})',
                 value: quantity(qty),
-                color: AppColors.gold,
+                color: context.palette.gold,
                 onMinus: () => setState(() {
                   _autoSize = false;
                   _manualQty = _spec.roundQuantityDown(
@@ -803,9 +813,10 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
             _Info(
               'Risk',
               '${money(risk)} (${riskPct.toStringAsFixed(1)}%)',
-              AppColors.down,
+              context.palette.down,
             ),
-            if (reward != null) _Info('Reward', money(reward), AppColors.up),
+            if (reward != null)
+              _Info('Reward', money(reward), context.palette.up),
             if (reward != null && risk > 0)
               _Info('R:R', (reward / risk).toStringAsFixed(1)),
             _Info('Margin', money(margin)),
@@ -830,7 +841,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
             child: Text(
               _message ?? problem!,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppColors.orange,
+                color: context.palette.orange,
               ),
             ),
           ),
@@ -857,7 +868,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
           children: [
             Pill(
               label: buy ? 'LONG' : 'SHORT',
-              color: buy ? AppColors.up : AppColors.down,
+              color: buy ? context.palette.up : context.palette.down,
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -880,7 +891,9 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
                   Text(
                     money(pnl, signed: true),
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      color: pnl >= 0 ? AppColors.up : AppColors.down,
+                      color: pnl >= 0
+                          ? context.palette.up
+                          : context.palette.down,
                     ),
                   ),
                 ],
@@ -897,12 +910,12 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
             _Info(
               'Stop',
               p.stopLoss == null ? '—' : _price(p.stopLoss!),
-              AppColors.down,
+              context.palette.down,
             ),
             _Info(
               'Target',
               p.takeProfit == null ? '—' : _price(p.takeProfit!),
-              AppColors.up,
+              context.palette.up,
             ),
             _Info('Margin', money(p.margin)),
           ],
@@ -927,7 +940,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
             Expanded(
               child: _SideButton(
                 label: 'Close ${money(pnl, signed: true)}',
-                color: buy ? AppColors.down : AppColors.up,
+                color: buy ? context.palette.down : context.palette.up,
                 onPressed: _closePosition,
               ),
             ),
@@ -981,7 +994,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
         PriceLine(
           id: 'entry',
           price: position.entryPrice,
-          color: AppColors.textMuted,
+          color: context.palette.textMuted,
           label: 'Entry',
           dashed: true,
         ),
@@ -989,7 +1002,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
           PriceLine(
             id: 'sl',
             price: position.stopLoss!,
-            color: AppColors.down,
+            color: context.palette.down,
             label: 'Stop-loss',
             draggable: true,
           ),
@@ -997,7 +1010,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
           PriceLine(
             id: 'tp',
             price: position.takeProfit!,
-            color: AppColors.up,
+            color: context.palette.up,
             label: 'Take-profit',
             draggable: true,
           ),
@@ -1008,14 +1021,14 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
         PriceLine(
           id: 'order',
           price: pending.price!,
-          color: AppColors.cyan,
+          color: context.palette.cyan,
           label: _orderName(pending.side, pending.type),
         ),
         if (pending.stopLoss != null)
           PriceLine(
             id: 'psl',
             price: pending.stopLoss!,
-            color: AppColors.down,
+            color: context.palette.down,
             label: 'Stop-loss',
             dashed: true,
           ),
@@ -1023,7 +1036,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
           PriceLine(
             id: 'ptp',
             price: pending.takeProfit!,
-            color: AppColors.up,
+            color: context.palette.up,
             label: 'Take-profit',
             dashed: true,
           ),
@@ -1035,7 +1048,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
         PriceLine(
           id: 'entry',
           price: _entry,
-          color: AppColors.textMuted,
+          color: context.palette.textMuted,
           label: _side == Side.long ? 'Buy at ask' : 'Sell at bid',
           dashed: true,
         )
@@ -1043,14 +1056,14 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
         PriceLine(
           id: 'order',
           price: _entry,
-          color: AppColors.cyan,
+          color: context.palette.cyan,
           label: _orderName(_side, _type),
           draggable: true,
         ),
       PriceLine(
         id: 'sl',
         price: _stop,
-        color: AppColors.down,
+        color: context.palette.down,
         label: 'Stop-loss',
         draggable: true,
       ),
@@ -1058,7 +1071,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
         PriceLine(
           id: 'tp',
           price: target,
-          color: AppColors.up,
+          color: context.palette.up,
           label: 'Take-profit',
           draggable: true,
         ),
@@ -1071,13 +1084,13 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
         index: t.entryIndex,
         price: t.entryPrice,
         pointsUp: t.side == Side.long,
-        color: AppColors.cyan,
+        color: context.palette.cyan,
       ),
       ChartMarker(
         index: t.exitIndex,
         price: t.exitPrice,
         pointsUp: t.side != Side.long,
-        color: t.isWin ? AppColors.up : AppColors.down,
+        color: t.isWin ? context.palette.up : context.palette.down,
       ),
     ],
     if (_s.position case final p?)
@@ -1085,7 +1098,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
         index: p.entryIndex,
         price: p.entryPrice,
         pointsUp: p.side == Side.long,
-        color: AppColors.cyan,
+        color: context.palette.cyan,
       ),
   ];
 
@@ -1124,14 +1137,14 @@ class _Stepper extends StatelessWidget {
         child: Icon(
           icon,
           size: 18,
-          color: onTap == null ? AppColors.outline : AppColors.text,
+          color: onTap == null ? context.palette.outline : context.palette.text,
         ),
       ),
     );
     return Container(
       padding: const EdgeInsets.fromLTRB(10, 4, 4, 4),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: context.palette.background,
         borderRadius: BorderRadius.circular(12),
         border: Border(left: BorderSide(color: color, width: 3)),
       ),
@@ -1189,7 +1202,7 @@ class _Info extends StatelessWidget {
           TextSpan(
             text: value,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: color ?? AppColors.text,
+              color: color ?? context.palette.text,
               fontWeight: FontWeight.w700,
             ),
           ),

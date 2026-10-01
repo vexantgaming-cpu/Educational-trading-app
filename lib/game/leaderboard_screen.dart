@@ -28,18 +28,18 @@ class LeaderboardScreen extends StatelessWidget {
           const SizedBox(height: 12),
           for (final s in standings) ...[
             if (canPromote && s.rank == 1)
-              const _ZoneLabel(
+              _ZoneLabel(
                 'Promotion zone',
-                AppColors.up,
+                context.palette.up,
                 Icons.arrow_upward,
               ),
             if (canPromote && s.rank == LeagueRules.promoteCount + 1)
               const Divider(height: 20),
             if (canDemote &&
                 s.rank == LeagueRules.groupSize - LeagueRules.demoteCount + 1)
-              const _ZoneLabel(
+              _ZoneLabel(
                 'Demotion zone',
-                AppColors.down,
+                context.palette.down,
                 Icons.arrow_downward,
               ),
             StandingRow(standing: s, league: store.league),
@@ -64,20 +64,20 @@ class SimulatedRivalsNote extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.cyan.withValues(alpha: 0.08),
+        color: context.palette.cyan.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.3)),
+        border: Border.all(color: context.palette.cyan.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.info_outline, size: 18, color: AppColors.cyan),
+          Icon(Icons.info_outline, size: 18, color: context.palette.cyan),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               'Preview: you are competing against 29 simulated rivals at your level. '
               'Online leagues with real players are coming.',
               style: Theme.of(context).textTheme.bodySmall
-                  ?.copyWith(color: AppColors.text),
+                  ?.copyWith(color: context.palette.text),
             ),
           ),
         ],
@@ -127,22 +127,22 @@ class StandingRow extends StatelessWidget {
         league.previous != null &&
         s.rank > LeagueRules.groupSize - LeagueRules.demoteCount;
     final rankColor = promote
-        ? AppColors.up
+        ? context.palette.up
         : demote
-        ? AppColors.down
-        : AppColors.textMuted;
+        ? context.palette.down
+        : context.palette.textMuted;
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: s.isYou
-            ? AppColors.gold.withValues(alpha: 0.1)
-            : AppColors.surface,
+            ? context.palette.gold.withValues(alpha: 0.1)
+            : context.palette.surface,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: s.isYou
-              ? AppColors.gold.withValues(alpha: 0.6)
-              : AppColors.outline,
+              ? context.palette.gold.withValues(alpha: 0.6)
+              : context.palette.outline,
         ),
       ),
       child: Row(
@@ -167,7 +167,9 @@ class StandingRow extends StatelessWidget {
                   s.name,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: s.isYou ? AppColors.gold : AppColors.text,
+                    color: s.isYou
+                        ? context.palette.gold
+                        : context.palette.text,
                   ),
                 ),
                 Text(
@@ -181,7 +183,9 @@ class StandingRow extends StatelessWidget {
             '${s.returnPct >= 0 ? '+' : ''}${s.returnPct.toStringAsFixed(2)}%',
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w700,
-              color: s.returnPct >= 0 ? AppColors.up : AppColors.down,
+              color: s.returnPct >= 0
+                  ? context.palette.up
+                  : context.palette.down,
             ),
           ),
         ],

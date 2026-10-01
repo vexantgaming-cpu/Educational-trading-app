@@ -5,6 +5,7 @@ import 'package:upwiq/exercises/place_trade_exercise.dart';
 import 'package:upwiq/game/game_store.dart';
 import 'package:upwiq/main.dart';
 import 'package:upwiq/progress/progress_store.dart';
+import 'package:upwiq/settings/settings_store.dart';
 
 void main() {
   testWidgets('levels start folded, open on tap, and tabs navigate', (
@@ -15,7 +16,11 @@ void main() {
     GameStore.reset();
     final progress = await ProgressStore.load();
     final game = await GameStore.load(clock: () => DateTime(2026, 9, 30, 10));
-    await tester.pumpWidget(TradingAcademyApp(progress: progress, game: game));
+    SettingsStore.reset();
+    final settings = await SettingsStore.load();
+    await tester.pumpWidget(
+      UpwiqApp(progress: progress, game: game, settings: settings),
+    );
     expect(find.text('0 XP'), findsOneWidget);
     expect(find.text('Market Foundations'), findsOneWidget);
 

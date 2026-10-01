@@ -18,6 +18,8 @@ import 'package:market_sim/market_sim.dart';
 import 'screens/learn_screen.dart';
 import 'screens/practice_screen.dart';
 import 'screens/account_screen.dart';
+import 'settings/settings_store.dart';
+import 'theme/app_colors.dart';
 import 'theme/app_theme.dart';
 
 Future<void> main() async {
@@ -25,37 +27,59 @@ Future<void> main() async {
   _registerFontLicenses();
   final progress = await ProgressStore.load();
   final game = await GameStore.load();
-  runApp(TradingAcademyApp(progress: progress, game: game));
+  final settings = await SettingsStore.load();
+  runApp(UpwiqApp(progress: progress, game: game, settings: settings));
 }
 
-class TradingAcademyApp extends StatelessWidget {
-  const TradingAcademyApp({
+class UpwiqApp extends StatelessWidget {
+  const UpwiqApp({
     super.key,
     required this.progress,
     required this.game,
+    required this.settings,
   });
 
   final ProgressStore progress;
   final GameStore game;
+  final SettingsStore settings;
+
+  static final _light = buildAppTheme(AppPalette.light);
+  static final _dark = buildAppTheme(AppPalette.dark);
 
   @override
   Widget build(BuildContext context) {
-    return ProgressScope(
-      store: progress,
-      child: GameScope(
-        store: game,
-        child: MaterialApp(
-          title: 'Upwiq',
-          debugShowCheckedModeBanner: false,
-          theme: buildAppTheme(),
-          routes: {
-            '/': (_) => const HomeShell(),
-            '/practice': (_) => const HomeShell(initialTab: 1),
-            '/league': (_) => const HomeShell(initialTab: 2),
-            '/account': (_) => const HomeShell(initialTab: 3),
-            placeTradeRoute: (_) => const PlaceTradeExercise(),
-          },
-          onGenerateRoute: _generateRoute,
+    return SettingsScope(
+      store: settings,
+      child: ProgressScope(
+        store: progress,
+        child: GameScope(
+          store: game,
+          child: ListenableBuilder(
+            listenable: settings,
+            builder: (context, _) => MaterialApp(
+              title: 'Upwiq',
+              debugShowCheckedModeBanner: false,
+              theme: _light,
+              darkTheme: _dark,
+              themeMode: settings.themeMode,
+              // Status bar icons follow the theme on screens without an app bar.
+              builder: (context, child) =>
+                  AnnotatedRegion<SystemUiOverlayStyle>(
+                    value: Theme.of(context).brightness == Brightness.dark
+                        ? SystemUiOverlayStyle.light
+                        : SystemUiOverlayStyle.dark,
+                    child: child!,
+                  ),
+              routes: {
+                '/': (_) => const HomeShell(),
+                '/practice': (_) => const HomeShell(initialTab: 1),
+                '/league': (_) => const HomeShell(initialTab: 2),
+                '/account': (_) => const HomeShell(initialTab: 3),
+                placeTradeRoute: (_) => const PlaceTradeExercise(),
+              },
+              onGenerateRoute: _generateRoute,
+            ),
+          ),
         ),
       ),
     );

@@ -24,13 +24,13 @@ class PracticeScreen extends StatelessWidget {
             title: 'Practice',
             highlight: 'without risk',
             subtitle: 'Trade with virtual money and learn from every result.',
-            art: PracticeArt(),
-            footer: const Row(
+            art: PracticeArt(context.palette),
+            footer: Row(
               children: [
                 Pill(
                   label: '\$10,000 virtual balance',
                   icon: Icons.account_balance_wallet,
-                  color: AppColors.gold,
+                  color: context.palette.gold,
                 ),
               ],
             ),
@@ -110,12 +110,12 @@ class _PracticeCard extends StatelessWidget {
     final available = onStart != null;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.palette.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: available
-              ? AppColors.gold.withValues(alpha: 0.45)
-              : AppColors.outline,
+              ? context.palette.gold.withValues(alpha: 0.45)
+              : context.palette.outline,
         ),
       ),
       padding: const EdgeInsets.all(16),
@@ -134,7 +134,7 @@ class _PracticeCard extends StatelessWidget {
           Text(
             body,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.textMuted,
+              color: context.palette.textMuted,
             ),
           ),
           if (preview != null) ...[const SizedBox(height: 12), preview!],
@@ -167,7 +167,7 @@ class _ChartPreview extends StatelessWidget {
       height: 120,
       padding: const EdgeInsets.fromLTRB(8, 8, 0, 8),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: context.palette.background,
         borderRadius: BorderRadius.circular(14),
       ),
       child: IgnorePointer(

@@ -68,11 +68,11 @@ class ChartColors {
   factory ChartColors.of(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return ChartColors(
-      up: AppColors.up,
-      down: AppColors.down,
+      up: context.palette.up,
+      down: context.palette.down,
       grid: scheme.outlineVariant.withValues(alpha: 0.55),
       text: scheme.onSurfaceVariant,
-      movingAverage: AppColors.gold,
+      movingAverage: context.palette.gold,
       background: scheme.surface,
     );
   }

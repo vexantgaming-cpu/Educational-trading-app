@@ -24,12 +24,12 @@ class GradientButton extends StatelessWidget {
     final button = DecoratedBox(
       decoration: BoxDecoration(
         gradient: enabled ? AppColors.primaryGradient : null,
-        color: enabled ? null : AppColors.surfaceHighest,
+        color: enabled ? null : context.palette.surfaceHighest,
         borderRadius: BorderRadius.circular(14),
         boxShadow: enabled
             ? [
                 BoxShadow(
-                  color: AppColors.orange.withValues(alpha: 0.28),
+                  color: context.palette.orange.withValues(alpha: 0.28),
                   blurRadius: 18,
                   offset: const Offset(0, 6),
                 ),
@@ -91,18 +91,21 @@ class Pill extends StatelessWidget {
     super.key,
     required this.label,
     this.icon,
-    this.color = AppColors.textMuted,
+    this.color,
     this.gradient,
   });
 
   final String label;
   final IconData? icon;
-  final Color color;
+
+  /// Defaults to the theme's muted text colour.
+  final Color? color;
   final Gradient? gradient;
 
   @override
   Widget build(BuildContext context) {
     final onGradient = gradient != null;
+    final color = this.color ?? context.palette.textMuted;
     final fg = onGradient ? Colors.white : color;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

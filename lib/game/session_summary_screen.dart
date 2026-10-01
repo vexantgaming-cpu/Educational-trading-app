@@ -38,9 +38,9 @@ class SessionSummaryScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                gradient: AppColors.heroGradient,
+                gradient: context.palette.heroGradient,
                 borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: AppColors.outline),
+                border: Border.all(color: context.palette.outline),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +53,7 @@ class SessionSummaryScreen extends StatelessWidget {
                   Text(
                     money(result.pnl, signed: true),
                     style: theme.textTheme.headlineMedium?.copyWith(
-                      color: win ? AppColors.up : AppColors.down,
+                      color: win ? context.palette.up : context.palette.down,
                       fontSize: 34,
                     ),
                   ),
@@ -61,7 +61,7 @@ class SessionSummaryScreen extends StatelessWidget {
                     '${result.returnPct >= 0 ? '+' : ''}${result.returnPct.toStringAsFixed(2)}% · '
                     'balance ${money(result.endBalance)}',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textMuted,
+                      color: context.palette.textMuted,
                     ),
                   ),
                   if (store != null) ...[
@@ -71,7 +71,7 @@ class SessionSummaryScreen extends StatelessWidget {
                         'Account blown: equity fell below 10% of the starting balance. '
                         'You restart in Bronze with a fresh \$10,000.',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.down,
+                          color: context.palette.down,
                         ),
                       )
                     else
@@ -81,19 +81,19 @@ class SessionSummaryScreen extends StatelessWidget {
                         children: [
                           Pill(
                             label: '${store.league.title} league',
-                            color: AppColors.gold,
+                            color: context.palette.gold,
                           ),
                           Pill(
                             label:
                                 'Rank #${store.you.rank} of ${LeagueRules.groupSize}',
-                            color: AppColors.cyan,
+                            color: context.palette.cyan,
                           ),
                           Pill(
                             label:
                                 'Week ${store.seasonReturnPct >= 0 ? '+' : ''}${store.seasonReturnPct.toStringAsFixed(2)}%',
                             color: store.seasonReturnPct >= 0
-                                ? AppColors.up
-                                : AppColors.down,
+                                ? context.palette.up
+                                : context.palette.down,
                           ),
                         ],
                       ),
@@ -116,13 +116,15 @@ class SessionSummaryScreen extends StatelessWidget {
                         index: t.entryIndex,
                         price: t.entryPrice,
                         pointsUp: t.side == Side.long,
-                        color: AppColors.cyan,
+                        color: context.palette.cyan,
                       ),
                       ChartMarker(
                         index: t.exitIndex,
                         price: t.exitPrice,
                         pointsUp: t.side != Side.long,
-                        color: t.isWin ? AppColors.up : AppColors.down,
+                        color: t.isWin
+                            ? context.palette.up
+                            : context.palette.down,
                       ),
                     ],
                   ],
@@ -248,10 +250,10 @@ class SessionSummaryScreen extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
+              Icon(
                 Icons.tips_and_updates,
                 size: 18,
-                color: AppColors.gold,
+                color: context.palette.gold,
               ),
               const SizedBox(width: 8),
               Expanded(child: Text(n, style: theme.textTheme.bodyMedium)),
@@ -273,9 +275,9 @@ class _Section extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.palette.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.outline),
+        border: Border.all(color: context.palette.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,7 +314,9 @@ class _NewsLine extends StatelessWidget {
             width: 48,
             child: Text(
               time,
-              style: theme.textTheme.bodySmall?.copyWith(color: AppColors.gold),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: context.palette.gold,
+              ),
             ),
           ),
           Expanded(
@@ -360,7 +364,9 @@ class _TradeRow extends StatelessWidget {
         children: [
           Pill(
             label: t.side == Side.long ? 'BUY' : 'SELL',
-            color: t.side == Side.long ? AppColors.up : AppColors.down,
+            color: t.side == Side.long
+                ? context.palette.up
+                : context.palette.down,
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -381,7 +387,7 @@ class _TradeRow extends StatelessWidget {
               Text(
                 money(t.netPnl, signed: true),
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: t.isWin ? AppColors.up : AppColors.down,
+                  color: t.isWin ? context.palette.up : context.palette.down,
                   fontWeight: FontWeight.w700,
                 ),
               ),
