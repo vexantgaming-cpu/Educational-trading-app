@@ -1,7 +1,6 @@
-# 📈 Trading Academy — Product & Build Plan
+# 📈 Upwiq — Product & Build Plan
 
-> **Working title.** Check name availability on Google Play and trademark databases
-> before branding. Status: **plan agreed, build starting (Phase 0/1).**
+> Brand name **Upwiq** (say "up-wick"), chosen 1 Oct 2026. Status: **Phase 1 in progress (lessons, practice, League game).**
 
 An Android app (Play Store first, iOS later) that teaches beginners **how to read
 any market** — stocks, forex, crypto, commodities, indices — through bite-sized
@@ -19,6 +18,7 @@ Free lessons to start; a paid tier unlocks the full curriculum and practice tool
 | **Lesson content** | Written and self-checked by Claude against standard, widely taught definitions | Beginner material is well established. Recommended: one read-through by an experienced trader before public launch. |
 | **Play developer account** | **Personal** (not created yet) | $25 one-time fee + identity verification. **Closed test with ≥ 12 testers for 14 continuous days** before production. A Google **payments profile** is needed to sell subscriptions. Because the app earns money, EU law (Digital Services Act) makes the developer a "trader": **contact details (address, phone, email) are shown on the EU store listing**, so consider a business address or PO box instead of a home address. |
 | **Launch markets** | **All of Europe (EU/EEA, UK, Switzerland and the rest) + USA** | English at launch, app built translation-ready; add major EU languages in Phase 3. Prices in EUR, GBP, CHF, USD etc. via Play regional pricing. GDPR / UK GDPR apply (see §9). |
+| **Name** (1 Oct 2026) | **Upwiq**: *up* + *wick* (the candle wick); the *q* hints at IQ | Android package ID **`com.upwiq.app`**, permanent once published on Play. To do: register upwiq.com and upwiq.app (plus upwick.app as a redirect); run a trademark search (EUIPO TMview, USPTO) in classes 9, 36 and 41 before launch. Design brief for the logo, icon and store assets: `docs/brand/UPWIQ_DESIGN_BRIEF.md`. |
 | **Repository** | Dedicated repo: [`Educational-trading-app`](https://github.com/vexantgaming-cpu/Educational-trading-app) | Separate from the Smoke-Free Coach repo. |
 
 ---
@@ -465,7 +465,7 @@ Assumes 1–2 developers, a designer (part-time) and a content author with tradi
 
 Answered on 30 Sep 2026: see §0. Still open:
 
-1. **Name & brand** (working title for now).
+1. ~~Name & brand~~: **Upwiq** (decided 1 Oct 2026). Logo, icon and store assets are being designed from `docs/brand/UPWIQ_DESIGN_BRIEF.md`.
 2. **12 closed-test testers:** start collecting Gmail addresses of friends/family who will
    install the test build and keep it for 14 days.
 3. **Budget** for optional extras: licensed real market data (premium Arena), a legal

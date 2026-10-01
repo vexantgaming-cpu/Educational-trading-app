@@ -1,6 +1,6 @@
 # market_sim
 
-Pure-Dart core of Trading Academy. No Flutter dependency, so it runs in unit
+Pure-Dart core of Upwiq. No Flutter dependency, so it runs in unit
 tests, on-device and (later) on a server for challenge re-simulation.
 
 | File | What it does |

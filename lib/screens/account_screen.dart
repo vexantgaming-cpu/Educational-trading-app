@@ -119,7 +119,7 @@ class AccountScreen extends StatelessWidget {
                     title: 'Licences',
                     onTap: () => showLicensePage(
                       context: context,
-                      applicationName: 'Trading Academy',
+                      applicationName: 'Upwiq',
                     ),
                   ),
                 ],
@@ -131,7 +131,7 @@ class AccountScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
             child: Text(
-              'Trading Academy is an educational app. It does not provide '
+              'Upwiq is an educational app. It does not provide '
               'financial advice or recommendations, and it does not offer real '
               'trading. All trades are simulated with virtual money that cannot '
               'be bought or withdrawn. Simulated results do not reflect real '

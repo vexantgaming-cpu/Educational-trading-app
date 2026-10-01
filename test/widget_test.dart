@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trading_academy/exercises/place_trade_exercise.dart';
-import 'package:trading_academy/game/game_store.dart';
-import 'package:trading_academy/main.dart';
-import 'package:trading_academy/progress/progress_store.dart';
+import 'package:upwiq/exercises/place_trade_exercise.dart';
+import 'package:upwiq/game/game_store.dart';
+import 'package:upwiq/main.dart';
+import 'package:upwiq/progress/progress_store.dart';
 
 void main() {
   testWidgets('levels start folded, open on tap, and tabs navigate', (

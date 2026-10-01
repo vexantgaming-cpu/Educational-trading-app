@@ -165,7 +165,7 @@ class BrandBar extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Text(
-            'Trading Academy',
+            'Upwiq',
             style: Theme.of(context).textTheme.titleMedium
                 ?.copyWith(fontWeight: FontWeight.w700, letterSpacing: -0.2),
           ),

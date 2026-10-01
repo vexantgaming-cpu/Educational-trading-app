@@ -1,6 +1,6 @@
-# 📈 Trading Academy
+# 📈 Upwiq
 
-Beginner-friendly app that teaches **how to read any market** (stocks, forex,
+**Upwiq** (say "up-wick") is a beginner-friendly app that teaches **how to read any market** (stocks, forex,
 crypto, commodities, indices) with bite-sized lessons, interactive charts and
 **simulated trades with virtual money**. Android first (Google Play), built with
 Flutter. Educational only: no real trading, no financial advice.
@@ -18,7 +18,7 @@ Flutter. Educational only: no real trading, no financial advice.
 Every push builds a test APK:
 
 1. Open the repo's **Actions** tab → latest **CI** run → download
-   **trading-academy-test-apk** (a zip containing `app-release.apk`).
+   **upwiq-test-apk** (a zip containing `app-release.apk`).
 2. Copy the APK to your phone and open it. Android will ask you to allow
    installs from that source (Files/Chrome) the first time.
 

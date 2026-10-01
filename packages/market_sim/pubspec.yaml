@@ -1,6 +1,6 @@
 name: market_sim
 description: >-
-  Pure-Dart market simulation for Trading Academy: candles, instrument specs,
+  Pure-Dart market simulation for Upwiq: candles, instrument specs,
   synthetic chart generation, indicators, position sizing, a deterministic
   bar-by-bar replay engine, trade statistics and process scoring.
 version: 0.1.0

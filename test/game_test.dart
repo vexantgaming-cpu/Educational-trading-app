@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:market_sim/market_sim.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trading_academy/game/game_scope.dart';
-import 'package:trading_academy/game/game_store.dart';
-import 'package:trading_academy/game/session_result.dart';
-import 'package:trading_academy/game/trading_session_screen.dart';
+import 'package:upwiq/game/game_scope.dart';
+import 'package:upwiq/game/game_store.dart';
+import 'package:upwiq/game/session_result.dart';
+import 'package:upwiq/game/trading_session_screen.dart';
 
 void main() {
   late DateTime now;

@@ -1,4 +1,4 @@
-/// Pure-Dart market simulation core for Trading Academy.
+/// Pure-Dart market simulation core for Upwiq.
 library;
 
 export 'src/candle.dart';

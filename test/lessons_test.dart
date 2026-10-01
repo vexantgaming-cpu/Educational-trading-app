@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:market_sim/market_sim.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trading_academy/data/curriculum.dart';
-import 'package:trading_academy/lessons/lesson_model.dart';
-import 'package:trading_academy/lessons/lesson_player.dart';
-import 'package:trading_academy/progress/progress_scope.dart';
-import 'package:trading_academy/progress/progress_store.dart';
+import 'package:upwiq/data/curriculum.dart';
+import 'package:upwiq/lessons/lesson_model.dart';
+import 'package:upwiq/lessons/lesson_player.dart';
+import 'package:upwiq/progress/progress_scope.dart';
+import 'package:upwiq/progress/progress_store.dart';
 
 Map<String, LessonContent> loadAll() => {
   for (final f in Directory(

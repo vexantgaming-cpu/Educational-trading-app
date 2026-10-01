@@ -45,7 +45,7 @@ class TradingAcademyApp extends StatelessWidget {
       child: GameScope(
         store: game,
         child: MaterialApp(
-          title: 'Trading Academy',
+          title: 'Upwiq',
           debugShowCheckedModeBanner: false,
           theme: buildAppTheme(),
           routes: {

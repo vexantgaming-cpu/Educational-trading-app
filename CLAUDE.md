@@ -1,4 +1,4 @@
-# Trading Academy: notes for Claude
+# Upwiq: notes for Claude
 
 Beginner trading-education app (Flutter, Android first). Owner is not a
 developer: Claude writes the code, owner tests on their phone via the CI APK.
@@ -30,5 +30,6 @@ flutter build web --release --no-web-resources-cdn   # then screenshot with Play
 Flutter SDK is not preinstalled in cloud sessions: download the stable tarball
 from storage.googleapis.com/flutter_infra_release into /opt/sdk/flutter.
 The Android SDK host is blocked in the sandbox, so APK builds run in GitHub Actions.
-The `applicationId` (android/app/build.gradle.kts) is permanent once published:
-finalise it with the owner before the first Play upload.
+The app is called **Upwiq** (say "up-wick"); the Android `applicationId` is
+`com.upwiq.app` (agreed with the owner). It is permanent once published on
+Play, so don't change it. Brand and design brief: `docs/brand/UPWIQ_DESIGN_BRIEF.md`.
