@@ -4,6 +4,10 @@ Beginner trading-education app (Flutter, Android first). Owner is not a
 developer: Claude writes the code, owner tests on their phone via the CI APK.
 Read `docs/PLAN.md` §0 for the agreed decisions before making product changes.
 
+Git: work on `main` and push straight to it (owner's choice, 2 Oct 2026).
+Every push builds a test APK in CI. Once the app is live on Google Play, switch
+to a branch and pull request per batch so `main` only holds released code.
+
 ## Non-negotiables (product & compliance)
 - Education only. No signals, no "buy X now", no personalised recommendations,
   no promotion of any specific broker, exchange or coin.
