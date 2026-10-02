@@ -4,6 +4,7 @@
   "steps": [
     {
       "type": "explain",
+      "art": "lossesNormal",
       "title": "Losses are part of the job",
       "text": "Every trader loses, often. Even approaches that work over time lose on a large share of trades.\n\nA strategy can win **fewer than half** of its trades and still make money, as long as the winners are bigger than the losers. A loss is a **cost of doing business**, not a verdict on you."
     },
@@ -16,6 +17,7 @@
     },
     {
       "type": "explain",
+      "art": "goodBadLoss",
       "title": "Good loss or bad loss?",
       "text": "Judge the **decision**, not the result.\n\nA **good loss**: you followed your plan, your stop did its job, and you lost the amount you planned (for example 1% of your account).\n\nA **bad loss**: no stop, a stop you moved, a trade that was too big, or a trade that wasn't in your plan at all."
     },
@@ -33,6 +35,7 @@
     },
     {
       "type": "explain",
+      "art": "reset",
       "title": "The 3-step reset",
       "text": "After a loss:\n\n**1. Pause.** Step away from the screen for a few minutes. Breathe.\n\n**2. Review.** Was it a good or bad loss? Write one line about it in your journal.\n\n**3. Reset.** Your next trade gets the same size and the same rules. Never trade bigger to \"win it back\"."
     },
@@ -50,6 +53,7 @@
     },
     {
       "type": "explain",
+      "art": "lossLimit",
       "title": "Set a daily loss limit",
       "text": "Decide in advance when you stop for the day, for example **after 3 losses in a row** or when you're **down 3%**.\n\nWhen you hit the limit, you're done, however sure you feel about the next trade. It's one of the simplest ways to prevent one bad day from becoming a bad month."
     },

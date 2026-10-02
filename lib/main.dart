@@ -15,6 +15,7 @@ import 'progress/progress_store.dart';
 
 import 'package:market_sim/market_sim.dart';
 
+import 'screens/feedback_screen.dart';
 import 'screens/learn_screen.dart';
 import 'screens/practice_screen.dart';
 import 'screens/account_screen.dart';
@@ -75,6 +76,7 @@ class UpwiqApp extends StatelessWidget {
                 '/practice': (_) => const HomeShell(initialTab: 1),
                 '/league': (_) => const HomeShell(initialTab: 2),
                 '/account': (_) => const HomeShell(initialTab: 3),
+                '/feedback': (_) => const FeedbackScreen(),
                 placeTradeRoute: (_) => const PlaceTradeExercise(),
               },
               onGenerateRoute: _generateRoute,

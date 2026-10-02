@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 import 'gradient_button.dart';
+import 'upwiq_logo.dart';
 
 /// The key visual at the top of each tab: headline (with a gradient
 /// highlight), a short line, optional footer, and an illustration.
@@ -138,7 +139,7 @@ class GradientProgressBar extends StatelessWidget {
   }
 }
 
-/// App mark + name, shown at the top of the tabs.
+/// The Upwiq logo, shown at the top of the tabs.
 class BrandBar extends StatelessWidget {
   const BrandBar({super.key, this.trailing});
 
@@ -148,30 +149,11 @@ class BrandBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      child: Row(
-        children: [
-          Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.candlestick_chart,
-              color: AppColors.onGold,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            'Upwiq',
-            style: Theme.of(context).textTheme.titleMedium
-                ?.copyWith(fontWeight: FontWeight.w700, letterSpacing: -0.2),
-          ),
-          const Spacer(),
-          ?trailing,
-        ],
+      child: SizedBox(
+        height: 34,
+        child: Row(
+          children: [const UpwiqLogo(height: 28), const Spacer(), ?trailing],
+        ),
       ),
     );
   }

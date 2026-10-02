@@ -125,6 +125,9 @@ Premium: fear and greed/FOMO, revenge trading and tilt, overconfidence after a
 winning streak, loss aversion (cutting winners, holding losers), discipline and
 routines, getting through drawdowns, patience. Helpline numbers change: re-check
 them before each release.
+Every explanation in these lessons opens with an illustration of its feeling or
+idea (racing heart, fear-and-greed scale, loss aversion ×2, tilt gauge, low
+battery, help bubble…), drawn in code in the tab-art style for both themes.
 
 > Content must be reviewed by an experienced trader or qualified professional before
 > launch. Every lesson carries the "educational, not financial advice" footer.
@@ -437,6 +440,12 @@ dynamic text size, screen-reader labels for chart summaries.
 
 Targets are starting assumptions to revisit after the closed test.
 
+**User feedback** (added 2 Oct 2026): Account → *Leave feedback* (rating, topic,
+message, optional app details) opens the user's email app addressed to
+`feedback@upwiq.com`. Set up that mailbox (or change `lib/app_info.dart`) before
+the closed test. Later, when Firebase arrives for online leagues, feedback can be
+stored there instead of email.
+
 ---
 
 ## 11. Roadmap
@@ -471,7 +480,7 @@ Assumes 1–2 developers, a designer (part-time) and a content author with tradi
 
 Answered on 30 Sep 2026: see §0. Still open:
 
-1. ~~Name & brand~~: **Upwiq** (decided 1 Oct 2026). Logo, icon and store assets are being designed from `docs/brand/UPWIQ_DESIGN_BRIEF.md`.
+1. ~~Name & brand~~: **Upwiq** (decided 1 Oct 2026). Logo and app icon from the design system are in the app (2 Oct 2026): rising-wick symbol + lowercase `upwiq` wordmark, adaptive and themed Android icon, branded launch screen. Play Store icon: `docs/brand/app-icon/app-icon-512.png`.
 2. **12 closed-test testers:** start collecting Gmail addresses of friends/family who will
    install the test build and keep it for 14 days.
 3. **Budget** for optional extras: licensed real market data (premium Arena), a legal

@@ -4,6 +4,7 @@
   "steps": [
     {
       "type": "explain",
+      "art": "tilt",
       "title": "What \"tilt\" looks like",
       "text": "**Tilt** is when emotions have taken over your trading. You trade faster and bigger, and you start breaking your own rules.\n\nTypical signs: chasing losses, taking trades outside your plan, ignoring stops, and feeling that you **must** win money back right now.\n\nWhen you notice tilt, the best trade is **no trade**. Stop for the day."
     },
@@ -21,11 +22,13 @@
     },
     {
       "type": "explain",
+      "art": "rest",
       "title": "Your body is part of your trading",
       "text": "Tired, stressed, hungry, unwell or upset? Your decisions suffer, and it's hard to notice from the inside.\n\nMany experienced traders simply **don't trade** when they've slept badly or are dealing with something big in their life. No trade is worth your health or your relationships."
     },
     {
       "type": "explain",
+      "art": "warningSigns",
       "title": "When trading stops being healthy",
       "text": "Trading with real money can become harmful, in a similar way to gambling. Warning signs include:\n\n• Trading with money you **can't afford to lose**: rent, bills, savings you need, or borrowed money.\n\n• **Hiding** your trading or losses from people close to you.\n\n• Feeling **unable to stop**, or restless and irritable when you're not trading.\n\n• **Chasing losses** again and again.\n\n• Losing sleep over it."
     },
@@ -43,11 +46,13 @@
     },
     {
       "type": "explain",
+      "art": "support",
       "title": "Where to get help",
       "text": "If any of this sounds familiar, you're not alone, and support is free and confidential.\n\n**UK**: National Gambling Helpline (GamCare), **0808 8020 133**, 24/7.\n\n**US**: National Problem Gambling Helpline, **1-800-MY-RESET** (1-800-697-3738), call, text or chat.\n\n**Elsewhere in Europe**: your national gambling-support helpline, or your doctor.\n\nIf you ever feel in crisis, contact your local emergency services."
     },
     {
       "type": "explain",
+      "art": "safePractice",
       "title": "Practise safely here",
       "text": "Everything you trade in this app uses **virtual money**, so you can build skills without that risk.\n\nTake breaks whenever you want. Your progress will be here when you come back."
     },

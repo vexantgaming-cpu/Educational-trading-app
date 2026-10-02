@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Upwiq light background, shown behind the logo while the app starts. -->
+    <color name="splash_background">#F5F7FB</color>
+</resources>

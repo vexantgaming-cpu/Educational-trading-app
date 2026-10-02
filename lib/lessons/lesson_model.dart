@@ -35,6 +35,10 @@ sealed class LessonStep {
         title: json['title'] as String?,
         text: json['text'] as String,
         chart: _chart(json['chart']),
+        art: switch (json['art']) {
+          final String name => LessonArt.values.byName(name),
+          _ => null,
+        },
       ),
       'candle_anatomy' => CandleAnatomyStep(
         title: json['title'] as String?,
@@ -70,13 +74,35 @@ sealed class LessonStep {
 }
 
 class ExplainStep extends LessonStep {
-  const ExplainStep({this.title, required this.text, this.chart});
+  const ExplainStep({this.title, required this.text, this.chart, this.art});
 
   final String? title;
 
   /// Supports **bold** markup and blank-line paragraphs.
   final String text;
   final ChartSpec? chart;
+
+  /// Illustration shown above the title (used by the psychology lessons).
+  final LessonArt? art;
+}
+
+/// Illustrations available to explain steps, by their JSON `art` name.
+/// Drawn by `MindArtPainter` in `mind_art.dart`.
+enum LessonArt {
+  stress,
+  fearGreed,
+  lossAversion,
+  calmPlan,
+  nameIt,
+  lossesNormal,
+  goodBadLoss,
+  reset,
+  lossLimit,
+  tilt,
+  rest,
+  warningSigns,
+  support,
+  safePractice,
 }
 
 class CandleAnatomyStep extends LessonStep {

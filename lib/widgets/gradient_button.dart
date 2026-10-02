@@ -147,11 +147,13 @@ class IconBadge extends StatelessWidget {
     required this.icon,
     required this.colors,
     this.size = 52,
+    this.iconColor = Colors.white,
   });
 
   final IconData icon;
   final List<Color> colors;
   final double size;
+  final Color iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -173,7 +175,7 @@ class IconBadge extends StatelessWidget {
           ),
         ],
       ),
-      child: Icon(icon, color: Colors.white, size: size * 0.5),
+      child: Icon(icon, color: iconColor, size: size * 0.5),
     );
   }
 }

@@ -13,6 +13,7 @@ import '../widgets/gradient_button.dart';
 import '../widgets/tab_hero.dart';
 import 'candle_anatomy.dart';
 import 'lesson_model.dart';
+import 'mind_art.dart';
 import 'rich_text.dart';
 
 Future<LessonContent> loadLesson(String id, {AssetBundle? bundle}) async {
@@ -184,6 +185,10 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
       ExplainStep() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (step.art != null) ...[
+            SizedBox(width: double.infinity, child: LessonArtPanel(step.art!)),
+            const SizedBox(height: 18),
+          ],
           if (step.title != null) ...[
             Text(step.title!, style: theme.textTheme.headlineSmall),
             const SizedBox(height: 12),

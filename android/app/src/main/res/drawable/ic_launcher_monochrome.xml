@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Themed (monochrome) icon, tinted by Android 13+. Generated from docs/brand/app-icon/app-icon-monochrome.svg
+     (Upwiq design system): the rising-wick symbol on its 64-unit grid,
+     placed inside the 66dp safe zone of the 108dp adaptive-icon canvas. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:translateX="22"
+        android:translateY="20">
+        <path
+            android:pathData="M23,17 L32,8 L41,17 M32,8 L32,24"
+            android:fillColor="#00000000"
+            android:strokeWidth="4"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:strokeColor="#FFFFFFFF" />
+        <path
+            android:pathData="M28,24 L36,24 A4,4 0 0,1 40,28 L40,48 A4,4 0 0,1 36,52 L28,52 A4,4 0 0,1 24,48 L24,28 A4,4 0 0,1 28,24 Z"
+            android:fillColor="#FFFFFFFF" />
+        <path
+            android:pathData="M32,52 L32,60"
+            android:fillColor="#00000000"
+            android:strokeWidth="4"
+            android:strokeLineCap="round"
+            android:strokeColor="#FFFFFFFF" />
+    </group>
+</vector>

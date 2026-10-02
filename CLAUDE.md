@@ -33,3 +33,9 @@ The Android SDK host is blocked in the sandbox, so APK builds run in GitHub Acti
 The app is called **Upwiq** (say "up-wick"); the Android `applicationId` is
 `com.upwiq.app` (agreed with the owner). It is permanent once published on
 Play, so don't change it. Brand and design brief: `docs/brand/UPWIQ_DESIGN_BRIEF.md`.
+The logo and app icon come from the owner's Upwiq design system (a claude.ai
+Design System artifact); copies of the SVGs live in `docs/brand/logo/` and
+`docs/brand/app-icon/`. In the app the logo is drawn in code
+(`lib/widgets/upwiq_logo.dart`, same geometry) so the letters follow the theme;
+the Android adaptive icon is `res/drawable/ic_launcher_*.xml` and the legacy and
+web PNGs are rendered from `app-icon.svg`. Keep them in sync if the logo changes.

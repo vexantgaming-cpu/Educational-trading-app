@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../app_info.dart';
 import '../data/curriculum.dart';
 import '../progress/progress_scope.dart';
 import '../settings/settings_store.dart';
@@ -7,6 +8,8 @@ import '../theme/app_colors.dart';
 import '../theme/illustrations.dart';
 import '../widgets/gradient_button.dart';
 import '../widgets/tab_hero.dart';
+import '../widgets/upwiq_logo.dart';
+import 'feedback_screen.dart';
 
 /// Ranks earned with XP. Purely motivational.
 const _ranks = [
@@ -88,6 +91,16 @@ class AccountScreen extends StatelessWidget {
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
+            child: Text('HELP US IMPROVE', style: theme.textTheme.labelSmall),
+          ),
+        ),
+        const SliverPadding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          sliver: SliverToBoxAdapter(child: _FeedbackCard()),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
             child: Text('SETTINGS', style: theme.textTheme.labelSmall),
           ),
         ),
@@ -123,6 +136,11 @@ class AccountScreen extends StatelessWidget {
                     onTap: () => showLicensePage(
                       context: context,
                       applicationName: 'Upwiq',
+                      applicationVersion: appVersion,
+                      applicationIcon: const Padding(
+                        padding: EdgeInsets.all(12),
+                        child: UpwiqLogo.symbol(height: 56),
+                      ),
                     ),
                   ),
                 ],
@@ -232,6 +250,59 @@ class _PremiumCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Opens the feedback form.
+class _FeedbackCard extends StatelessWidget {
+  const _FeedbackCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Material(
+      color: context.palette.surface,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: context.palette.outline),
+      ),
+      child: InkWell(
+        onTap: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const FeedbackScreen())),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const IconBadge(
+                icon: Icons.rate_review_outlined,
+                colors: [AppColors.gradientGold, AppColors.gradientOrange],
+                iconColor: AppColors.onGold,
+                size: 44,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Leave feedback', style: theme.textTheme.titleMedium),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Ideas, bugs, lessons you liked or found hard. '
+                      'Tell us what to improve.',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(Icons.chevron_right, color: context.palette.textMuted),
+            ],
+          ),
+        ),
       ),
     );
   }

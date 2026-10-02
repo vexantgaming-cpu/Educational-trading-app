@@ -92,6 +92,12 @@ void main() {
     await tester.tap(find.text('Account'));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(find.text('Light'), 200);
+    // Centre it: the tab content scrolls behind the navigation bar.
+    await Scrollable.ensureVisible(
+      tester.element(find.text('Light')),
+      alignment: 0.5,
+    );
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Light'));
     await tester.pumpAndSettle();
     expect(brightnessOf(tester), Brightness.light);
