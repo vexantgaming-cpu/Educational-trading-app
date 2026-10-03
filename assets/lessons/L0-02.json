@@ -4,6 +4,7 @@
   "steps": [
     {
       "type": "explain",
+      "art": "bidAsk",
       "title": "There are two prices, not one",
       "text": "At any moment a market has a **bid**: the highest price a buyer is currently offering.\n\nIt also has an **ask** (or **offer**): the lowest price a seller is currently asking for."
     },
@@ -21,6 +22,7 @@
     },
     {
       "type": "explain",
+      "art": "spreadCost",
       "title": "Why the spread matters",
       "text": "If you bought at the ask and sold straight away at the bid, you'd lose the spread. So **every trade starts slightly in the red** by that amount.\n\nIt's a real cost, and it adds up quickly if you trade often."
     },
@@ -38,6 +40,7 @@
     },
     {
       "type": "explain",
+      "art": "spreadWiden",
       "title": "When spreads widen",
       "text": "Spreads are usually **tight** in busy markets with lots of buyers and sellers (this is called **liquidity**).\n\nThey tend to **widen** in quiet markets, outside main trading hours, and around big news, when many traders step back."
     },

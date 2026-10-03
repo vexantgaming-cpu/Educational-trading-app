@@ -150,8 +150,15 @@ All exercises run on the app's own chart engine (§7) with scored hit-testing.
 ### "Small trades you can take freely": three places to trade
 
 1. **Mini-trades inside lessons** (about 1 min): one scenario chart, one decision, instant replay.
-2. **Daily Challenge**: the same chart for every user each day, one trade, a
-   leaderboard ranked by **process score**, not raw profit.
+2. **Daily Challenge** (built 3 Oct 2026): three short rounds, new every day
+   and the same for every user on a given date. (1) **Read the chart**: the
+   trend, the support or resistance zone, or the breakout candle. (2) **Size
+   it**: a position-sizing question on a rotating market (shares, EUR/USD,
+   gold, US 500, Bitcoin). (3) **Plan the trade**: a long at support or a short
+   at resistance, scored on the plan (stop, reward:risk, risk %), not the
+   outcome. Up to 300 points, XP for finishing, a streak and the last 7 days.
+   No streak-guilt: a missed day just starts a new streak. A shared
+   leaderboard, ranked by process score, comes with online accounts.
 3. **Practice Arena**: bar-by-bar replay of a longer chart with a virtual balance
    (e.g. $10,000 virtual). Buy/sell, set stops and targets, control replay speed,
    reset any time. Free users get a daily allowance; premium is unlimited.

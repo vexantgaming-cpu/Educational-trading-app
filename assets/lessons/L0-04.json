@@ -4,6 +4,7 @@
   "steps": [
     {
       "type": "explain",
+      "art": "longShort",
       "title": "Two directions",
       "text": "Going **long** means buying first, hoping to sell higher later.\n\nGoing **short** means selling first, hoping to buy back cheaper later. With shares, that means selling shares you have borrowed.\n\nYou can profit, or lose, in either direction."
     },
@@ -21,16 +22,19 @@
     },
     {
       "type": "explain",
+      "art": "marketOrder",
       "title": "Market order",
       "text": "A **market order** buys or sells **right now** at the best price available.\n\nIt's fast and almost always fills, but you don't control the exact price. In a fast market you can get a worse price than you saw on screen. This is called **slippage**."
     },
     {
       "type": "explain",
+      "art": "limitOrder",
       "title": "Limit order",
       "text": "A **limit order** trades only at **your price or better**.\n\nA **buy limit** sits **below** the current price and waits for a dip. A **sell limit** sits **above** it and waits for a rise.\n\nYou control the price, but the order might never fill."
     },
     {
       "type": "explain",
+      "art": "stopOrder",
       "title": "Stop order",
       "text": "A **stop order** turns into a market order once price **reaches your level**.\n\nA **buy stop** sits **above** the current price (to catch a breakout). A **sell stop** sits **below** it.\n\nA **stop-loss** is a stop order that closes your trade automatically if price moves against you."
     },

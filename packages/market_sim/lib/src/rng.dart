@@ -30,6 +30,18 @@ class SeededRandom {
 
   bool nextBool([double probability = 0.5]) => nextDouble() < probability;
 
+  /// A shuffled copy of [items] (Fisher–Yates).
+  List<T> shuffled<T>(List<T> items) {
+    final out = [...items];
+    for (var i = out.length - 1; i > 0; i--) {
+      final j = nextInt(i + 1);
+      final t = out[i];
+      out[i] = out[j];
+      out[j] = t;
+    }
+    return out;
+  }
+
   /// Standard normal sample (Box–Muller).
   double nextGaussian() {
     final spare = _spareGaussian;

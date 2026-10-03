@@ -50,6 +50,7 @@ sealed class LessonStep {
         answer: json['answer'] as int,
         explanation: json['explanation'] as String,
         chart: _chart(json['chart']),
+        shuffle: json['shuffle'] as bool? ?? true,
       ),
       'spot' => SpotStep(
         prompt: json['prompt'] as String,
@@ -87,8 +88,46 @@ class ExplainStep extends LessonStep {
 }
 
 /// Illustrations available to explain steps, by their JSON `art` name.
-/// Drawn by `MindArtPainter` in `mind_art.dart`.
+/// Drawn by `LessonArtPainter` in `art/lesson_art.dart`.
 enum LessonArt {
+  // Level 0: market foundations
+  buyersSellers,
+  otherSide,
+  bidAsk,
+  spreadCost,
+  spreadWiden,
+  marketFamilies,
+  tradingHours,
+  leverage,
+  longShort,
+  marketOrder,
+  limitOrder,
+  stopOrder,
+  candleColours,
+  candleShapes,
+  timeframeZoom,
+  liquidity,
+  // Level 1: market structure
+  trendStructure,
+  rangeBox,
+  swingPoints,
+  roleReversal,
+  trendChannel,
+  fakeout,
+  pullback,
+  multiTimeframe,
+  // Level 2: risk management
+  beginnerMistakes,
+  onePercent,
+  stopPlacement,
+  rewardRisk,
+  expectancy,
+  positionSize,
+  marginLevel,
+  drawdown,
+  tradingCosts,
+  slippage,
+  // Level 7: trading psychology
   stress,
   fearGreed,
   lossAversion,
@@ -119,6 +158,7 @@ class QuizStep extends LessonStep {
     required this.answer,
     required this.explanation,
     this.chart,
+    this.shuffle = true,
   });
 
   final String question;
@@ -128,9 +168,27 @@ class QuizStep extends LessonStep {
   final int answer;
   final String explanation;
   final ChartSpec? chart;
+
+  /// Show the options in a fixed, mixed-up order so the right answer isn't
+  /// always in the same place. Options starting "All of" or "None of" stay
+  /// last. Set `"shuffle": false` when the order itself matters.
+  final bool shuffle;
 }
 
-enum SpotTarget { support, resistance, highest, lowest }
+/// What the learner taps in a "Spot it" step.
+///
+/// [swingHigh]/[swingLow] are the most recent confirmed swing points (five
+/// lower highs, or higher lows, on each side). [breakout] is the first candle
+/// that closes beyond the range before a segment labelled `breakout`.
+enum SpotTarget {
+  support,
+  resistance,
+  highest,
+  lowest,
+  swingHigh,
+  swingLow,
+  breakout,
+}
 
 /// "Spot it": tap the right place on a chart.
 class SpotStep extends LessonStep {
@@ -245,6 +303,7 @@ class ChartSpec {
     return RenderedChart(
       candles: candles,
       zones: aggregate == 1 ? scenario.zones : const [],
+      spans: aggregate == 1 ? scenario.spans : const [],
       movingAverage: movingAverage == null
           ? null
           : Indicators.sma([for (final c in candles) c.close], movingAverage!),
@@ -256,10 +315,14 @@ class RenderedChart {
   const RenderedChart({
     required this.candles,
     required this.zones,
+    this.spans = const [],
     this.movingAverage,
   });
 
   final List<Candle> candles;
   final List<Zone> zones;
+
+  /// Which bars belong to which scripted segment (base timeframe only).
+  final List<SegmentSpan> spans;
   final List<double?>? movingAverage;
 }

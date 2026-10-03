@@ -14,15 +14,20 @@ enum _Phase { planning, running, done }
 
 /// "Place the trade": drag the stop-loss and take-profit, see the risk and
 /// position size update live, then watch the trade play out bar by bar.
+///
+/// With a [challenge] it is round 3 of the Daily Challenge: today's chart,
+/// no "new chart" button, and it closes with the plan's [ProcessScore].
 class PlaceTradeExercise extends StatefulWidget {
   const PlaceTradeExercise({
     super.key,
     this.seed = 7,
     this.replayInterval = const Duration(milliseconds: 140),
+    this.challenge,
   });
 
   final int seed;
   final Duration replayInterval;
+  final TradeSetup? challenge;
 
   @override
   State<PlaceTradeExercise> createState() => _PlaceTradeExerciseState();
@@ -63,7 +68,10 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
   }
 
   void _load() {
-    _scenario = TradeScenario.supportBounce(_seed);
+    final challenge = widget.challenge;
+    _scenario = challenge != null
+        ? TradeScenario.forSetup(challenge)
+        : TradeScenario.supportBounce(_seed);
     _session = ReplaySession(
       candles: _scenario.scenario.candles,
       spec: spec,
@@ -74,7 +82,7 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
       for (final c in _scenario.scenario.candles) c.close,
     ], 20);
     _phase = _Phase.planning;
-    _side = Side.long;
+    _side = _scenario.side;
     _result = null;
     _score = null;
     _error = null;
@@ -182,19 +190,24 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Place the trade'),
+        title: Text(
+          widget.challenge != null
+              ? 'Round 3 · Plan the trade'
+              : 'Place the trade',
+        ),
         actions: [
-          IconButton(
-            tooltip: 'New chart',
-            icon: const Icon(Icons.refresh),
-            onPressed: _phase == _Phase.running ? null : _nextChart,
-          ),
+          if (widget.challenge == null)
+            IconButton(
+              tooltip: 'New chart',
+              icon: const Icon(Icons.refresh),
+              onPressed: _phase == _Phase.running ? null : _nextChart,
+            ),
         ],
       ),
       body: SafeArea(
         child: Column(
           children: [
-            _Banner(phase: _phase),
+            _Banner(phase: _phase, side: _scenario.side),
             Expanded(
               flex: 11,
               child: Padding(
@@ -565,25 +578,37 @@ class _PlaceTradeExerciseState extends State<PlaceTradeExercise> {
           style: theme.textTheme.bodySmall,
         ),
         const SizedBox(height: 14),
-        GradientButton(
-          label: 'Try another chart',
-          icon: Icons.refresh,
-          onPressed: _nextChart,
-        ),
+        if (widget.challenge != null)
+          GradientButton(
+            label: 'See today\'s score',
+            icon: Icons.emoji_events_outlined,
+            onPressed: () => Navigator.of(context).pop(_score),
+          )
+        else
+          GradientButton(
+            label: 'Try another chart',
+            icon: Icons.refresh,
+            onPressed: _nextChart,
+          ),
       ],
     );
   }
 }
 
 class _Banner extends StatelessWidget {
-  const _Banner({required this.phase});
+  const _Banner({required this.phase, required this.side});
 
   final _Phase phase;
+  final Side side;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final text = switch (phase) {
+      _Phase.planning when side == Side.short =>
+        'Price has rallied back to an area where sellers stepped in before. '
+            'Plan a short trade: drag the red stop-loss and the green '
+            'take-profit.',
       _Phase.planning =>
         'Price has pulled back to an area where buyers stepped in before. '
             'Plan a trade: drag the red stop-loss and the green take-profit.',

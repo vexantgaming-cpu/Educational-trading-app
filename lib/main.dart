@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'daily/daily_challenge_screen.dart';
+import 'daily/daily_challenge_store.dart';
 import 'data/curriculum.dart';
 import 'exercises/place_trade_exercise.dart';
 import 'game/game_scope.dart';
@@ -29,7 +31,10 @@ Future<void> main() async {
   final progress = await ProgressStore.load();
   final game = await GameStore.load();
   final settings = await SettingsStore.load();
-  runApp(UpwiqApp(progress: progress, game: game, settings: settings));
+  final daily = await DailyChallengeStore.load();
+  runApp(
+    UpwiqApp(progress: progress, game: game, settings: settings, daily: daily),
+  );
 }
 
 class UpwiqApp extends StatelessWidget {
@@ -38,11 +43,16 @@ class UpwiqApp extends StatelessWidget {
     required this.progress,
     required this.game,
     required this.settings,
+    this.daily,
   });
 
   final ProgressStore progress;
   final GameStore game;
   final SettingsStore settings;
+
+  /// Daily Challenge history; in memory when not given (tests, previews).
+  final DailyChallengeStore? daily;
+  static final _memoryDaily = DailyChallengeStore.memory();
 
   static final _light = buildAppTheme(AppPalette.light);
   static final _dark = buildAppTheme(AppPalette.dark);
@@ -55,31 +65,35 @@ class UpwiqApp extends StatelessWidget {
         store: progress,
         child: GameScope(
           store: game,
-          child: ListenableBuilder(
-            listenable: settings,
-            builder: (context, _) => MaterialApp(
-              title: 'Upwiq',
-              debugShowCheckedModeBanner: false,
-              theme: _light,
-              darkTheme: _dark,
-              themeMode: settings.themeMode,
-              // Status bar icons follow the theme on screens without an app bar.
-              builder: (context, child) =>
-                  AnnotatedRegion<SystemUiOverlayStyle>(
-                    value: Theme.of(context).brightness == Brightness.dark
-                        ? SystemUiOverlayStyle.light
-                        : SystemUiOverlayStyle.dark,
-                    child: child!,
-                  ),
-              routes: {
-                '/': (_) => const HomeShell(),
-                '/practice': (_) => const HomeShell(initialTab: 1),
-                '/league': (_) => const HomeShell(initialTab: 2),
-                '/account': (_) => const HomeShell(initialTab: 3),
-                '/feedback': (_) => const FeedbackScreen(),
-                placeTradeRoute: (_) => const PlaceTradeExercise(),
-              },
-              onGenerateRoute: _generateRoute,
+          child: DailyScope(
+            store: daily ?? _memoryDaily,
+            child: ListenableBuilder(
+              listenable: settings,
+              builder: (context, _) => MaterialApp(
+                title: 'Upwiq',
+                debugShowCheckedModeBanner: false,
+                theme: _light,
+                darkTheme: _dark,
+                themeMode: settings.themeMode,
+                // Status bar icons follow the theme on screens without an app bar.
+                builder: (context, child) =>
+                    AnnotatedRegion<SystemUiOverlayStyle>(
+                      value: Theme.of(context).brightness == Brightness.dark
+                          ? SystemUiOverlayStyle.light
+                          : SystemUiOverlayStyle.dark,
+                      child: child!,
+                    ),
+                routes: {
+                  '/': (_) => const HomeShell(),
+                  '/practice': (_) => const HomeShell(initialTab: 1),
+                  '/league': (_) => const HomeShell(initialTab: 2),
+                  '/account': (_) => const HomeShell(initialTab: 3),
+                  '/feedback': (_) => const FeedbackScreen(),
+                  dailyChallengeRoute: (_) => const DailyChallengeScreen(),
+                  placeTradeRoute: (_) => const PlaceTradeExercise(),
+                },
+                onGenerateRoute: _generateRoute,
+              ),
             ),
           ),
         ),
@@ -159,6 +173,16 @@ Route<void>? _generateRoute(RouteSettings settings) {
         ranked: false,
         startingBalance: LeagueRules.startingBalance,
         onComplete: (result) async => SessionSummaryScreen(result: result),
+      ),
+    );
+  }
+  // Previews of a Daily Challenge trade round: /daily/trade?date=2026-10-03
+  if (!kReleaseMode && uri.path == '/daily/trade') {
+    final date = DateTime.tryParse(uri.queryParameters['date'] ?? '');
+    return MaterialPageRoute(
+      settings: settings,
+      builder: (_) => PlaceTradeExercise(
+        challenge: DailyChallenge.forDate(date ?? DateTime.now()).trade,
       ),
     );
   }

@@ -1,0 +1,103 @@
+{
+  "id": "L1-09",
+  "title": "Multi-timeframe analysis",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "multiTimeframe",
+      "title": "One market, several views",
+      "text": "A sharp drop on a 1-hour chart can be a tiny dip inside an uptrend on the daily chart.\n\nLooking at two or three timeframes helps you avoid trading **against the bigger picture**."
+    },
+    {
+      "type": "explain",
+      "title": "Higher timeframe: the direction",
+      "text": "Start high. Each candle here covers **4 times** as long as on the next chart. The trend is clear: up.\n\nUse this view for the **trend** and the **major levels**.",
+      "chart": {
+        "seed": 291,
+        "aggregate": 4,
+        "visibleBars": 30,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 80,
+            "movePct": 14
+          },
+          {
+            "type": "trend",
+            "bars": 20,
+            "movePct": -4
+          },
+          {
+            "type": "trend",
+            "bars": 20,
+            "movePct": 3
+          }
+        ]
+      }
+    },
+    {
+      "type": "explain",
+      "title": "Lower timeframe: the timing",
+      "text": "This is the **same market**, zoomed in on the last part. The pullback that looked small above is clear here.\n\nUse this view to **time your entry** and place your stop precisely.",
+      "chart": {
+        "seed": 291,
+        "visibleBars": 50,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 80,
+            "movePct": 14
+          },
+          {
+            "type": "trend",
+            "bars": 20,
+            "movePct": -4
+          },
+          {
+            "type": "trend",
+            "bars": 20,
+            "movePct": 3
+          }
+        ]
+      }
+    },
+    {
+      "type": "quiz",
+      "question": "The daily chart is in a strong uptrend. On the 1-hour chart, price is dropping towards daily support. Which idea fits the bigger picture?",
+      "options": [
+        "Short it, because the 1-hour chart is falling",
+        "Look for a buy as the dip reaches support, with a stop below it",
+        "Ignore both charts",
+        "Buy anywhere: the trend will save you"
+      ],
+      "answer": 1,
+      "explanation": "The higher timeframe sets the **direction** (up), and the lower timeframe offers a better **entry** at support."
+    },
+    {
+      "type": "explain",
+      "title": "A simple top-down routine",
+      "text": "1. **Higher** (e.g. daily): trend direction and major levels.\n\n2. **Middle** (e.g. 4-hour): the current swing and pullbacks.\n\n3. **Lower** (e.g. 1-hour): entry timing and stop placement.\n\nA common guide is a factor of about **4 to 6** between the timeframes you use."
+    },
+    {
+      "type": "quiz",
+      "question": "The timeframes disagree. What's a sensible default for a beginner?",
+      "options": [
+        "Follow the lowest timeframe: it's the most recent",
+        "Trade both directions at once",
+        "Follow the higher timeframe, or wait until they line up",
+        "Make the position bigger to make up for it"
+      ],
+      "answer": 2,
+      "explanation": "When timeframes conflict, the higher one usually wins. Waiting is a position too."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "Use a **higher** timeframe for direction and levels.",
+        "Use a **lower** timeframe for timing and stops.",
+        "Keep a factor of about **4–6** between timeframes.",
+        "When they disagree, **follow the higher one** or wait."
+      ]
+    }
+  ]
+}

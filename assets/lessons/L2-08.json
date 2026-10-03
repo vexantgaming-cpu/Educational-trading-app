@@ -1,0 +1,67 @@
+{
+  "id": "L2-08",
+  "title": "Drawdown maths",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "drawdown",
+      "title": "Losses and gains aren't symmetrical",
+      "text": "A **drawdown** is a fall from your account's peak. To get back, you need a **bigger** percentage gain than the loss:\n\ndown **10%** needs **+11%**, down **25%** needs **+33%**, down **50%** needs **+100%**."
+    },
+    {
+      "type": "quiz",
+      "question": "Your account falls from $10,000 to $8,000. What percentage gain takes you back to $10,000?",
+      "options": [
+        "20%",
+        "15%",
+        "25%",
+        "80%"
+      ],
+      "answer": 2,
+      "explanation": "You need $2,000 on top of $8,000: $2,000 ÷ $8,000 = **25%**."
+    },
+    {
+      "type": "explain",
+      "title": "Why small risk matters so much",
+      "text": "Small drawdowns are quick to recover from. Deep ones can take years, or never recover.\n\nThat's why your **risk per trade** and a **daily loss limit** matter more than finding a perfect entry."
+    },
+    {
+      "type": "explain",
+      "title": "Losing streaks are normal",
+      "text": "Even if you win half your trades, a run of **5 losses in a row** is likely to turn up at some point over a few hundred trades.\n\nPlan for it: at **1%** risk, 5 losses cost about **5%**. At **5%** risk, about **23%**."
+    },
+    {
+      "type": "quiz",
+      "question": "Which drawdown is the hardest to recover from?",
+      "options": [
+        "−5%",
+        "−10%",
+        "−20%",
+        "−40%"
+      ],
+      "answer": 3,
+      "explanation": "From −40% you need about **+67%** to get back. The deeper the hole, the steeper the climb."
+    },
+    {
+      "type": "quiz",
+      "question": "You're in a 20% drawdown. What's a sensible response?",
+      "options": [
+        "Double your risk to recover faster",
+        "Cut your risk per trade and review what went wrong",
+        "Stop using stops",
+        "Switch to a market you've never traded"
+      ],
+      "answer": 1,
+      "explanation": "Lower risk slows the damage while you find the problem. Bigger risk in a drawdown is how accounts get wiped out."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "Recovery needs a **bigger** gain than the loss.",
+        "−10% → +11%, −25% → +33%, −50% → **+100%**.",
+        "Losing streaks are **normal**: size for them.",
+        "In a drawdown, **cut risk** and review."
+      ]
+    }
+  ]
+}

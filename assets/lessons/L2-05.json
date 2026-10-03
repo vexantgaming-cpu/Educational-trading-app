@@ -1,0 +1,67 @@
+{
+  "id": "L2-05",
+  "title": "Win rate × reward:risk = expectancy",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "expectancy",
+      "title": "Two numbers that work together",
+      "text": "Your **win rate** (how often you win) and your **reward:risk** only make sense together.\n\nThe win rate you need to break even is **1 ÷ (1 + R:R)**: **50%** at 1:1, about **33%** at 2:1, and **25%** at 3:1 (before costs)."
+    },
+    {
+      "type": "explain",
+      "title": "Expectancy",
+      "text": "**Expectancy** is your average result per trade, in R:\n\n(win rate × average win) − (loss rate × average loss)\n\nExample: win 40% of the time at +2R, lose 60% at −1R. 0.4 × 2 − 0.6 × 1 = **+0.2R** per trade. Over 100 trades that's about **+20R**."
+    },
+    {
+      "type": "quiz",
+      "question": "Win rate 50%, average win +1.5R, average loss −1R. What's the expectancy per trade?",
+      "options": [
+        "+0.5R",
+        "−0.25R",
+        "+0.25R",
+        "+1.5R"
+      ],
+      "answer": 2,
+      "explanation": "0.5 × 1.5 − 0.5 × 1 = 0.75 − 0.5 = **+0.25R** per trade."
+    },
+    {
+      "type": "quiz",
+      "question": "Your reward:risk is 3:1. Roughly what win rate do you need to break even, before costs?",
+      "options": [
+        "25%",
+        "33%",
+        "50%",
+        "75%"
+      ],
+      "answer": 0,
+      "explanation": "1 ÷ (1 + 3) = **25%**. Win one trade in four at +3R and you cover three −1R losses."
+    },
+    {
+      "type": "explain",
+      "title": "Small samples lie",
+      "text": "Ten trades tell you almost nothing: a good strategy can lose six in a row by chance, and a bad one can win six.\n\nJudge a strategy on **dozens to hundreds** of trades, and include costs."
+    },
+    {
+      "type": "quiz",
+      "question": "Why might a strategy that wins 70% of its trades still lose money?",
+      "options": [
+        "70% is too low to profit",
+        "Its losing trades are much bigger than its winners",
+        "A high win rate always profits",
+        "Win rate is all that matters"
+      ],
+      "answer": 1,
+      "explanation": "If the average loss is far bigger than the average win, a few losses wipe out many wins. Always look at **both** numbers."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "Break-even win rate = **1 ÷ (1 + R:R)**.",
+        "**Expectancy** = average result per trade, in R.",
+        "Positive expectancy needs **win rate and R:R together**.",
+        "Judge strategies on **many** trades, after costs."
+      ]
+    }
+  ]
+}

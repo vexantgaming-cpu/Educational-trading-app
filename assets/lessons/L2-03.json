@@ -1,0 +1,82 @@
+{
+  "id": "L2-03",
+  "title": "Where to put a stop-loss",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "stopPlacement",
+      "title": "Your stop marks where you're wrong",
+      "text": "A good stop-loss isn't a random distance, or the amount you can \"afford\" to lose. It goes where the reason for the trade **no longer holds**.\n\nFor a buy at support, that's **below** the support zone."
+    },
+    {
+      "type": "explain",
+      "title": "Give it room",
+      "text": "Put the stop **beyond** the zone and its wicks, with a small buffer.\n\nA stop inside the zone, or right on an obvious round number, is likely to be hit by normal wiggles even when your idea was right."
+    },
+    {
+      "type": "spot",
+      "prompt": "You want to buy here. Tap the support zone: your stop would go just below it.",
+      "target": "support",
+      "explanation": "The support zone is where the dips kept stopping. A stop **just below it** is only hit if support really breaks.",
+      "chart": {
+        "seed": 303,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 25,
+            "movePct": 7
+          },
+          {
+            "type": "range",
+            "bars": 45,
+            "belowPct": 4.5,
+            "abovePct": 0.4
+          }
+        ]
+      }
+    },
+    {
+      "type": "quiz",
+      "question": "Where does a stop-loss for a short (sell) trade at resistance usually go?",
+      "options": [
+        "Just below the resistance zone",
+        "Just above the resistance zone",
+        "At your entry price",
+        "Far below the market"
+      ],
+      "answer": 1,
+      "explanation": "A short at resistance is wrong if price breaks **above** resistance, so the stop goes just above the zone."
+    },
+    {
+      "type": "explain",
+      "title": "Other logical places",
+      "text": "• Beyond the most recent **swing low** (for a buy) or **swing high** (for a sell).\n\n• Beyond a **trendline** your trade depends on.\n\n• A multiple of the market's typical daily range (its volatility). You'll meet this in the Indicators level."
+    },
+    {
+      "type": "quiz",
+      "question": "The logical stop is far away, so your 1% risk only allows a small position. What should you do?",
+      "options": [
+        "Move the stop closer so you can trade bigger",
+        "Trade without a stop",
+        "Accept the smaller position, or skip the trade",
+        "Use more leverage"
+      ],
+      "answer": 2,
+      "explanation": "The stop comes from the chart; the size comes from the stop. Never squeeze a stop just to trade bigger."
+    },
+    {
+      "type": "explain",
+      "title": "Never move a stop further away",
+      "text": "You can move a stop **closer** to lock in profit. Never move it **further away** to avoid a loss.\n\nThat turns a small, planned loss into a big, unplanned one."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "Stops go where the trade idea is **wrong**.",
+        "Place them **beyond** zones, swings or trendlines, with a buffer.",
+        "Size comes from the stop, **not** the other way round.",
+        "Move stops closer, **never** further away."
+      ]
+    }
+  ]
+}

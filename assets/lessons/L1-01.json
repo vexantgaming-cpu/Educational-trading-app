@@ -1,0 +1,108 @@
+{
+  "id": "L1-01",
+  "title": "Trends: higher highs and higher lows",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "trendStructure",
+      "title": "What a trend really is",
+      "text": "An **uptrend** makes **higher highs** and **higher lows**: each rally goes a little further, and each dip stops a little higher.\n\nA **downtrend** is the mirror image: **lower highs** and **lower lows**.\n\nTrends are never straight lines. Price moves in steps: a push, a pause, another push."
+    },
+    {
+      "type": "explain",
+      "title": "An uptrend on a chart",
+      "text": "Follow the dips on this chart. Each one stops **above** the previous dip, and each rally makes a new high.\n\nAs long as that pattern continues, buyers are in control.",
+      "chart": {
+        "seed": 211,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 70,
+            "movePct": 14
+          }
+        ]
+      }
+    },
+    {
+      "type": "explain",
+      "title": "A downtrend on a chart",
+      "text": "Here the rallies fail at **lower** levels each time, and each fall goes deeper.\n\nSellers are in control. Buying every dip in a downtrend is one of the most common beginner mistakes.",
+      "chart": {
+        "seed": 212,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 70,
+            "movePct": -12
+          }
+        ]
+      }
+    },
+    {
+      "type": "quiz",
+      "question": "What's the trend on this chart?",
+      "options": [
+        "Up: higher highs and higher lows",
+        "Down: lower highs and lower lows",
+        "Sideways: no clear direction",
+        "You can't tell from a chart"
+      ],
+      "answer": 0,
+      "explanation": "After a quiet start, price makes **higher highs and higher lows**. That's an uptrend.",
+      "chart": {
+        "seed": 213,
+        "segments": [
+          {
+            "type": "range",
+            "bars": 25,
+            "belowPct": 2,
+            "abovePct": 2
+          },
+          {
+            "type": "trend",
+            "bars": 45,
+            "movePct": 11
+          }
+        ]
+      }
+    },
+    {
+      "type": "quiz",
+      "question": "In an uptrend, what is a \"higher low\"?",
+      "options": [
+        "A price lower than yesterday's close",
+        "A dip that stops above the previous dip",
+        "The lowest point on the chart",
+        "A candle with a long lower wick"
+      ],
+      "answer": 1,
+      "explanation": "A higher low is a **pullback that ends above the last one**. It shows buyers stepping in earlier each time."
+    },
+    {
+      "type": "explain",
+      "title": "When is a trend in doubt?",
+      "text": "Watch the last swing point. In an uptrend, the warning sign is price falling **below the most recent higher low**. In a downtrend, it's price rising **above the most recent lower high**.\n\nThat doesn't guarantee a reversal: the market may simply go sideways for a while. But the clean pattern is broken, so be more careful."
+    },
+    {
+      "type": "quiz",
+      "question": "Price in an uptrend falls below its most recent higher low. What's the most sensible read?",
+      "options": [
+        "The uptrend is stronger than ever",
+        "Price must now fall much further",
+        "The uptrend's pattern is broken, so be careful buying dips",
+        "Nothing: lows don't matter in an uptrend"
+      ],
+      "answer": 2,
+      "explanation": "The higher-low pattern has broken. The trend **may** be ending or pausing. Nothing is certain, but buying dips is now riskier."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "**Uptrend**: higher highs and higher lows.",
+        "**Downtrend**: lower highs and lower lows.",
+        "Trends move in **steps**, not straight lines.",
+        "A break of the last higher low (or lower high) puts the trend **in doubt**."
+      ]
+    }
+  ]
+}

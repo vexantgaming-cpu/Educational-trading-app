@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:market_sim/market_sim.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:upwiq/daily/daily_challenge_store.dart';
 import 'package:upwiq/game/game_scope.dart';
 import 'package:upwiq/game/game_store.dart';
 import 'package:upwiq/game/league_screen.dart';
@@ -155,14 +156,19 @@ void main() {
                 store: settings,
                 child: ProgressScope(
                   store: progress,
-                  child: MaterialApp(
-                    theme: buildAppTheme(palette),
-                    builder: (context, child) => MediaQuery(
-                      data: MediaQuery.of(context)
-                          .copyWith(textScaler: TextScaler.linear(scale)),
-                      child: child!,
+                  child: DailyScope(
+                    store: DailyChallengeStore.memory(
+                      clock: () => DateTime(2026, 10, 3, 10),
                     ),
-                    home: Scaffold(body: tab),
+                    child: MaterialApp(
+                      theme: buildAppTheme(palette),
+                      builder: (context, child) => MediaQuery(
+                        data: MediaQuery.of(context)
+                            .copyWith(textScaler: TextScaler.linear(scale)),
+                        child: child!,
+                      ),
+                      home: Scaffold(body: tab),
+                    ),
                   ),
                 ),
               ),

@@ -1,0 +1,61 @@
+{
+  "id": "L2-04",
+  "title": "Take-profit and reward:risk",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "rewardRisk",
+      "title": "Reward compared with risk",
+      "text": "**Reward:risk** compares what you could make with what you could lose. If your stop is $1 away and your target $2 away, that's **2:1**.\n\nTraders call the risk **1R**. A target twice as far away is **+2R**."
+    },
+    {
+      "type": "quiz",
+      "question": "Entry 50, stop-loss 48, target 56. What's the reward:risk?",
+      "options": [
+        "2:1",
+        "3:1",
+        "1:3",
+        "6:1"
+      ],
+      "answer": 1,
+      "explanation": "Risk is 50 − 48 = **2**. Reward is 56 − 50 = **6**. 6 ÷ 2 = **3:1**."
+    },
+    {
+      "type": "explain",
+      "title": "Why it matters",
+      "text": "At **2:1** you can be wrong more often than right and still come out ahead.\n\nAt **1:2** (risking 2 to make 1), you'd need to win about **two trades in every three** just to break even."
+    },
+    {
+      "type": "explain",
+      "title": "Targets must be realistic",
+      "text": "A target should sit where price can plausibly get to: before the next resistance for a buy, before the next support for a sell.\n\nA 5:1 target straight through a wall of resistance looks great on paper and rarely gets hit."
+    },
+    {
+      "type": "quiz",
+      "question": "You plan a buy with a 2:1 target, but strong resistance sits just 1R above your entry. What's the most sensible choice?",
+      "options": [
+        "Keep the 2:1 target and hope",
+        "Remove the stop to give it room",
+        "Double the position size",
+        "Skip the trade, or wait for a better entry"
+      ],
+      "answer": 3,
+      "explanation": "If the realistic target is only 1R away, the trade doesn't offer enough reward. A better entry, lower down, might."
+    },
+    {
+      "type": "exercise",
+      "title": "Plan a trade",
+      "text": "Put it into practice: place your stop **below support** and a target that gives at least **1.5:1**, without going past resistance.\n\nCome back here when you're done.",
+      "route": "/exercise/place-trade"
+    },
+    {
+      "type": "recap",
+      "points": [
+        "**R:R** = reward ÷ risk; the risk is **1R**.",
+        "Aim for at least **1.5:1 to 2:1**.",
+        "Targets go **before** the next opposing level.",
+        "If the realistic target is too close, **skip** the trade."
+      ]
+    }
+  ]
+}

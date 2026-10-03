@@ -1,0 +1,55 @@
+{
+  "id": "L2-01",
+  "title": "Why most beginners lose",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "beginnerMistakes",
+      "title": "The uncomfortable truth",
+      "text": "In the EU, brokers offering CFDs (a popular leveraged product) must tell you what share of their retail clients' accounts **lose money**. The published figures are typically somewhere **between 60% and 85%**.\n\nMost of those losses don't come from bad chart reading. They come from how traders **manage risk**, and themselves."
+    },
+    {
+      "type": "explain",
+      "title": "Three classic mistakes",
+      "text": "**1. No stop-loss.** Hoping a losing trade will come back is how small losses turn into big ones.\n\n**2. Trades that are too big.** Every move feels huge, emotions take over, and a normal run of losses does serious damage.\n\n**3. Overtrading and chasing.** Trading out of boredom, or to win back a loss, piles up costs and mistakes."
+    },
+    {
+      "type": "quiz",
+      "question": "Which habit protects a beginner the most?",
+      "options": [
+        "Trading as often as possible to get experience",
+        "Risking a small, fixed amount per trade, with a stop-loss",
+        "Making the next trade bigger after a loss",
+        "Removing stops so normal swings don't trigger them"
+      ],
+      "answer": 1,
+      "explanation": "A small, fixed risk with a stop means no single trade, or bad week, can do serious damage."
+    },
+    {
+      "type": "explain",
+      "title": "The good news",
+      "text": "These are **process** mistakes, and process can be learned.\n\nThis level gives you the tools: risk per trade, stop placement, reward-to-risk, position sizing and the maths of losing streaks. Master these before anything else."
+    },
+    {
+      "type": "quiz",
+      "question": "A trader has a decent strategy but risks 20% of the account on every trade. What's the most likely outcome over time?",
+      "options": [
+        "They get rich faster",
+        "Risk size doesn't matter if the strategy is good",
+        "They can't lose more than 20% in total",
+        "A normal losing streak does huge damage, even with a good strategy"
+      ],
+      "answer": 3,
+      "explanation": "Four losses in a row at 20% each leave about **41%** of the account. Losing streaks happen to every strategy."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "Most retail CFD accounts **lose money**.",
+        "The big killers: **no stop**, **too big**, **overtrading**.",
+        "These are **process** mistakes, and process can be learned.",
+        "Risk management comes **before** finding entries."
+      ]
+    }
+  ]
+}

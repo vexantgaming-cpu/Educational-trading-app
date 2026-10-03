@@ -4,6 +4,7 @@
   "steps": [
     {
       "type": "explain",
+      "art": "timeframeZoom",
       "title": "One candle, one period",
       "text": "Each candle covers a fixed amount of time: 1 minute, 1 hour, 1 day, 1 week... That period is the **timeframe**.\n\nThe same market can tell very different stories on different timeframes."
     },

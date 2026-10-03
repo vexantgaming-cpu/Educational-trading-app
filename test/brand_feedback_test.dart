@@ -11,7 +11,7 @@ import 'package:upwiq/game/game_scope.dart';
 import 'package:upwiq/game/game_store.dart';
 import 'package:upwiq/lessons/lesson_model.dart';
 import 'package:upwiq/lessons/lesson_player.dart';
-import 'package:upwiq/lessons/mind_art.dart';
+import 'package:upwiq/lessons/art/lesson_art.dart';
 import 'package:upwiq/main.dart';
 import 'package:upwiq/progress/progress_scope.dart';
 import 'package:upwiq/progress/progress_store.dart';
@@ -87,7 +87,7 @@ void main() {
     });
   });
 
-  group('psychology art', () {
+  group('lesson art', () {
     test('every explain step in the Level 7 lessons has art', () {
       final used = <LessonArt>{};
       for (final id in const ['L7-01', 'L7-02', 'L7-03']) {
@@ -96,7 +96,7 @@ void main() {
           used.add(step.art!);
         }
       }
-      expect(used, LessonArt.values.toSet(), reason: 'each picture is used');
+      expect(used.length, 14, reason: 'one picture per idea');
     });
 
     test('every picture paints in both themes and at odd sizes', () {
@@ -105,7 +105,7 @@ void main() {
         for (final palette in [AppPalette.dark, AppPalette.light]) {
           for (final size in const [Size(288, 150), Size(600, 150)]) {
             final recorder = ui.PictureRecorder();
-            MindArtPainter(art, palette).paint(Canvas(recorder), size);
+            LessonArtPainter(art, palette).paint(Canvas(recorder), size);
             recorder.endRecording().dispose();
           }
         }

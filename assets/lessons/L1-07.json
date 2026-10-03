@@ -1,0 +1,115 @@
+{
+  "id": "L1-07",
+  "title": "Breakouts vs fakeouts",
+  "steps": [
+    {
+      "type": "explain",
+      "title": "What a breakout looks like",
+      "text": "A **breakout** is when price **closes** beyond a range or key level and keeps going.\n\nLook at the volume bars too: strong breakouts often come with **higher volume** than the range before them.",
+      "chart": {
+        "seed": 271,
+        "showZones": true,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 20,
+            "movePct": 5
+          },
+          {
+            "type": "range",
+            "bars": 40,
+            "belowPct": 3.5,
+            "abovePct": 0.4,
+            "volume": 0.7
+          },
+          {
+            "type": "trend",
+            "bars": 20,
+            "movePct": 7,
+            "volume": 1.8,
+            "label": "breakout"
+          }
+        ]
+      }
+    },
+    {
+      "type": "spot",
+      "prompt": "Tap the breakout candle.",
+      "target": "breakout",
+      "explanation": "It's the first candle to **close** above resistance. Before that, price was still inside the range.",
+      "chart": {
+        "seed": 272,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 20,
+            "movePct": 5
+          },
+          {
+            "type": "range",
+            "bars": 40,
+            "belowPct": 4,
+            "abovePct": 0.4,
+            "volume": 0.7
+          },
+          {
+            "type": "trend",
+            "bars": 25,
+            "movePct": 8,
+            "volume": 1.8,
+            "label": "breakout"
+          }
+        ]
+      }
+    },
+    {
+      "type": "explain",
+      "art": "fakeout",
+      "title": "The fakeout",
+      "text": "A **fakeout** (false breakout) pokes beyond a level and then closes back **inside**.\n\nIt traps traders who jumped in early. When they rush to get out, their orders can push price sharply the other way."
+    },
+    {
+      "type": "explain",
+      "title": "Telling them apart",
+      "text": "No signal is certain, but these help:\n\n• Wait for a **candle close** beyond the level, not just a wick.\n\n• Look for **volume** above normal.\n\n• Watch the **retest**: a real breakout often comes back to the level and holds.\n\n• Check the **bigger picture**: breakouts in the direction of the higher-timeframe trend tend to work better."
+    },
+    {
+      "type": "quiz",
+      "question": "Price pushes above resistance during the hour, but the candle closes back below it. What is that most likely?",
+      "options": [
+        "A confirmed breakout",
+        "A possible fakeout: the close didn't confirm the breakout",
+        "A swing low",
+        "A certain reversal"
+      ],
+      "answer": 1,
+      "explanation": "Only the wick went above the level. Without a **close** beyond it, the breakout isn't confirmed."
+    },
+    {
+      "type": "quiz",
+      "question": "Which breakout is generally more convincing?",
+      "options": [
+        "A wick above resistance on very low volume",
+        "A breakout in thin holiday trading",
+        "A close above resistance on higher-than-usual volume",
+        "They're all equally convincing"
+      ],
+      "answer": 2,
+      "explanation": "A **close** beyond the level shows it held for the whole period, and **volume** shows many traders took part."
+    },
+    {
+      "type": "explain",
+      "title": "Protect yourself",
+      "text": "Even good breakouts fail sometimes. Keep your stop on the **other side of the level** (or below the breakout candle), and size the trade so a failed breakout is just a **small, planned loss**."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "A **breakout** is a close beyond the level that keeps going.",
+        "A **fakeout** pokes through and closes back inside.",
+        "Confirmation: **close**, **volume**, **retest**, **bigger trend**.",
+        "Failed breakouts happen: always use a **stop**."
+      ]
+    }
+  ]
+}

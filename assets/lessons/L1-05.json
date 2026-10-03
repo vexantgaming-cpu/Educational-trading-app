@@ -1,0 +1,123 @@
+{
+  "id": "L1-05",
+  "title": "When support becomes resistance",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "roleReversal",
+      "title": "Old levels have memory",
+      "text": "When price breaks **up** through resistance, that level often turns into **support** when price comes back to it.\n\nAnd when support breaks **down**, it often becomes **resistance**. This is called **role reversal**."
+    },
+    {
+      "type": "explain",
+      "title": "Why it happens",
+      "text": "Traders remember prices. Sellers who were caught on the wrong side of the breakout may buy back near the old level to get out at break-even. Traders who missed the move wait for a return to the level to buy.\n\nTogether they add buying pressure right at the old ceiling."
+    },
+    {
+      "type": "explain",
+      "title": "Break and retest",
+      "text": "On this chart, price broke above resistance, came **back** to it and bounced. That return to the level is called a **retest**.\n\nRetests give a clear place to enter, with a nearby, logical stop.",
+      "chart": {
+        "seed": 251,
+        "showZones": true,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 25,
+            "movePct": 6
+          },
+          {
+            "type": "range",
+            "bars": 35,
+            "belowPct": 3.5,
+            "abovePct": 0.4
+          },
+          {
+            "type": "trend",
+            "bars": 12,
+            "movePct": 5,
+            "volume": 1.6,
+            "label": "breakout"
+          },
+          {
+            "type": "trend",
+            "bars": 8,
+            "movePct": -3
+          },
+          {
+            "type": "trend",
+            "bars": 15,
+            "movePct": 5
+          }
+        ]
+      }
+    },
+    {
+      "type": "quiz",
+      "question": "Price breaks below a support zone, then rallies back up into it. What might that zone do now?",
+      "options": [
+        "Act as resistance",
+        "Become support again for sure",
+        "Nothing: broken levels are forgotten",
+        "Force price straight back up"
+      ],
+      "answer": 0,
+      "explanation": "Broken support often turns into **resistance**. It's a tendency, not a law, so trades still need a stop."
+    },
+    {
+      "type": "spot",
+      "prompt": "Tap the candle where price broke out of the range.",
+      "target": "breakout",
+      "explanation": "The breakout candle is the first one that **closes above** the range's resistance. Wicks poking through don't count until a candle closes beyond the level.",
+      "chart": {
+        "seed": 255,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 25,
+            "movePct": 6
+          },
+          {
+            "type": "range",
+            "bars": 40,
+            "belowPct": 4,
+            "abovePct": 0.4
+          },
+          {
+            "type": "trend",
+            "bars": 25,
+            "movePct": 8,
+            "volume": 1.8,
+            "label": "breakout"
+          }
+        ]
+      }
+    },
+    {
+      "type": "explain",
+      "title": "Not every retest holds",
+      "text": "Sometimes price slices straight back through the level and the breakout fails.\n\nThat's why a retest trade still needs a stop: for a buy, usually **just below the retested zone**. If price closes back inside the old range, the idea was wrong."
+    },
+    {
+      "type": "quiz",
+      "question": "You buy a retest of old resistance, which is now acting as support. Where does your stop-loss go?",
+      "options": [
+        "Just above the zone",
+        "Just below the retested zone",
+        "In the middle of the zone",
+        "No stop needed: role reversal always works"
+      ],
+      "answer": 1,
+      "explanation": "If price falls back **below** the zone, the level didn't hold, so that's where the trade idea is wrong."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "Broken resistance often becomes **support**, and broken support **resistance**.",
+        "A return to the broken level is a **retest**.",
+        "A breakout needs a **close** beyond the level.",
+        "Retests can fail: keep a **stop** beyond the zone."
+      ]
+    }
+  ]
+}

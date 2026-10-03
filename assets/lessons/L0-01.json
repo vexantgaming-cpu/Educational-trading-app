@@ -4,6 +4,7 @@
   "steps": [
     {
       "type": "explain",
+      "art": "buyersSellers",
       "title": "Buyers meet sellers",
       "text": "A **market** is simply a place where buyers and sellers meet. It can be a stock exchange, the network of banks that trade currencies, or a crypto exchange.\n\nThe rule is the same everywhere: a trade only happens when a buyer and a seller **agree on a price**."
     },
@@ -38,6 +39,7 @@
     },
     {
       "type": "explain",
+      "art": "otherSide",
       "title": "Someone is always on the other side",
       "text": "Every trade has two sides. When you buy, someone sells to you. When you sell, someone buys from you.\n\nThose people include banks, funds, market makers and individual traders, each with their own reasons and time horizons."
     },

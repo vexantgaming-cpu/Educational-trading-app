@@ -1,0 +1,97 @@
+{
+  "id": "L1-08",
+  "title": "Pullbacks and retracements",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "pullback",
+      "title": "Trends breathe",
+      "text": "Markets rarely go straight up. After a push higher, price usually **pulls back** before the next leg.\n\nThese **pullbacks** (also called **retracements**) are where many trend traders look to join the move."
+    },
+    {
+      "type": "explain",
+      "title": "Where pullbacks often stop",
+      "text": "Common places:\n\n• Old **resistance that turned into support**.\n\n• A rising **moving average** (the line on this chart averages the last 20 closes).\n\n• Roughly **a third to two thirds** of the previous move. Many traders watch the Fibonacci levels at 38.2%, 50% and 61.8%. Treat them as a rough zone, not precise magic numbers.",
+      "chart": {
+        "seed": 281,
+        "ma": 20,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 70,
+            "movePct": 15
+          }
+        ]
+      }
+    },
+    {
+      "type": "quiz",
+      "question": "Price rose from 100 to 120, then pulled back to 110. How much of the move did it retrace?",
+      "options": [
+        "10%",
+        "25%",
+        "50%",
+        "110%"
+      ],
+      "answer": 2,
+      "explanation": "The move was 20 points. A pullback of 10 points is **half** of it: a 50% retracement."
+    },
+    {
+      "type": "explain",
+      "title": "Pullback or reversal?",
+      "text": "A healthy pullback in an uptrend still makes a **higher low**: it stops above the previous swing low.\n\nIf price falls **below** the previous swing low, it's no longer just a pullback. The trend may be changing."
+    },
+    {
+      "type": "quiz",
+      "question": "In an uptrend, a pullback falls below the previous swing low. What's the best read?",
+      "options": [
+        "A great buy: the deeper the better",
+        "Nothing has changed",
+        "It's more than a pullback: the uptrend is now in question",
+        "Swing lows don't matter in uptrends"
+      ],
+      "answer": 2,
+      "explanation": "The higher-low pattern has broken. Wait for the market to show its hand before buying."
+    },
+    {
+      "type": "spot",
+      "prompt": "Tap the bottom of the latest pullback: the most recent swing low.",
+      "target": "swingLow",
+      "explanation": "The latest pullback ended at the **most recent swing low**. A stop for a trend-following buy would go just below it.",
+      "chart": {
+        "seed": 285,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 40,
+            "movePct": 9
+          },
+          {
+            "type": "trend",
+            "bars": 12,
+            "movePct": -3.5
+          },
+          {
+            "type": "trend",
+            "bars": 18,
+            "movePct": 4
+          }
+        ]
+      }
+    },
+    {
+      "type": "explain",
+      "title": "A simple pullback plan",
+      "text": "1. Find the trend and the zone where you expect the pullback to stop.\n\n2. Wait for price to reach it and show signs of turning (for example a strong bullish candle).\n\n3. Enter with a stop **below the pullback low**, and a target at the previous high or beyond."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "Trends move in **pushes and pullbacks**.",
+        "Pullbacks often stop at old levels, a moving average, or **38–62%** of the move.",
+        "A healthy pullback makes a **higher low**.",
+        "Stop goes **below the pullback low**."
+      ]
+    }
+  ]
+}

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:market_sim/market_sim.dart';
 
 import '../chart/candle_chart.dart';
+import '../daily/daily_challenge_screen.dart';
+import '../daily/daily_challenge_store.dart';
 import '../data/curriculum.dart';
 import '../exercises/trade_scenario.dart';
 import '../game/market_picker_screen.dart';
@@ -46,6 +48,8 @@ class PracticeScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
           sliver: SliverList.list(
             children: [
+              const _DailyCard(),
+              const SizedBox(height: 12),
               _PracticeCard(
                 icon: Icons.candlestick_chart,
                 colors: const [Color(0xFFFFC857), Color(0xFFFF7A2F)],
@@ -55,15 +59,6 @@ class PracticeScreen extends StatelessWidget {
                     'then watch it play out candle by candle.',
                 preview: const _ChartPreview(),
                 onStart: () => Navigator.of(context).pushNamed(placeTradeRoute),
-              ),
-              const SizedBox(height: 12),
-              const _PracticeCard(
-                icon: Icons.today,
-                colors: [Color(0xFF38BDF8), Color(0xFF2563EB)],
-                title: 'Daily Challenge',
-                body:
-                    'One chart, one trade, the same for everyone. Scored on '
-                    'how well you plan, not on luck.',
               ),
               const SizedBox(height: 12),
               _PracticeCard(
@@ -83,6 +78,81 @@ class PracticeScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Today's Daily Challenge: start it, or see how it went.
+class _DailyCard extends StatelessWidget {
+  const _DailyCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final palette = context.palette;
+    final store = DailyScope.of(context);
+    final result = store.todayResult;
+    final streak = store.streak;
+    return Container(
+      decoration: BoxDecoration(
+        color: palette.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: palette.gold.withValues(alpha: 0.45)),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const IconBadge(
+                icon: Icons.today,
+                colors: [Color(0xFF38BDF8), Color(0xFF2563EB)],
+                size: 44,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Daily Challenge',
+                  style: theme.textTheme.titleMedium,
+                ),
+              ),
+              Pill(label: '#${store.today.number}', color: palette.cyan),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            result == null
+                ? 'Three quick rounds: read a chart, size a position, plan a '
+                      'trade. New every day, the same for everyone.'
+                : 'Done for today: ${result.total} / ${DailyResult.maxTotal}, '
+                      '${result.verdict.toLowerCase()}. Next challenge in '
+                      '${untilText(store.untilNext)}.',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: palette.textMuted,
+            ),
+          ),
+          if (streak > 0) ...[
+            const SizedBox(height: 10),
+            Pill(
+              label: streak == 1 ? '1-day streak' : '$streak-day streak',
+              icon: Icons.local_fire_department,
+              color: palette.gold,
+            ),
+          ],
+          const SizedBox(height: 14),
+          GradientButton(
+            label: result == null
+                ? 'Start today\'s challenge'
+                : 'See today\'s result',
+            icon: result == null
+                ? Icons.play_arrow
+                : Icons.emoji_events_outlined,
+            onPressed: () =>
+                Navigator.of(context).pushNamed(dailyChallengeRoute),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -74,6 +74,30 @@ void main() {
     });
   });
 
+  test('every illustration is used, and the free path has pictures', () {
+    final used = <LessonArt>{};
+    for (final lesson in lessons.values) {
+      for (final step in lesson.steps.whereType<ExplainStep>()) {
+        if (step.art case final art?) used.add(art);
+      }
+    }
+    expect(LessonArt.values.toSet().difference(used), isEmpty);
+    // Every free lesson opens its story with a picture or a chart.
+    for (final level in curriculum) {
+      for (final lesson in level.lessons) {
+        if (lesson.id == null || level.isLocked(lesson)) continue;
+        final steps = lessons[lesson.id]!.steps;
+        final visual = steps.any(
+          (s) =>
+              (s is ExplainStep && (s.art != null || s.chart != null)) ||
+              s is SpotStep ||
+              s is CandleAnatomyStep,
+        );
+        expect(visual, isTrue, reason: '${lesson.id} has no visual');
+      }
+    }
+  });
+
   group('spot it', () {
     SpotStep spotStep(String lessonId, SpotTarget target) => lessons[lessonId]!
         .steps
@@ -103,11 +127,88 @@ void main() {
     test('highest candle: near misses of a bar or two still count', () {
       final step = spotStep('L0-05', SpotTarget.highest);
       final chart = step.chart.render();
-      final peak = extremeIndex(step, chart)!;
+      final peak = spotAnswerIndex(step, chart)!;
       final highs = [for (final c in chart.candles) c.high];
       expect(highs[peak], highs.reduce((a, b) => a > b ? a : b));
       expect(isSpotCorrect(step, chart, (index: peak + 1, price: 0)), isTrue);
       expect(isSpotCorrect(step, chart, (index: peak + 6, price: 0)), isFalse);
+    });
+
+    test('swing and breakout questions have one clear answer', () {
+      var checked = 0;
+      for (final lesson in lessons.values) {
+        for (final step in lesson.steps.whereType<SpotStep>()) {
+          final chart = step.chart.render();
+          final where = '${lesson.id} "${step.prompt}"';
+          switch (step.target) {
+            case SpotTarget.swingHigh:
+            case SpotTarget.swingLow:
+              final type = step.target == SpotTarget.swingHigh
+                  ? SwingType.high
+                  : SwingType.low;
+              final answer = spotAnswerIndex(step, chart);
+              expect(answer, isNotNull, reason: '$where: no swing');
+              // No smaller swing after the answer that could also look
+              // like "the most recent" one.
+              final later = findSwings(
+                chart.candles,
+                strength: 2,
+              ).where((s) => s.type == type && s.index > answer! + 2);
+              expect(later, isEmpty, reason: '$where: a later minor swing');
+              // The previous swing of the same kind is well apart.
+              final earlier = findSwings(
+                chart.candles,
+                strength: spotSwingStrength,
+              ).where((s) => s.type == type && s.index < answer!);
+              if (earlier.isNotEmpty) {
+                expect(
+                  answer! - earlier.last.index,
+                  greaterThan(6),
+                  reason: '$where: two swings close together',
+                );
+              }
+              checked++;
+            case SpotTarget.breakout:
+              final answer = spotAnswerIndex(step, chart);
+              expect(answer, isNotNull, reason: '$where: no breakout candle');
+              final span = chart.spans.firstWhere((s) => s.label == 'breakout');
+              expect(answer, inInclusiveRange(span.fromIndex, span.toIndex));
+              checked++;
+            default:
+              break;
+          }
+        }
+      }
+      expect(checked, greaterThanOrEqualTo(5));
+    });
+
+    test('quiz options are mixed up but stable', () {
+      final positions = <int>[];
+      for (final lesson in lessons.values) {
+        for (var i = 0; i < lesson.steps.length; i++) {
+          final step = lesson.steps[i];
+          if (step is! QuizStep) continue;
+          final order = quizOptionOrder(lesson.id, i, step);
+          expect(order.toSet(), {
+            for (var k = 0; k < step.options.length; k++) k,
+          });
+          expect(quizOptionOrder(lesson.id, i, step), order);
+          positions.add(order.indexOf(step.answer));
+          for (var k = 0; k < order.length; k++) {
+            if (step.options[order[k]].toLowerCase().startsWith('all of')) {
+              expect(k, order.length - 1, reason: '"All of…" stays last');
+            }
+          }
+        }
+      }
+      // The right answer isn't parked in one place.
+      for (var p = 0; p < 4; p++) {
+        expect(
+          positions.where((x) => x == p).length,
+          greaterThan(positions.length ~/ 8),
+          reason: 'answer position $p is too rare',
+        );
+      }
     });
 
     test('"highest/lowest" charts have one clear answer', () {
@@ -118,7 +219,7 @@ void main() {
             continue;
           }
           final chart = step.chart.render();
-          final best = extremeIndex(step, chart)!;
+          final best = spotAnswerIndex(step, chart)!;
           final highest = step.target == SpotTarget.highest;
           double value(int i) =>
               highest ? chart.candles[i].high : chart.candles[i].low;

@@ -1,0 +1,117 @@
+{
+  "id": "L1-03",
+  "title": "Swing highs and swing lows",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "swingPoints",
+      "title": "The turning points",
+      "text": "A **swing high** is a peak: a candle whose high is higher than the candles on **both sides**. A **swing low** is a valley: a low that's lower than its neighbours.\n\nSwing points are the building blocks of everything in this level: trends, support and resistance, and stop placement."
+    },
+    {
+      "type": "explain",
+      "title": "How many candles on each side?",
+      "text": "There's no single rule. A common one is that a swing high must beat **2 to 5 candles** on each side. More candles means fewer, more important swings.\n\nIn this app's \"Spot it\" exercises a swing must beat **5 candles on each side**. On this chart, find the clear peaks and valleys.",
+      "chart": {
+        "seed": 231,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 30,
+            "movePct": 8
+          },
+          {
+            "type": "trend",
+            "bars": 20,
+            "movePct": -5
+          },
+          {
+            "type": "trend",
+            "bars": 20,
+            "movePct": 6
+          }
+        ]
+      }
+    },
+    {
+      "type": "spot",
+      "prompt": "Tap the most recent swing high.",
+      "target": "swingHigh",
+      "explanation": "The most recent swing high is the **last clear peak**, with lower highs on both sides. The candles at the right edge can't be a swing yet: what comes after them hasn't happened.",
+      "chart": {
+        "seed": 235,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 45,
+            "movePct": 10
+          },
+          {
+            "type": "trend",
+            "bars": 18,
+            "movePct": -5
+          }
+        ]
+      }
+    },
+    {
+      "type": "spot",
+      "prompt": "Now tap the most recent swing low.",
+      "target": "swingLow",
+      "explanation": "The most recent swing low is the **last clear valley**, with higher lows on both sides.",
+      "chart": {
+        "seed": 236,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 45,
+            "movePct": -10
+          },
+          {
+            "type": "trend",
+            "bars": 18,
+            "movePct": 5
+          }
+        ]
+      }
+    },
+    {
+      "type": "quiz",
+      "question": "Why can't the last candle on a chart count as a swing high, even if it's the highest?",
+      "options": [
+        "Candles after it haven't formed yet, so we don't know it's a peak",
+        "Because swing highs must be red candles",
+        "Because the last candle is never the highest",
+        "It always counts"
+      ],
+      "answer": 0,
+      "explanation": "A swing needs candles **after** it to confirm it. Until then, price might keep rising."
+    },
+    {
+      "type": "explain",
+      "title": "What swings tell you",
+      "text": "Swings mark where buyers or sellers took over. Use them to:\n\n• **Read the trend**: are the swings rising or falling?\n\n• **Find levels**: old swing highs and lows often act as resistance and support.\n\n• **Place stops**: just beyond the most recent swing."
+    },
+    {
+      "type": "quiz",
+      "question": "You're long (bought) in an uptrend. Where is a logical place for your stop-loss?",
+      "options": [
+        "Just above the most recent swing high",
+        "Exactly at your entry price",
+        "Just below the most recent swing low",
+        "A random 1% below your entry"
+      ],
+      "answer": 2,
+      "explanation": "If price falls **below the last swing low**, the uptrend's pattern breaks, so your reason for the trade is gone."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "**Swing high**: a peak with lower highs on both sides.",
+        "**Swing low**: a valley with higher lows on both sides.",
+        "A swing needs candles **after** it to be confirmed.",
+        "Swings show the **trend**, the **levels** and where **stops** belong."
+      ]
+    }
+  ]
+}

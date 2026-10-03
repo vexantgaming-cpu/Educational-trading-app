@@ -9,6 +9,7 @@
     },
     {
       "type": "explain",
+      "art": "candleColours",
       "title": "Colour shows direction",
       "text": "**Green** (bullish): the candle closed **higher** than it opened. The open is at the bottom of the body.\n\n**Red** (bearish): the candle closed **lower** than it opened. The open is at the top of the body."
     },
@@ -38,6 +39,7 @@
     },
     {
       "type": "explain",
+      "art": "candleShapes",
       "title": "What the shape tells you",
       "text": "A **long body** means one side was in control for most of the period.\n\nA **long wick** means price travelled somewhere and got **pushed back**. That's a sign of rejection.\n\nA **tiny body** means buyers and sellers ended roughly even."
     },

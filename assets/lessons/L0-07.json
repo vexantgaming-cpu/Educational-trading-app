@@ -33,6 +33,7 @@
     },
     {
       "type": "explain",
+      "art": "liquidity",
       "title": "Liquidity",
       "text": "**Liquidity** is how easily you can trade **without moving the price**.\n\n**Liquid** markets (large company shares, EUR/USD, Bitcoin) have many buyers and sellers, tight spreads and smooth prices.\n\n**Illiquid** markets have wide spreads and prices that jump around."
     },

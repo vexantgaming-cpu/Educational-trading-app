@@ -35,6 +35,14 @@ class ProgressStore extends ChangeNotifier {
   int get completedCount => _completed.length;
   bool isCompleted(String lessonId) => _completed.contains(lessonId);
 
+  /// Adds XP earned outside lessons (e.g. the Daily Challenge).
+  Future<void> addXp(int amount) async {
+    if (amount <= 0) return;
+    _xp += amount;
+    notifyListeners();
+    await _prefs?.setInt(_xpKey, _xp);
+  }
+
   /// Records a finished lesson. XP is only awarded the first time.
   Future<int> complete(String lessonId, {required int correctAnswers}) async {
     if (_completed.contains(lessonId)) return 0;

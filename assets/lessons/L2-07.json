@@ -1,0 +1,61 @@
+{
+  "id": "L2-07",
+  "title": "Leverage and margin",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "leverage",
+      "title": "Borrowed buying power",
+      "text": "**Leverage** lets you open a position bigger than your deposit. At **30:1**, $1,000 of **margin** controls a $30,000 position.\n\nProfits and losses are based on the **full $30,000**, not on your $1,000."
+    },
+    {
+      "type": "explain",
+      "title": "It cuts both ways",
+      "text": "A 1% move against a 30:1 position costs **30%** of the margin you put up.\n\nLeverage doesn't change how much the market moves. It changes how much each move helps, or hurts, you."
+    },
+    {
+      "type": "quiz",
+      "question": "You open a $20,000 position using $1,000 of margin. The market moves 2% against you. How much do you lose?",
+      "options": [
+        "$20",
+        "$40",
+        "$400",
+        "$2,000"
+      ],
+      "answer": 2,
+      "explanation": "2% of the **full position**: 2% of $20,000 = **$400**. That's 40% of your margin."
+    },
+    {
+      "type": "explain",
+      "art": "marginLevel",
+      "title": "Margin calls and close-outs",
+      "text": "Your broker needs a minimum amount of margin to keep positions open. If losses eat into it, you may get a **margin call**.\n\nUnder EU and UK rules for retail CFD traders, positions are closed automatically when your equity falls to **50%** of the required margin, and you can't lose more than the money in your account (**negative balance protection**)."
+    },
+    {
+      "type": "explain",
+      "title": "Limits for everyday traders",
+      "text": "**EU and UK** retail leverage limits: **30:1** major currency pairs; **20:1** other currency pairs, gold and major indices; **10:1** other commodities and minor indices; **5:1** individual shares; **2:1** crypto.\n\n**US**: retail forex is limited to **50:1** on major pairs and **20:1** on others, and CFDs aren't offered to retail clients."
+    },
+    {
+      "type": "quiz",
+      "question": "What's the safest way to think about leverage?",
+      "options": [
+        "Use the maximum available to grow faster",
+        "Higher leverage means lower risk",
+        "Size every trade from your stop and risk %, and treat leverage only as a limit",
+        "Leverage affects profits but not losses"
+      ],
+      "answer": 2,
+      "explanation": "With proper sizing, your risk is set by your stop and your risk %. Leverage only needs to be high enough to allow that size."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "Leverage = a **big position** from a **small deposit**.",
+        "Gains and losses are on the **full** position size.",
+        "EU/UK retail: close-out at **50%** margin, and you can't lose more than your account.",
+        "Size from your **stop and risk %**; leverage is just a limit."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": "L2-09",
+  "title": "Fees, spread and slippage",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "tradingCosts",
+      "title": "The hidden drag",
+      "text": "Every trade has costs: the **spread** (the gap between bid and ask), sometimes a **commission**, and **slippage** (getting a worse price than you expected).\n\nHolding a leveraged position overnight usually costs a **financing** fee too, often called a swap."
+    },
+    {
+      "type": "explain",
+      "title": "Costs as a share of your risk",
+      "text": "Compare costs with your stop. With a **10-pip** stop and a **1-pip** spread, the spread eats **10%** of your risk on every trade. With a **50-pip** stop, the same spread is just **2%**.\n\nThat's why very short-term trading with tight stops is the most cost-sensitive."
+    },
+    {
+      "type": "quiz",
+      "question": "The spread is 2 pips and your stop-loss is 10 pips away. Roughly what share of your risk does the spread cost?",
+      "options": [
+        "2%",
+        "5%",
+        "20%",
+        "50%"
+      ],
+      "answer": 2,
+      "explanation": "2 ÷ 10 = **20%**. Every trade starts a fifth of the way to your stop."
+    },
+    {
+      "type": "explain",
+      "art": "slippage",
+      "title": "Slippage",
+      "text": "A stop-loss becomes a market order when it's triggered. In a fast market, or when price **gaps** (over a weekend or after big news), it can be filled at a **worse** price than your stop.\n\nLimit orders avoid slippage, but they might not fill at all."
+    },
+    {
+      "type": "quiz",
+      "question": "Your stop is at 99.50. The market opens with a gap down to 99.20. Where are you most likely filled?",
+      "options": [
+        "Exactly at 99.50",
+        "Around 99.20, the first available price",
+        "At your entry price",
+        "Nowhere: the trade stays open"
+      ],
+      "answer": 1,
+      "explanation": "There was no trading between 99.50 and 99.20, so the stop fills at the **first available price**."
+    },
+    {
+      "type": "explain",
+      "title": "Keep costs down",
+      "text": "Trade **liquid** markets at **active** hours, plan around major news, don't overtrade, and include costs whenever you judge a strategy.\n\nThe League in this app uses realistic spreads, so you'll feel them."
+    },
+    {
+      "type": "quiz",
+      "question": "Which habit cuts trading costs the most?",
+      "options": [
+        "Trading every small move",
+        "Trading quiet, illiquid markets at night",
+        "Trading less often, in liquid markets",
+        "Using very tight stops on every trade"
+      ],
+      "answer": 2,
+      "explanation": "Fewer trades in liquid markets means fewer spreads paid and less slippage."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "Costs: **spread**, **commission**, **slippage**, **overnight financing**.",
+        "Judge costs **against your stop** distance.",
+        "Gaps cause **slippage** on stop orders.",
+        "Trade **less**, in **liquid** markets."
+      ]
+    }
+  ]
+}

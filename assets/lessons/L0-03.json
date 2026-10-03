@@ -4,11 +4,13 @@
   "steps": [
     {
       "type": "explain",
+      "art": "marketFamilies",
       "title": "Five big market families",
       "text": "**Stocks**: shares in companies.\n\n**Forex**: currencies, traded in pairs like EUR/USD.\n\n**Crypto**: digital assets like Bitcoin.\n\n**Commodities**: raw materials like gold and oil.\n\n**Indices**: a basket of stocks, like the US 500, tracked as one price."
     },
     {
       "type": "explain",
+      "art": "tradingHours",
       "title": "Difference 1: trading hours",
       "text": "Stocks trade during their exchange's hours. The New York Stock Exchange, for example, is open 9:30 to 16:00 New York time on weekdays.\n\n**Forex** trades around the clock on weekdays, from Sunday evening to Friday evening (New York time).\n\n**Crypto** trades 24 hours a day, 7 days a week."
     },
@@ -31,6 +33,7 @@
     },
     {
       "type": "explain",
+      "art": "leverage",
       "title": "Difference 3: leverage",
       "text": "Many brokers let you control a large position with a smaller deposit. This is called **leverage**.\n\nIn the EU and UK, leverage for everyday (retail) traders is capped: **30:1** on major currency pairs, **20:1** on gold and major indices, **5:1** on individual shares and **2:1** on crypto. In the US the rules depend on the product.\n\nLeverage magnifies losses exactly as much as gains. Level 2 covers it in detail."
     },

@@ -1,0 +1,115 @@
+{
+  "id": "L1-02",
+  "title": "Ranges and consolidation",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "rangeBox",
+      "title": "When the market goes sideways",
+      "text": "A **range** forms when buyers and sellers are roughly balanced. Price bounces between a ceiling (**resistance**) and a floor (**support**).\n\nMarkets spend a lot of their time like this, often more than in clear trends."
+    },
+    {
+      "type": "explain",
+      "title": "A range on a chart",
+      "text": "After a rise, this market went sideways. Rallies kept stalling near the top zone and dips kept stalling near the bottom zone.\n\nThe zones are drawn for you here. Soon you'll find them yourself.",
+      "chart": {
+        "seed": 221,
+        "showZones": true,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 20,
+            "movePct": 6
+          },
+          {
+            "type": "range",
+            "bars": 50,
+            "belowPct": 4,
+            "abovePct": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "type": "quiz",
+      "question": "What's this market doing?",
+      "options": [
+        "Trending up",
+        "Trending down",
+        "Moving sideways in a range",
+        "Crashing"
+      ],
+      "answer": 2,
+      "explanation": "Price keeps turning at roughly the **same high and low**. That's a range.",
+      "chart": {
+        "seed": 222,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 15,
+            "movePct": -4
+          },
+          {
+            "type": "range",
+            "bars": 55,
+            "belowPct": 0.5,
+            "abovePct": 4.5
+          }
+        ]
+      }
+    },
+    {
+      "type": "explain",
+      "title": "Consolidation: a pause",
+      "text": "After a strong move, markets often **consolidate**: they move sideways while some traders take profits and others build new positions.\n\nA consolidation can end in a **continuation** of the trend or a **reversal**. The direction of the **breakout** tells you which."
+    },
+    {
+      "type": "explain",
+      "title": "Trading a range",
+      "text": "Some traders buy near support and sell near resistance, with a stop just outside the range. Others wait for price to **break out** and follow it.\n\nThe **middle of the range** is usually the worst place to trade: there's no nearby level to tell you when you're wrong."
+    },
+    {
+      "type": "quiz",
+      "question": "In a range, where is usually the worst place to open a new trade?",
+      "options": [
+        "Near support, with a stop below it",
+        "In the middle of the range",
+        "Near resistance, with a stop above it",
+        "After a clear breakout"
+      ],
+      "answer": 1,
+      "explanation": "In the middle there's no nearby level to lean on, so your stop and target both end up far away and arbitrary."
+    },
+    {
+      "type": "spot",
+      "prompt": "Tap the support zone of this range.",
+      "target": "support",
+      "explanation": "Support is the area near the **bottom** of the range, where the dips kept stopping.",
+      "chart": {
+        "seed": 226,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 25,
+            "movePct": 7
+          },
+          {
+            "type": "range",
+            "bars": 45,
+            "belowPct": 4.5,
+            "abovePct": 0.4
+          }
+        ]
+      }
+    },
+    {
+      "type": "recap",
+      "points": [
+        "A **range** is a balance between buyers and sellers.",
+        "**Support** is the floor, **resistance** the ceiling.",
+        "**Consolidation** is a pause; the breakout shows what comes next.",
+        "Avoid opening trades in the **middle** of a range."
+      ]
+    }
+  ]
+}

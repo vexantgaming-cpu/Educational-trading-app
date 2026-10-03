@@ -13,7 +13,7 @@ import '../widgets/gradient_button.dart';
 import '../widgets/tab_hero.dart';
 import 'candle_anatomy.dart';
 import 'lesson_model.dart';
-import 'mind_art.dart';
+import 'art/lesson_art.dart';
 import 'rich_text.dart';
 
 Future<LessonContent> loadLesson(String id, {AssetBundle? bundle}) async {
@@ -221,7 +221,7 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
             _chartView(step.chart!),
           ],
           const SizedBox(height: 16),
-          for (var i = 0; i < step.options.length; i++)
+          for (final i in quizOptionOrder(widget.lessonId, _index, step))
             _optionTile(context, step, i),
         ],
       ),
@@ -350,13 +350,13 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
               : Theme.of(context).colorScheme.primary,
         ),
       if (spot != null && _checked && !_wasCorrect)
-        if (extremeIndex(spot, chart) case final i?)
+        if (spotAnswerIndex(spot, chart) case final i?)
           ChartMarker(
             index: i,
-            price: spot.target == SpotTarget.highest
+            price: spotAnswerAtHigh(spot, chart)
                 ? chart.candles[i].high
                 : chart.candles[i].low,
-            pointsUp: spot.target == SpotTarget.lowest,
+            pointsUp: !spotAnswerAtHigh(spot, chart),
             color: colors.up,
           ),
     ];
@@ -479,6 +479,30 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
   }
 }
 
+/// The order quiz options are shown in: mixed up, but the same every time
+/// for a given lesson step. "All of…"/"None of…" options stay last.
+List<int> quizOptionOrder(String lessonId, int stepIndex, QuizStep step) {
+  final all = List<int>.generate(step.options.length, (i) => i);
+  if (!step.shuffle) return all;
+  final pinned = RegExp(r'^(all|none) of', caseSensitive: false);
+  final free = [
+    for (final i in all)
+      if (!pinned.hasMatch(step.options[i])) i,
+  ];
+  final rng = SeededRandom(stableHash('$lessonId:$stepIndex'));
+  for (var i = free.length - 1; i > 0; i--) {
+    final j = rng.nextInt(i + 1);
+    final t = free[i];
+    free[i] = free[j];
+    free[j] = t;
+  }
+  return [
+    ...free,
+    for (final i in all)
+      if (pinned.hasMatch(step.options[i])) i,
+  ];
+}
+
 /// Whether a tap on a "Spot it" chart hits the target.
 bool isSpotCorrect(
   SpotStep step,
@@ -497,28 +521,78 @@ bool isSpotCorrect(
           tap.index >= zone.fromIndex - 2;
     case SpotTarget.highest:
     case SpotTarget.lowest:
-      final target = extremeIndex(step, chart);
+    case SpotTarget.swingHigh:
+    case SpotTarget.swingLow:
+    case SpotTarget.breakout:
+      final target = spotAnswerIndex(step, chart);
       return target != null && (tap.index - target).abs() <= 2;
   }
 }
 
-/// Index of the highest high / lowest low among the visible candles.
-int? extremeIndex(SpotStep step, RenderedChart chart) {
-  if (step.target != SpotTarget.highest && step.target != SpotTarget.lowest) {
-    return null;
-  }
+/// How many bars on each side a swing point must beat in "Spot it".
+const spotSwingStrength = 5;
+
+/// The candle the learner should tap, for targets that are one candle:
+/// the highest high / lowest low on screen, the most recent swing high /
+/// low, or the breakout candle. Null for zone targets.
+int? spotAnswerIndex(SpotStep step, RenderedChart chart) {
   final candles = chart.candles;
   final start = (candles.length - step.chart.visibleBars).clamp(
     0,
     candles.length,
   );
-  var best = start;
-  for (var i = start; i < candles.length; i++) {
-    if (step.target == SpotTarget.highest
-        ? candles[i].high > candles[best].high
-        : candles[i].low < candles[best].low) {
-      best = i;
-    }
+  switch (step.target) {
+    case SpotTarget.support:
+    case SpotTarget.resistance:
+      return null;
+    case SpotTarget.highest:
+    case SpotTarget.lowest:
+      var best = start;
+      for (var i = start; i < candles.length; i++) {
+        if (step.target == SpotTarget.highest
+            ? candles[i].high > candles[best].high
+            : candles[i].low < candles[best].low) {
+          best = i;
+        }
+      }
+      return best;
+    case SpotTarget.swingHigh:
+    case SpotTarget.swingLow:
+      final type = step.target == SpotTarget.swingHigh
+          ? SwingType.high
+          : SwingType.low;
+      final swings = findSwings(
+        candles,
+        strength: spotSwingStrength,
+      ).where((s) => s.type == type && s.index >= start);
+      return swings.isEmpty ? null : swings.last.index;
+    case SpotTarget.breakout:
+      final spanIndex = chart.spans.indexWhere((s) => s.label == 'breakout');
+      if (spanIndex < 1) return null;
+      final span = chart.spans[spanIndex];
+      final range = chart.spans[spanIndex - 1];
+      Zone? zone(ZoneKind kind) => chart.zones
+          .where((z) => z.kind == kind && z.fromIndex == range.fromIndex)
+          .firstOrNull;
+      final up = span.kind == 'uptrend';
+      final level = up
+          ? zone(ZoneKind.resistance)?.high
+          : zone(ZoneKind.support)?.low;
+      if (level == null) return null;
+      for (var i = span.fromIndex; i <= span.toIndex; i++) {
+        if (i >= candles.length) break;
+        if (up ? candles[i].close > level : candles[i].close < level) return i;
+      }
+      return null;
   }
-  return best;
 }
+
+/// Whether the answer candle is marked at its high (pointing down at it).
+bool spotAnswerAtHigh(SpotStep step, RenderedChart chart) =>
+    switch (step.target) {
+      SpotTarget.highest || SpotTarget.swingHigh => true,
+      SpotTarget.breakout =>
+        chart.spans.where((s) => s.label == 'breakout').firstOrNull?.kind ==
+            'uptrend',
+      _ => false,
+    };

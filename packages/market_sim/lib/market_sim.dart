@@ -2,6 +2,7 @@
 library;
 
 export 'src/candle.dart';
+export 'src/daily_challenge.dart';
 export 'src/generator.dart';
 export 'src/indicators.dart';
 export 'src/instrument.dart';

@@ -1,0 +1,71 @@
+{
+  "id": "L1-06",
+  "title": "Trendlines and channels",
+  "steps": [
+    {
+      "type": "explain",
+      "art": "trendChannel",
+      "title": "Drawing a trendline",
+      "text": "In an uptrend, a **trendline** connects two or more **higher lows**. In a downtrend, it connects **lower highs**.\n\nIt shows the trend's slope and acts like a rising floor (or falling ceiling)."
+    },
+    {
+      "type": "explain",
+      "title": "Good trendline habits",
+      "text": "You need **two** touches to draw a line. A **third** touch that holds makes it more meaningful.\n\nDraw through wicks or through bodies, but be consistent. And don't force it: if you have to bend the rules to make a line fit, it probably isn't there."
+    },
+    {
+      "type": "explain",
+      "title": "Channels",
+      "text": "Draw a line **parallel** to the trendline through the highs and you get a **channel**. Price often travels between the two lines.\n\nVery steep trendlines tend to break sooner than gentle ones.",
+      "chart": {
+        "seed": 261,
+        "segments": [
+          {
+            "type": "trend",
+            "bars": 70,
+            "movePct": 12,
+            "volatilityPct": 0.8
+          }
+        ]
+      }
+    },
+    {
+      "type": "quiz",
+      "question": "What's the minimum number of points needed to draw a trendline?",
+      "options": [
+        "One",
+        "Two, and a third touch makes it more reliable",
+        "Five",
+        "It needs a moving average"
+      ],
+      "answer": 1,
+      "explanation": "Two points define a line. A third touch that holds shows other traders are watching it too."
+    },
+    {
+      "type": "quiz",
+      "question": "An uptrend line has held three times. Now a candle closes clearly below it. What's the most sensible read?",
+      "options": [
+        "Buy more: it's cheaper now",
+        "Trendlines never break",
+        "The trend has reversed for certain",
+        "The trend may be weakening, so be cautious with new buys"
+      ],
+      "answer": 3,
+      "explanation": "A clear close below the line is a **warning**, not a guarantee. Check the swing structure: has a higher low broken too?"
+    },
+    {
+      "type": "explain",
+      "title": "A guide, not a rule",
+      "text": "People draw trendlines, so two traders may draw them differently. Use them **together with** horizontal support and resistance and the swing structure, never on their own."
+    },
+    {
+      "type": "recap",
+      "points": [
+        "Uptrend lines join **higher lows**; downtrend lines join **lower highs**.",
+        "Two touches draw a line; a **third** makes it count.",
+        "A parallel line through the highs makes a **channel**.",
+        "Trendlines are subjective: **combine** them with levels and swings."
+      ]
+    }
+  ]
+}
