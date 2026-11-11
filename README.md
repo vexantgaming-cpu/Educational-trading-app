@@ -11,9 +11,10 @@ Flutter. Educational only: no real trading, no financial advice.
   Psychology lessons) with an illustration or chart for each idea, the **Daily
   Challenge** (three new rounds every day), the "Place the trade" exercise, XP, ranks and
   progress saved on the device, dark and light themes (switch in Account), the Upwiq logo and
-  app icon from the design system, a "Leave feedback" form in Account, and **the League**:
-  a daily trading game with news, realistic execution, weekly leagues and a leaderboard
-  (simulated rivals until online leagues launch). See `docs/PLAN.md` §5b.
+  app icon from the design system, a "Leave feedback" form in Account, a first-run welcome,
+  an opt-in **daily reminder** notification, and **the League**: a daily trading game with
+  news, realistic execution, weekly leagues and a leaderboard (simulated rivals until online
+  leagues launch), whose sessions can be paused and resumed. See `docs/PLAN.md` §5b.
 
 ## Try it on your Android phone
 
@@ -37,12 +38,14 @@ signed separately (Phase 2).
 | `lib/lessons/` | Lesson player: explain, quiz, "spot it" on a chart, exercise and recap steps; illustrations for the psychology lessons (`mind_art.dart`) |
 | `assets/lessons/` | Lesson content as JSON (one file per lesson, validated by `test/lessons_test.dart`) |
 | `lib/progress/` | XP and completed lessons, saved on the device |
-| `lib/game/` | The League: market picker, trading session, day summary, leaderboard, league account |
+| `lib/game/` | The League: market picker, trading session (saved as it is played), day summary, leaderboard, league account |
+| `lib/reminders/` | The daily reminder: which notifications to book (`reminder_plan.dart`), keeping the phone in step with the setting (`reminder_service.dart`), and the Android notifications themselves |
+| `lib/settings/` | Preferences saved on the device: theme, reminder, welcome seen |
 | `lib/theme/` | Colours, typography and the vector key visuals for each tab |
 | `lib/widgets/` | Shared styled widgets (logo, gradient button, tab hero, badges) |
 | `docs/brand/` | Design brief, logo SVGs and app-icon sources from the Upwiq design system (`app-icon-512.png` is the Play Store icon) |
 | `assets/fonts/` | Poppins and Inter (SIL Open Font License) |
-| `lib/screens/` | Learn path, Practice hub, Account, feedback form |
+| `lib/screens/` | Learn path, Practice hub, Account, feedback form, first-run welcome, reminder sheet |
 | `lib/app_info.dart` | App version and the address feedback is sent to |
 | `lib/data/curriculum.dart` | The 56-lesson learning path |
 | `docs/PLAN.md` | Product plan, decisions, compliance notes, roadmap |
@@ -69,6 +72,24 @@ opens the user's email app addressed to `feedbackEmail` in `lib/app_info.dart`
 (currently `feedback@upwiq.com`, which needs a mailbox or forwarding once the
 domain is registered). Nothing is sent until the user presses send there. If no
 email app is installed, the text is copied to the clipboard instead.
+
+### Daily reminder
+
+Account → **Daily reminder** switches on one notification a day at a chosen
+time (19:00 by default). It is off until asked for, and Android's permission
+question appears only then. The day's reminder is skipped once the Daily
+Challenge is finished, tapping it opens the Daily Challenge, and reminders are
+booked 14 days ahead and re-booked each time the app is opened, so they stop
+by themselves after two weeks away.
+
+Built on `flutter_local_notifications`, pinned to the 22.x line: version 23
+needs Android `compileSdk` 37 and a newer Android Gradle Plugin than this
+project uses. The Android pieces that must agree by name (the status-bar icon
+`res/drawable/ic_stat_upwiq.xml`, `res/raw/keep.xml`, the two receivers in the
+manifest, desugaring in `android/app/build.gradle.kts`) are checked by
+`test/reminder_test.dart`. Whether a notification really arrives can only be
+checked on a phone: switch it on, pick a time a few minutes ahead, close the
+app and wait (Android may deliver it a few minutes late).
 
 ### Writing a lesson
 

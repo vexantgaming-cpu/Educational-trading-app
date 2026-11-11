@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// App preferences saved on the device: appearance and whether the
-/// first-run welcome has been shown.
+/// App preferences saved on the device: appearance, the daily reminder and
+/// whether the first-run welcome has been shown.
 class SettingsStore extends ChangeNotifier {
   SettingsStore._(this._prefs)
     : _themeMode = _parse(_prefs?.getString(_themeKey)),
-      _welcomeSeen = _prefs?.getBool(_welcomeKey) ?? false;
+      _welcomeSeen = _prefs?.getBool(_welcomeKey) ?? false,
+      _reminderOn = _prefs?.getBool(_reminderOnKey) ?? false,
+      _reminderMinutes = _validMinutes(_prefs?.getInt(_reminderTimeKey));
 
   static const _themeKey = 'theme_mode';
   static const _welcomeKey = 'welcome_seen';
+  static const _reminderOnKey = 'reminder_on';
+  static const _reminderTimeKey = 'reminder_time';
+
+  /// 19:00: after work or school for most people.
+  static const defaultReminderMinutes = 19 * 60;
 
   static SettingsStore? _instance;
 
@@ -50,6 +57,33 @@ class SettingsStore extends ChangeNotifier {
     notifyListeners();
     await _prefs?.setBool(_welcomeKey, true);
   }
+
+  /// Whether the daily reminder notification is switched on. Off until the
+  /// person asks for it.
+  bool get reminderOn => _reminderOn;
+  bool _reminderOn;
+
+  /// When the reminder arrives, in minutes after midnight (local time).
+  int get reminderMinutes => _reminderMinutes;
+  int _reminderMinutes;
+
+  Future<void> setReminder({bool? on, int? minutes}) async {
+    final newOn = on ?? _reminderOn;
+    final newMinutes = minutes == null
+        ? _reminderMinutes
+        : _validMinutes(minutes);
+    if (newOn == _reminderOn && newMinutes == _reminderMinutes) return;
+    _reminderOn = newOn;
+    _reminderMinutes = newMinutes;
+    notifyListeners();
+    await _prefs?.setBool(_reminderOnKey, newOn);
+    await _prefs?.setInt(_reminderTimeKey, newMinutes);
+  }
+
+  static int _validMinutes(int? value) =>
+      value != null && value >= 0 && value < 24 * 60
+      ? value
+      : defaultReminderMinutes;
 
   static ThemeMode _parse(String? value) => ThemeMode.values.firstWhere(
     (m) => m.name == value,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +17,9 @@ import 'game/trading_session_screen.dart';
 import 'lessons/lesson_player.dart';
 import 'progress/progress_scope.dart';
 import 'progress/progress_store.dart';
+import 'reminders/local_notification_scheduler.dart';
+import 'reminders/reminder_scheduler.dart';
+import 'reminders/reminder_service.dart';
 
 import 'package:market_sim/market_sim.dart';
 
@@ -37,9 +42,43 @@ Future<void> main() async {
   final game = await GameStore.load();
   final settings = await SettingsStore.load();
   final daily = await DailyChallengeStore.load();
-  runApp(
-    UpwiqApp(progress: progress, game: game, settings: settings, daily: daily),
+  final reminders = ReminderService(
+    settings: settings,
+    daily: daily,
+    scheduler: deviceReminderScheduler(),
   );
+  final navigator = GlobalKey<NavigatorState>();
+  runApp(
+    UpwiqApp(
+      progress: progress,
+      game: game,
+      settings: settings,
+      daily: daily,
+      reminders: reminders,
+      navigatorKey: navigator,
+    ),
+  );
+  // Not awaited: the app is usable before the phone's reminders are booked.
+  unawaited(
+    reminders.start(onOpen: () => openDailyChallengeFromReminder(navigator)),
+  );
+}
+
+/// A tapped reminder leads to the Daily Challenge, unless the person is in
+/// the middle of something (a lesson, a trading session, a dialog): then
+/// the app is simply brought to the front.
+void openDailyChallengeFromReminder(GlobalKey<NavigatorState> key) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final navigator = key.currentState;
+    if (navigator == null) return;
+    var atHome = false;
+    navigator.popUntil((route) {
+      atHome = route.isFirst;
+      return true; // Only looking at the top route; nothing is popped.
+    });
+    if (atHome) navigator.pushNamed(dailyChallengeRoute);
+  });
+  WidgetsBinding.instance.ensureVisualUpdate();
 }
 
 class UpwiqApp extends StatelessWidget {
@@ -49,6 +88,8 @@ class UpwiqApp extends StatelessWidget {
     required this.game,
     required this.settings,
     this.daily,
+    this.reminders,
+    this.navigatorKey,
   });
 
   final ProgressStore progress;
@@ -59,11 +100,31 @@ class UpwiqApp extends StatelessWidget {
   final DailyChallengeStore? daily;
   static final _memoryDaily = DailyChallengeStore.memory();
 
+  /// The daily reminder; one that books nothing when not given.
+  final ReminderService? reminders;
+
+  /// Lets a tapped reminder open a screen from outside the widget tree.
+  final GlobalKey<NavigatorState>? navigatorKey;
+
   static final _light = buildAppTheme(AppPalette.light);
   static final _dark = buildAppTheme(AppPalette.dark);
 
   @override
   Widget build(BuildContext context) {
+    final daily = this.daily ?? _memoryDaily;
+    return ReminderScope(
+      service:
+          reminders ??
+          ReminderService(
+            settings: settings,
+            daily: daily,
+            scheduler: const NoReminders(),
+          ),
+      child: _stores(daily),
+    );
+  }
+
+  Widget _stores(DailyChallengeStore daily) {
     return SettingsScope(
       store: settings,
       child: ProgressScope(
@@ -71,11 +132,12 @@ class UpwiqApp extends StatelessWidget {
         child: GameScope(
           store: game,
           child: DailyScope(
-            store: daily ?? _memoryDaily,
+            store: daily,
             child: ListenableBuilder(
               listenable: settings,
               builder: (context, _) => MaterialApp(
                 title: 'Upwiq',
+                navigatorKey: navigatorKey,
                 debugShowCheckedModeBanner: false,
                 theme: _light,
                 darkTheme: _dark,

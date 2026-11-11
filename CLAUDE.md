@@ -43,3 +43,15 @@ Design System artifact); copies of the SVGs live in `docs/brand/logo/` and
 (`lib/widgets/upwiq_logo.dart`, same geometry) so the letters follow the theme;
 the Android adaptive icon is `res/drawable/ic_launcher_*.xml` and the legacy and
 web PNGs are rendered from `app-icon.svg`. Keep them in sync if the logo changes.
+
+## Things that bite
+- Tests that pump the whole app need
+  `SharedPreferences.setMockInitialValues({'welcome_seen': true})`, or they get
+  the first-run welcome instead of the tabs. Tests that load lesson assets
+  need `setUp(rootBundle.clear)`.
+- Daily reminder: `flutter_local_notifications` stays on 22.x until the
+  project moves to `compileSdk` 37 and AGP 9.1.1 (what 23.x requires). Tests
+  use `test/support/fake_reminders.dart`; real delivery can only be checked on
+  the owner's phone. Don't add exact-alarm permissions (Play restricts them).
+- The app's navigator key is created in `main()` and passed in, not a global:
+  a global key would carry the old navigator into a rebuilt app in tests.

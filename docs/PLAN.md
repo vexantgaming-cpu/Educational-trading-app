@@ -170,7 +170,7 @@ All exercises run on the app's own chart engine (§7) with scored hit-testing.
 - **XP, levels, streaks** (with streak freezes), a learning-path map, badges such as
   *"First stop-loss placed"* or *"10 trades with R:R ≥ 2"*.
 - **"Good loss" feedback**: "You respected your stop. That's a well-managed loss."
-- Opt-in daily reminder and "today's challenge is live" notification, capped at 1/day.
+- ✅ Opt-in daily reminder ("today's challenge is ready"), capped at 1/day and skipped once the day's challenge is done.
 - **Deliberately excluded:** loot boxes, buying virtual money, unrestricted P&L
   leaderboards (league rankings always come with risk rules), prizes with real-world
   value, casino-style effects for big wins, streak-guilt messaging.
@@ -529,18 +529,34 @@ A screen-by-screen review of the app. **Fixed the same day:**
   summary offers **Trade another market**. Account shows the real league
   balance instead of a fixed "$10k".
 
-**Suggested next, in priority order (owner to choose):**
+**Built next (11 Nov 2026), the first four suggestions:**
 
-1. **Resume an interrupted trading session.** If the phone closes the app
-   mid-session the day is lost; and because a ranked day is only recorded at
-   the end, it can be replayed after seeing the chart. Saving the session as
-   it goes fixes both. Needed before online leagues.
-2. **First-run welcome** (2–3 screens: what Upwiq is, virtual money only,
-   start the first lesson).
-3. **Go back one step in a lesson**, and ask before closing a lesson halfway.
-4. **Daily reminder** (the Account row says "Soon"): one opt-in notification a
-   day for the Daily Challenge. Hide the "Language" row until there is a
-   second language.
+1. ✅ **Ranked sessions are saved as they are played.** A session can be
+   paused ("Leave the session?" → Pause) and survives the app being closed;
+   the app offers to resume it at the next launch and the League tab shows
+   "Session in progress". It is saved from the moment the market is chosen, so
+   a ranked day can no longer be restarted after seeing the chart; a session
+   left unfinished when the week ends is settled as it stood. Saved as the
+   list of actions per candle and replayed on the deterministic engine
+   (`SavedSession` in `market_sim`). Practice sessions are not saved.
+2. ✅ **First-run welcome**: three screens (learn any market, practise with
+   virtual money, the League), then "Start my first lesson" or "Look around
+   first". Shown once, and never to someone who already has progress.
+3. ✅ **Go back one step in a lesson.** Earlier answers are kept and shown as
+   answered; the score is unchanged by going back.
+4. ✅ **Daily reminder**, opt-in from Account: on/off and a time (19:00 by
+   default). Permission is asked only when it is switched on. One notification
+   a day at most, skipped on a day whose Daily Challenge is already done;
+   tapping it opens the Daily Challenge unless a lesson or session is open.
+   Reminders are booked 14 days ahead and re-booked whenever the app is
+   opened, so they stop by themselves for someone who has been away two weeks
+   (the last one says so). "Around this time" delivery: no exact-alarm
+   permission, which Google Play restricts. Android only for now; **delivery
+   has to be checked on a real phone**, it cannot be tested in CI. The
+   "Language" row is gone until there is a second language.
+
+**Still suggested, in priority order (owner to choose):**
+
 5. **Daily Challenge: resume after an interruption** (today an unfinished
    attempt can be restarted from round 1 with the answers already seen).
 6. **Tablet layout**: screens stretch to the full width; a centred column or

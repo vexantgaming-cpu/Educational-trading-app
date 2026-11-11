@@ -183,6 +183,20 @@ ThemeData buildAppTheme([AppPalette p = AppPalette.dark]) {
       behavior: SnackBarBehavior.floating,
     ),
     dialogTheme: DialogThemeData(backgroundColor: p.surface),
+    // The reminder's time picker: AM/PM in the brand gold, like the hour.
+    timePickerTheme: TimePickerThemeData(
+      backgroundColor: p.surface,
+      dayPeriodColor: WidgetStateColor.resolveWith(
+        (states) => states.contains(WidgetState.selected)
+            ? p.gold.withValues(alpha: 0.16)
+            : Colors.transparent,
+      ),
+      dayPeriodTextColor: WidgetStateColor.resolveWith(
+        (states) =>
+            states.contains(WidgetState.selected) ? p.gold : p.textMuted,
+      ),
+      dayPeriodBorderSide: BorderSide(color: p.outline),
+    ),
     dividerTheme: DividerThemeData(color: p.outline, space: 1),
     listTileTheme: ListTileThemeData(iconColor: p.textMuted),
   );

@@ -12,6 +12,7 @@ import '../widgets/gradient_button.dart';
 import '../widgets/tab_hero.dart';
 import '../widgets/upwiq_logo.dart';
 import 'feedback_screen.dart';
+import 'reminder_sheet.dart';
 
 /// Ranks earned with XP. Purely motivational.
 const _ranks = [
@@ -30,6 +31,7 @@ class AccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final progress = ProgressScope.of(context);
+    final settings = SettingsScope.of(context);
     final xp = progress.xp;
     var rankIndex = 0;
     for (var i = 0; i < _ranks.length; i++) {
@@ -122,16 +124,13 @@ class AccountScreen extends StatelessWidget {
                 children: [
                   const _AppearanceRow(),
                   const Divider(indent: 56),
-                  const _SettingRow(
+                  _SettingRow(
                     icon: Icons.notifications_outlined,
                     title: 'Daily reminder',
-                    value: 'Soon',
-                  ),
-                  const Divider(indent: 56),
-                  const _SettingRow(
-                    icon: Icons.translate,
-                    title: 'Language',
-                    value: 'English',
+                    value: settings.reminderOn
+                        ? reminderTimeText(context, settings.reminderMinutes)
+                        : 'Off',
+                    onTap: () => showReminderSheet(context),
                   ),
                   const Divider(indent: 56),
                   _SettingRow(
