@@ -81,10 +81,12 @@ class SeasonReport {
 class GameStore extends ChangeNotifier {
   GameStore._(this._prefs, this._clock) {
     _read();
+    _readSession();
     _rollSeasonIfNeeded();
   }
 
   static const _key = 'league_state_v1';
+  static const _sessionKey = 'ranked_session_v1';
   static final _epoch = DateTime.utc(2026, 1, 1);
 
   static GameStore? _instance;
@@ -118,6 +120,12 @@ class GameStore extends ChangeNotifier {
   League bestLeague = League.bronze;
   SeasonReport? pendingReport;
   bool justBlown = false;
+
+  /// A ranked session that was started and not finished yet. It is saved
+  /// after every candle, so it survives the app being closed, and it has to
+  /// be finished before another ranked session can start: the day can't be
+  /// replayed with knowledge of the chart.
+  SavedSession? rankedSession;
 
   DateTime get now => _clock();
 
@@ -155,6 +163,16 @@ class GameStore extends ChangeNotifier {
   List<Standing> get standings => standingsAfter(now.weekday);
   Standing get you => standings.firstWhere((s) => s.isYou);
 
+  /// Saves the ranked session in progress (called after every candle and
+  /// every action).
+  Future<void> saveRankedSession(SavedSession session) async {
+    final started = rankedSession == null;
+    rankedSession = session;
+    // Screens only care that a session exists, not about each candle.
+    if (started) notifyListeners();
+    await _prefs?.setString(_sessionKey, jsonEncode(session.toJson()));
+  }
+
   /// Records a ranked session and applies it to the account. [date] is the
   /// day the session started (it can end after midnight); today by default.
   Future<void> recordRankedDay({
@@ -163,6 +181,18 @@ class GameStore extends ChangeNotifier {
     required int trades,
     String? date,
   }) async {
+    _applyRankedResult(symbol: symbol, pnl: pnl, trades: trades, date: date);
+    await _clearSession();
+    await _save();
+    notifyListeners();
+  }
+
+  void _applyRankedResult({
+    required String symbol,
+    required double pnl,
+    required int trades,
+    String? date,
+  }) {
     final day = date ?? todayKey;
     final before = balance;
     balance = math.max(0, balance + pnl);
@@ -181,13 +211,17 @@ class GameStore extends ChangeNotifier {
       _resetAccount();
       justBlown = true;
     }
-    await _save();
-    notifyListeners();
+  }
+
+  Future<void> _clearSession() async {
+    rankedSession = null;
+    await _prefs?.remove(_sessionKey);
   }
 
   /// Starts over: fresh \$10,000 in Bronze, in a new group.
   Future<void> resetAccount() async {
     _resetAccount();
+    await _clearSession();
     await _save();
     notifyListeners();
   }
@@ -220,6 +254,21 @@ class GameStore extends ChangeNotifier {
   bool _rollSeasonIfNeeded() {
     final current = seasonIdFor(now);
     if (seasonId == current) return false;
+    // A ranked session left unfinished last week ends where it was paused
+    // (an open trade closes at the last price seen) and counts for that week.
+    final abandoned = rankedSession;
+    if (abandoned != null &&
+        seasonIdFor(DateTime.parse(abandoned.startedOn)) != current) {
+      final result = abandoned.settle();
+      _applyRankedResult(
+        symbol: abandoned.symbol,
+        pnl: result.pnl,
+        trades: result.trades,
+        date: abandoned.startedOn,
+      );
+      rankedSession = null;
+      _prefs?.remove(_sessionKey);
+    }
     if (seasonId != 0 && seasonDaysPlayed > 0) {
       final finalStandings = standingsAfter(7);
       final me = finalStandings.firstWhere((s) => s.isYou);
@@ -248,6 +297,22 @@ class GameStore extends ChangeNotifier {
     seasonStartBalance = balance;
     seasonDays = [];
     return true;
+  }
+
+  /// Loads the session in progress, if any. A save that can't be replayed
+  /// (damaged, or from a market that no longer exists) is dropped.
+  void _readSession() {
+    final raw = _prefs?.getString(_sessionKey);
+    if (raw == null) return;
+    try {
+      final session = SavedSession.fromJson(
+        jsonDecode(raw) as Map<String, dynamic>,
+      );
+      session.restore();
+      rankedSession = session;
+    } catch (_) {
+      _prefs?.remove(_sessionKey);
+    }
   }
 
   void _read() {

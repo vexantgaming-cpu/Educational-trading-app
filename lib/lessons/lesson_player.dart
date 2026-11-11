@@ -49,15 +49,32 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
   LessonContent? _lesson;
   Object? _loadError;
   var _index = 0;
-  var _correct = 0;
   var _finished = false;
   var _earnedXp = 0;
 
-  // Per-step answer state.
+  // Answer state of the step on screen.
   int? _selected;
   var _checked = false;
   var _wasCorrect = false;
   ({int index, double price})? _tap;
+
+  /// Checked answers by step, so going back shows a question as it was
+  /// answered and each one counts once.
+  final _answered = <int, _Answer>{};
+
+  int get _correct => _answered.values.where((a) => a.correct).length;
+
+  /// Shows step [index]: as answered if it was, fresh otherwise.
+  void _goTo(int index) {
+    final answer = _answered[index];
+    setState(() {
+      _index = index;
+      _selected = answer?.selected;
+      _tap = answer?.tap;
+      _checked = answer != null;
+      _wasCorrect = answer?.correct ?? false;
+    });
+  }
 
   final _charts = <int, RenderedChart>{};
 
@@ -114,6 +131,8 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
           children: [
             Expanded(
               child: SingleChildScrollView(
+                // A new step starts at its top.
+                key: ValueKey(_index),
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
                 child: _stepBody(context, step),
               ),
@@ -122,9 +141,32 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
               _feedback(context, step),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-              child: GradientButton(
-                label: _buttonLabel(step, lesson),
-                onPressed: _canProceed(step) ? () => _onButton(step) : null,
+              child: Row(
+                children: [
+                  if (_index > 0) ...[
+                    IconButton.outlined(
+                      tooltip: 'Previous step',
+                      onPressed: () => _goTo(_index - 1),
+                      style: IconButton.styleFrom(
+                        minimumSize: const Size(50, 50),
+                        side: BorderSide(color: context.palette.outline),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      icon: const Icon(Icons.arrow_back),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                  Expanded(
+                    child: GradientButton(
+                      label: _buttonLabel(step, lesson),
+                      onPressed: _canProceed(step)
+                          ? () => _onButton(step)
+                          : null,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -154,22 +196,16 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
         SpotStep() => isSpotCorrect(step, _chart(step.chart), _tap!),
         _ => true,
       };
+      _answered[_index] = (selected: _selected, tap: _tap, correct: correct);
       setState(() {
         _checked = true;
         _wasCorrect = correct;
-        if (correct) _correct++;
       });
       return;
     }
     final lesson = _lesson!;
     if (_index < lesson.steps.length - 1) {
-      setState(() {
-        _index++;
-        _selected = null;
-        _checked = false;
-        _wasCorrect = false;
-        _tap = null;
-      });
+      _goTo(_index + 1);
       return;
     }
     final earned = await ProgressScope.of(context)
@@ -515,6 +551,13 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
     );
   }
 }
+
+/// A checked answer to a quiz or "Spot it" step.
+typedef _Answer = ({
+  int? selected,
+  ({int index, double price})? tap,
+  bool correct,
+});
 
 /// The order quiz options are shown in: mixed up, but the same every time
 /// for a given lesson step. "All of…"/"None of…" options stay last.

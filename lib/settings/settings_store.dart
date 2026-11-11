@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// App preferences saved on the device (currently the appearance).
+/// App preferences saved on the device: appearance and whether the
+/// first-run welcome has been shown.
 class SettingsStore extends ChangeNotifier {
   SettingsStore._(this._prefs)
-    : _themeMode = _parse(_prefs?.getString(_themeKey));
+    : _themeMode = _parse(_prefs?.getString(_themeKey)),
+      _welcomeSeen = _prefs?.getBool(_welcomeKey) ?? false;
 
   static const _themeKey = 'theme_mode';
+  static const _welcomeKey = 'welcome_seen';
 
   static SettingsStore? _instance;
 
@@ -35,6 +38,17 @@ class SettingsStore extends ChangeNotifier {
     _themeMode = mode;
     notifyListeners();
     await _prefs?.setString(_themeKey, mode.name);
+  }
+
+  /// Whether the first-run welcome was finished or skipped.
+  bool get welcomeSeen => _welcomeSeen;
+  bool _welcomeSeen;
+
+  Future<void> setWelcomeSeen() async {
+    if (_welcomeSeen) return;
+    _welcomeSeen = true;
+    notifyListeners();
+    await _prefs?.setBool(_welcomeKey, true);
   }
 
   static ThemeMode _parse(String? value) => ThemeMode.values.firstWhere(

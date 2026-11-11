@@ -12,6 +12,7 @@ export 'src/process_score.dart';
 export 'src/replay.dart';
 export 'src/risk.dart';
 export 'src/rng.dart';
+export 'src/saved_session.dart';
 export 'src/stats.dart';
 export 'src/swings.dart';
 export 'src/trading_day.dart';

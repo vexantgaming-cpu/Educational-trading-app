@@ -32,7 +32,7 @@ void main() {
   late DateTime now;
 
   Future<(ProgressStore, GameStore, SettingsStore)> stores() async {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'welcome_seen': true});
     ProgressStore.reset();
     GameStore.reset();
     SettingsStore.reset();

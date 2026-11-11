@@ -11,7 +11,7 @@ void main() {
   testWidgets('levels start folded, open on tap, and tabs navigate', (
     tester,
   ) async {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'welcome_seen': true});
     ProgressStore.reset();
     GameStore.reset();
     final progress = await ProgressStore.load();

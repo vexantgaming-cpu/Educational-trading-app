@@ -21,6 +21,7 @@ import 'screens/feedback_screen.dart';
 import 'screens/learn_screen.dart';
 import 'screens/practice_screen.dart';
 import 'screens/account_screen.dart';
+import 'screens/welcome_screen.dart';
 import 'settings/settings_store.dart';
 import 'theme/app_colors.dart';
 import 'theme/app_theme.dart';
@@ -87,7 +88,7 @@ class UpwiqApp extends StatelessWidget {
                       child: child!,
                     ),
                 routes: {
-                  '/': (_) => const HomeShell(),
+                  '/': (_) => const _Home(),
                   '/practice': (_) => const HomeShell(initialTab: 1),
                   '/league': (_) => const HomeShell(initialTab: 2),
                   '/account': (_) => const HomeShell(initialTab: 3),
@@ -102,6 +103,43 @@ class UpwiqApp extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// The app's first screen: a short welcome for a newcomer, the tabs for
+/// everyone else.
+class _Home extends StatelessWidget {
+  const _Home();
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = SettingsScope.of(context);
+    final progress = ProgressScope.of(context);
+    // Someone who already has progress doesn't need the introduction.
+    final newcomer =
+        !settings.welcomeSeen &&
+        progress.xp == 0 &&
+        progress.completedCount == 0;
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 250),
+      child: newcomer
+          ? WelcomeScreen(
+              onExplore: settings.setWelcomeSeen,
+              onStartLearning: () {
+                final navigator = Navigator.of(context);
+                final first = nextLesson((_) => false);
+                settings.setWelcomeSeen();
+                if (first == null) return;
+                navigator.push(
+                  MaterialPageRoute<bool>(
+                    builder: (_) =>
+                        LessonPlayerScreen(lessonId: first.lesson.id!),
+                  ),
+                );
+              },
+            )
+          : const HomeShell(),
     );
   }
 }

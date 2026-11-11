@@ -22,6 +22,9 @@ class TradingSessionScreen extends StatefulWidget {
     required this.startingBalance,
     this.tick = const Duration(milliseconds: 700),
     this.onComplete,
+    this.resume,
+    this.onProgress,
+    this.startedOn = '',
   });
 
   final MarketProfile market;
@@ -35,9 +38,23 @@ class TradingSessionScreen extends StatefulWidget {
   /// Called once when the session ends; the returned widget is shown next.
   final Future<Widget> Function(SessionResult result)? onComplete;
 
+  /// A saved session to continue from where it stopped (same market, day
+  /// and starting balance).
+  final SavedSession? resume;
+
+  /// Called with the session's saved form at the start, after every candle
+  /// and after every action, so it can be resumed if the app is closed.
+  /// With it, leaving the screen can pause the session instead of ending it.
+  final void Function(SavedSession session)? onProgress;
+
+  /// The date this session counts for (`yyyy-mm-dd`), kept in the save.
+  final String startedOn;
+
   @override
   State<TradingSessionScreen> createState() => _TradingSessionScreenState();
 }
+
+enum _Leave { stay, pause, end }
 
 class _TradingSessionScreenState extends State<TradingSessionScreen> {
   static const _speeds = [1, 2, 4, 8];
@@ -52,13 +69,13 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
     widget.market,
     widget.dayNumber,
   );
-  late final ReplaySession _s = ReplaySession(
-    candles: _day.candles,
-    spec: _spec,
-    startingBalance: widget.startingBalance,
-    startIndex: _day.sessionStart - 1,
-    spreads: _day.spreads,
-  );
+  late final ReplaySession _s =
+      widget.resume?.restore() ??
+      SavedSession.newEngine(_day, widget.startingBalance);
+
+  /// Everything the player did, by candle: the session's save file.
+  late final _log = <SessionAction>[...?widget.resume?.actions];
+  Timer? _saveTimer;
   late final double _atr =
       Indicators.atr(_day.candles.sublist(0, _day.sessionStart)).last ??
       _day.sessionOpen * widget.market.dailyVolatilityPct / 100 / 10;
@@ -95,9 +112,70 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.resume != null) {
+      _eventRevealed = _s.currentIndex >= _day.event.index;
+    }
+    // Saved from the first moment: choosing a market is binding.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _save();
+    });
+  }
+
+  @override
   void dispose() {
     _timer?.cancel();
+    if (_saveTimer?.isActive ?? false) {
+      _saveTimer!.cancel();
+      _save();
+    }
     super.dispose();
+  }
+
+  // ---- Save and resume ---------------------------------------------------
+
+  void _save() {
+    final onProgress = widget.onProgress;
+    if (onProgress == null || _ending) return;
+    onProgress(
+      SavedSession(
+        symbol: widget.market.symbol,
+        dayNumber: widget.dayNumber,
+        ranked: widget.ranked,
+        startingBalance: widget.startingBalance,
+        startedOn: widget.startedOn,
+        index: _s.currentIndex,
+        actions: List.of(_log),
+      ),
+    );
+  }
+
+  void _record(SessionAction action) {
+    _log.add(action);
+    _save();
+  }
+
+  /// Dragging a level moves it many times; only where it ends up matters,
+  /// and one save a moment later is enough.
+  void _recordLevels() {
+    final p = _s.position;
+    if (p == null) return;
+    final last = _log.lastOrNull;
+    if (last is UpdateLevels && last.index == _s.currentIndex) {
+      _log.removeLast();
+    }
+    _log.add(
+      UpdateLevels(
+        _s.currentIndex,
+        stopLoss: p.stopLoss,
+        takeProfit: p.takeProfit,
+      ),
+    );
+    _saveTimer ??= Timer(const Duration(milliseconds: 300), () {
+      _saveTimer = null;
+      _save();
+    });
   }
 
   // ---- Playback ----------------------------------------------------------
@@ -145,6 +223,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
         _timer?.cancel();
       }
     });
+    _save();
     if (!_s.hasNextBar) _end();
   }
 
@@ -230,16 +309,16 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
     }
     final qty = _qty;
     try {
-      _s.submit(
-        OrderRequest(
-          side: _side,
-          quantity: qty,
-          type: _type,
-          price: _type == OrderType.market ? null : _entry,
-          stopLoss: _stop,
-          takeProfit: _target,
-        ),
+      final order = OrderRequest(
+        side: _side,
+        quantity: qty,
+        type: _type,
+        price: _type == OrderType.market ? null : _entry,
+        stopLoss: _stop,
+        takeProfit: _target,
       );
+      _s.submit(order);
+      _record(SubmitOrder(_s.currentIndex, order));
       setState(() {
         _message = null;
         if (_type == OrderType.market) {
@@ -257,6 +336,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
 
   void _closePosition() {
     final trade = _s.closePosition();
+    _record(ClosePosition(_s.currentIndex));
     setState(() => _toast(_closeMessage(trade)));
   }
 
@@ -264,6 +344,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
     final p = _s.position!;
     try {
       _s.updateLevels(stopLoss: p.entryPrice, takeProfit: p.takeProfit);
+      _recordLevels();
       setState(() => _toast('Stop moved to break-even'));
     } on OrderRejected catch (e) {
       setState(() => _message = e.message);
@@ -281,6 +362,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
             : position.takeProfit;
         try {
           _s.updateLevels(stopLoss: stop, takeProfit: target);
+          _recordLevels();
         } on OrderRejected {
           // Ignore drags past the current price.
         }
@@ -335,30 +417,48 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
       );
   }
 
-  Future<bool> _confirmLeave() async {
-    if (_ending) return true;
-    final leave = await showDialog<bool>(
+  /// Leaving: a saved (ranked) session can be paused and resumed later;
+  /// otherwise the only choice is to end it.
+  Future<_Leave> _askLeave() async {
+    if (_ending) return _Leave.stay;
+    final canPause = widget.onProgress != null;
+    final choice = await showDialog<_Leave>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('End today\'s session?'),
+        title: Text(canPause ? 'Leave the session?' : 'End this session?'),
         content: Text(
-          widget.ranked
-              ? 'Any open trade will be closed at the current price and your ranked session for today will end.'
+          canPause
+              ? 'Pause: your trades and orders are saved and the market '
+                    'waits for you. Resume from the League tab.\n\n'
+                    'End: any open trade is closed at the current price and '
+                    'the result is final.'
               : 'Any open trade will be closed at the current price.',
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(context, _Leave.stay),
             child: const Text('Keep trading'),
           ),
+          if (canPause)
+            TextButton(
+              onPressed: () => Navigator.pop(context, _Leave.pause),
+              child: const Text('Pause'),
+            ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () => Navigator.pop(context, _Leave.end),
             child: const Text('End session'),
           ),
         ],
       ),
     );
-    return leave ?? false;
+    return choice ?? _Leave.stay;
+  }
+
+  void _pause() {
+    _timer?.cancel();
+    _playing = false;
+    _save();
+    Navigator.of(context).pop();
   }
 
   // ---- UI ----------------------------------------------------------------
@@ -370,7 +470,14 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
         if (didPop) return;
-        if (await _confirmLeave()) _end();
+        switch (await _askLeave()) {
+          case _Leave.end:
+            _end();
+          case _Leave.pause:
+            if (mounted) _pause();
+          case _Leave.stay:
+            break;
+        }
       },
       child: Scaffold(
         appBar: AppBar(
@@ -979,6 +1086,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
         OutlinedButton(
           onPressed: () => setState(() {
             _s.cancelPending();
+            _record(CancelPending(_s.currentIndex));
             _toast('Order cancelled');
           }),
           child: const Text('Cancel order'),

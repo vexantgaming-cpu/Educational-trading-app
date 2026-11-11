@@ -312,4 +312,83 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets('going back shows an answered question as it was, and it '
+      'counts once', (tester) async {
+    tester.view.physicalSize = const Size(1179, 2556);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    SharedPreferences.setMockInitialValues({});
+    ProgressStore.reset();
+    final progress = await ProgressStore.load();
+    final lesson = lessons['L0-02']!;
+    final quizIndex = lesson.steps.indexWhere((s) => s is QuizStep);
+    final quiz = lesson.steps[quizIndex] as QuizStep;
+
+    await tester.pumpWidget(
+      ProgressScope(
+        store: progress,
+        child: MaterialApp(
+          home: LessonPlayerScreen(lessonId: lesson.id, content: lesson),
+        ),
+      ),
+    );
+    Future<void> press(String label) async {
+      final button = find.widgetWithText(FilledButton, label);
+      await tester.ensureVisible(button);
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> back() async {
+      await tester.tap(find.byTooltip('Previous step'));
+      await tester.pumpAndSettle();
+    }
+
+    // Nothing to go back to on the first step.
+    expect(find.byTooltip('Previous step'), findsNothing);
+    final firstTitle = (lesson.steps.first as ExplainStep).title!;
+    expect(find.text(firstTitle), findsOneWidget);
+
+    for (var i = 0; i < quizIndex; i++) {
+      await press('Continue');
+    }
+    // Re-read the previous explanation, then come back.
+    await back();
+    expect(find.text(quiz.question), findsNothing);
+    await press('Continue');
+    expect(find.text(quiz.question), findsOneWidget);
+
+    await tester.tap(find.text(quiz.options[quiz.answer]));
+    await tester.pump();
+    await press('Check');
+    expect(find.text('Correct!'), findsOneWidget);
+    await press('Continue');
+    expect(find.text(quiz.question), findsNothing);
+
+    // Back on the question: still answered, no second "Check".
+    await back();
+    expect(find.text(quiz.question), findsOneWidget);
+    expect(find.text('Correct!'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Check'), findsNothing);
+    final wrong = quiz.options[(quiz.answer + 1) % quiz.options.length];
+    await tester.tap(find.text(wrong));
+    await tester.pump();
+    expect(find.text('Correct!'), findsOneWidget, reason: 'answer is locked');
+
+    // Finish the lesson answering the rest correctly.
+    for (var i = quizIndex; i < lesson.steps.length; i++) {
+      final step = lesson.steps[i];
+      if (step is QuizStep && i != quizIndex) {
+        final option = find.text(step.options[step.answer]);
+        await tester.ensureVisible(option);
+        await tester.tap(option);
+        await tester.pump();
+        await press('Check');
+      }
+      await press(i == lesson.steps.length - 1 ? 'Finish' : 'Continue');
+    }
+    expect(find.text('3 of 3 answers correct'), findsOneWidget);
+    expect(progress.xp, 25, reason: 'the revisited answer counted once');
+  });
 }
