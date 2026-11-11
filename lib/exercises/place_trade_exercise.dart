@@ -12,6 +12,11 @@ import 'trade_scenario.dart';
 
 enum _Phase { planning, running, done }
 
+/// A different practice chart each time the exercise is opened, instead of
+/// always starting on the same one.
+int freshPracticeSeed() =>
+    1000 + DateTime.now().millisecondsSinceEpoch ~/ 1000 % 900000;
+
 /// "Place the trade": drag the stop-loss and take-profit, see the risk and
 /// position size update live, then watch the trade play out bar by bar.
 ///

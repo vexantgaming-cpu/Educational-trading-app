@@ -28,6 +28,9 @@ import 'theme/app_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _registerFontLicenses();
+  // The trading screens are designed for an upright phone: sideways there is
+  // no room left for the chart. (Tablets may still rotate; they have space.)
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   final progress = await ProgressStore.load();
   final game = await GameStore.load();
   final settings = await SettingsStore.load();
@@ -90,7 +93,8 @@ class UpwiqApp extends StatelessWidget {
                   '/account': (_) => const HomeShell(initialTab: 3),
                   '/feedback': (_) => const FeedbackScreen(),
                   dailyChallengeRoute: (_) => const DailyChallengeScreen(),
-                  placeTradeRoute: (_) => const PlaceTradeExercise(),
+                  placeTradeRoute: (_) =>
+                      PlaceTradeExercise(seed: freshPracticeSeed()),
                 },
                 onGenerateRoute: _generateRoute,
               ),
@@ -113,6 +117,28 @@ class HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<HomeShell> {
   late var _tab = widget.initialTab;
+
+  /// When the app comes back to the front it may be a new day (new Daily
+  /// Challenge, new ranked session) or a new league week.
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(onResume: _refresh);
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
+  void _refresh() {
+    if (!mounted) return;
+    GameScope.of(context).refresh();
+    DailyScope.of(context).refresh();
+  }
 
   static const _screens = [
     LearnScreen(),

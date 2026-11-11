@@ -834,7 +834,9 @@ class _ResultsViewState extends State<_ResultsView> {
                 child: Column(
                   children: [
                     Text(
-                      longDate(store.now).toUpperCase(),
+                      // The challenge's own date (it may be past midnight).
+                      longDate(DateTime.parse(widget.challenge.dateKey))
+                          .toUpperCase(),
                       style: theme.textTheme.labelSmall,
                     ),
                     const SizedBox(height: 8),

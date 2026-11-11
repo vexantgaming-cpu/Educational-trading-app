@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../app_info.dart';
 import '../data/curriculum.dart';
+import '../format.dart';
+import '../game/game_scope.dart';
 import '../progress/progress_scope.dart';
 import '../settings/settings_store.dart';
 import '../theme/app_colors.dart';
@@ -37,10 +39,11 @@ class AccountScreen extends StatelessWidget {
     final next = rankIndex + 1 < _ranks.length ? _ranks[rankIndex + 1] : null;
     final fromXp = _ranks[rankIndex].$1;
     final toNext = next == null ? 1.0 : (xp - fromXp) / (next.$1 - fromXp);
-    final totalLessons = curriculum.fold<int>(
-      0,
-      (a, l) => a + l.lessons.length,
-    );
+    // Counted against the lessons that can be taken today.
+    final totalLessons = availableLessons.length;
+    final doneLessons = availableLessons
+        .where((r) => progress.isCompleted(r.lesson.id!))
+        .length;
 
     return CustomScrollView(
       slivers: [
@@ -68,15 +71,16 @@ class AccountScreen extends StatelessWidget {
                 Expanded(
                   child: _StatTile(
                     icon: Icons.menu_book,
-                    value: '${progress.completedCount}/$totalLessons',
+                    value: '$doneLessons/$totalLessons',
                     label: 'Lessons',
                   ),
                 ),
                 const SizedBox(width: 10),
-                const Expanded(
+                Expanded(
+                  // The league account's paper money, as it stands today.
                   child: _StatTile(
                     icon: Icons.account_balance_wallet,
-                    value: '\$10k',
+                    value: compactMoney(GameScope.of(context).balance),
                     label: 'Virtual',
                   ),
                 ),

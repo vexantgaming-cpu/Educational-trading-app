@@ -218,3 +218,29 @@ const curriculum = <Level>[
     ],
   ),
 ];
+
+/// A lesson with the level it belongs to.
+typedef LessonRef = ({Level level, Lesson lesson});
+
+/// The lessons a learner can open today, in path order: written and not
+/// behind Premium.
+final List<LessonRef> availableLessons = [
+  for (final level in curriculum)
+    for (final lesson in level.lessons)
+      if (lesson.id != null && !level.isLocked(lesson))
+        (level: level, lesson: lesson),
+];
+
+/// The next lesson to take: the first unfinished one after [afterId] (or
+/// from the start of the path), wrapping round to earlier gaps. Null when
+/// every available lesson is done.
+LessonRef? nextLesson(bool Function(String id) isCompleted, {String? afterId}) {
+  final from = afterId == null
+      ? 0
+      : availableLessons.indexWhere((r) => r.lesson.id == afterId) + 1;
+  for (var k = 0; k < availableLessons.length; k++) {
+    final ref = availableLessons[(from + k) % availableLessons.length];
+    if (ref.lesson.id != afterId && !isCompleted(ref.lesson.id!)) return ref;
+  }
+  return null;
+}

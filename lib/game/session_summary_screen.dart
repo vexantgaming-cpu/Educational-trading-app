@@ -7,6 +7,7 @@ import '../format.dart';
 import '../theme/app_colors.dart';
 import '../widgets/gradient_button.dart';
 import 'game_scope.dart';
+import 'market_picker_screen.dart';
 import 'session_result.dart';
 
 /// End-of-day debrief: result, what the news did, every trade, and coaching.
@@ -186,10 +187,28 @@ class SessionSummaryScreen extends StatelessWidget {
               ),
             ],
             const SizedBox(height: 20),
-            GradientButton(
-              label: result.ranked ? 'Back to the league' : 'Done',
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+            if (result.ranked)
+              GradientButton(
+                label: 'Back to the league',
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            else ...[
+              // Practice is unlimited: offer another go straight away.
+              GradientButton(
+                label: 'Trade another market',
+                icon: Icons.replay,
+                onPressed: () => Navigator.of(context).pushReplacement(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const MarketPickerScreen(ranked: false),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Done'),
+              ),
+            ],
           ],
         ),
       ),

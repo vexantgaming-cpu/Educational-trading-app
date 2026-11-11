@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../daily/daily_challenge_screen.dart';
 import '../data/curriculum.dart';
 import '../lessons/lesson_player.dart';
 import '../progress/progress_scope.dart';
@@ -15,9 +16,14 @@ class LearnScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final progress = ProgressScope.of(context);
-    final total = curriculum.fold<int>(0, (a, l) => a + l.lessons.length);
-    final done = progress.completedCount;
+    // Progress is measured against the lessons that can be taken today.
+    final total = availableLessons.length;
+    final done = availableLessons
+        .where((r) => progress.isCompleted(r.lesson.id!))
+        .length;
     return CustomScrollView(
+      // Keeps the scroll position when you switch tabs and come back.
+      key: const PageStorageKey('learn-scroll'),
       slivers: [
         SliverToBoxAdapter(
           child: BrandBar(
@@ -66,6 +72,10 @@ class LearnScreen extends StatelessWidget {
             ),
           ),
         ),
+        const SliverPadding(
+          padding: EdgeInsets.fromLTRB(16, 4, 16, 0),
+          sliver: SliverToBoxAdapter(child: _UpNextCard()),
+        ),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
@@ -85,6 +95,98 @@ class LearnScreen extends StatelessWidget {
   }
 }
 
+/// One tap to the next unfinished lesson: "Start here" for a newcomer, "Up
+/// next" afterwards, and a pointer to the Daily Challenge once the free path
+/// is finished.
+class _UpNextCard extends StatelessWidget {
+  const _UpNextCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final palette = context.palette;
+    final progress = ProgressScope.of(context);
+    final next = nextLesson(progress.isCompleted);
+    final started = progress.completedCount > 0;
+
+    final String label, title, subtitle;
+    final Widget badge;
+    final VoidCallback onTap;
+    if (next != null) {
+      label = started ? 'UP NEXT' : 'START HERE';
+      title = next.lesson.title;
+      subtitle =
+          'Level ${next.level.number} · ${next.level.title} · '
+          '${next.lesson.minutes} min';
+      badge = IconBadge(
+        icon: next.level.icon,
+        colors: next.level.colors,
+        size: 44,
+      );
+      onTap = () => Navigator.of(context).push(
+        MaterialPageRoute<bool>(
+          builder: (_) => LessonPlayerScreen(lessonId: next.lesson.id!),
+        ),
+      );
+    } else {
+      label = 'ALL FREE LESSONS DONE';
+      title = 'Keep your skills sharp';
+      subtitle = 'Three new rounds in today\'s Daily Challenge.';
+      badge = const IconBadge(
+        icon: Icons.today,
+        colors: [Color(0xFF38BDF8), Color(0xFF2563EB)],
+        size: 44,
+      );
+      onTap = () => Navigator.of(context).pushNamed(dailyChallengeRoute);
+    }
+
+    return Material(
+      color: palette.surface,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: palette.gold.withValues(alpha: 0.5)),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              badge,
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: palette.gold,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(subtitle, style: theme.textTheme.bodySmall),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Icon(Icons.play_circle_fill, color: palette.gold, size: 36),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// A level as a collapsible card: key visual, progress and access badge on
 /// top; lessons revealed on tap. Folded by default.
 class LevelCard extends StatefulWidget {
@@ -97,7 +199,19 @@ class LevelCard extends StatefulWidget {
 }
 
 class _LevelCardState extends State<LevelCard> {
-  var _expanded = false;
+  /// Remembered while the app is open, so a level you opened is still open
+  /// when you come back from another tab.
+  String get _storageId => 'learn-level-${widget.level.number}';
+  late var _expanded =
+      PageStorage.maybeOf(context)?.readState(context, identifier: _storageId)
+          as bool? ??
+      false;
+
+  void _toggle() {
+    setState(() => _expanded = !_expanded);
+    PageStorage.maybeOf(context)
+        ?.writeState(context, _expanded, identifier: _storageId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +237,7 @@ class _LevelCardState extends State<LevelCard> {
       child: Column(
         children: [
           InkWell(
-            onTap: () => setState(() => _expanded = !_expanded),
+            onTap: _toggle,
             child: Padding(
               padding: const EdgeInsets.all(14),
               child: Row(
@@ -261,7 +375,7 @@ class _LessonRow extends StatelessWidget {
       leading = CircleAvatar(
         radius: 16,
         backgroundColor: context.palette.up,
-        child: Icon(Icons.check, size: 18, color: Colors.white),
+        child: Icon(Icons.check, size: 18, color: context.palette.onUp),
       );
     } else if (locked) {
       leading = CircleAvatar(

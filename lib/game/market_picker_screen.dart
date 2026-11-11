@@ -26,6 +26,18 @@ class _MarketPickerScreenState extends State<MarketPickerScreen> {
 
   bool get ranked => widget.ranked;
 
+  @override
+  void initState() {
+    super.initState();
+    // A new league week may have started while the app stayed open. After
+    // the first frame, because this notifies the widgets above.
+    if (ranked) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) GameScope.of(context).refresh();
+      });
+    }
+  }
+
   int _dayFor(int today) => ranked ? today : _practiceDay;
 
   @override
@@ -67,6 +79,9 @@ class _MarketPickerScreenState extends State<MarketPickerScreen> {
   void _start(BuildContext context, MarketProfile market) {
     final store = GameScope.of(context);
     final dayNumber = _dayFor(store.dayNumber);
+    // The session belongs to the day it starts on, even if it ends after
+    // midnight.
+    final startedOn = store.todayKey;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (_) => TradingSessionScreen(
@@ -80,6 +95,7 @@ class _MarketPickerScreenState extends State<MarketPickerScreen> {
                 symbol: market.symbol,
                 pnl: result.pnl,
                 trades: result.trades.length,
+                date: startedOn,
               );
             }
             return SessionSummaryScreen(result: result);

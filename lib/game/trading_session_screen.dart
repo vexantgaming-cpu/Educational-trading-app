@@ -938,9 +938,11 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
             ),
             const SizedBox(width: 10),
             Expanded(
+              // Green while the trade is in profit, red while it is losing.
               child: _SideButton(
+                key: const Key('close-position'),
                 label: 'Close ${money(pnl, signed: true)}',
-                color: buy ? context.palette.down : context.palette.up,
+                color: pnl >= 0 ? context.palette.up : context.palette.down,
                 onPressed: _closePosition,
               ),
             ),
@@ -1213,7 +1215,12 @@ class _Info extends StatelessWidget {
 }
 
 class _SideButton extends StatelessWidget {
-  const _SideButton({required this.label, required this.color, this.onPressed});
+  const _SideButton({
+    super.key,
+    required this.label,
+    required this.color,
+    this.onPressed,
+  });
 
   final String label;
   final Color color;
@@ -1225,7 +1232,7 @@ class _SideButton extends StatelessWidget {
       onPressed: onPressed,
       style: FilledButton.styleFrom(
         backgroundColor: color,
-        foregroundColor: Colors.white,
+        foregroundColor: readableOn(color),
         minimumSize: const Size(0, 50),
       ),
       child: _FitLabel(label),

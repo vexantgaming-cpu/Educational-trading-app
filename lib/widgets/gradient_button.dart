@@ -106,7 +106,12 @@ class Pill extends StatelessWidget {
   Widget build(BuildContext context) {
     final onGradient = gradient != null;
     final color = this.color ?? context.palette.textMuted;
-    final fg = onGradient ? Colors.white : color;
+    // Dark ink on the bright brand gradient, white on the others.
+    final fg = !onGradient
+        ? color
+        : identical(gradient, AppColors.primaryGradient)
+        ? AppColors.onGold
+        : Colors.white;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(

@@ -90,6 +90,10 @@ class DailyChallengeStore extends ChangeNotifier {
   String get todayKey => DailyChallenge.dateKeyOf(now);
   DailyChallenge get today => DailyChallenge.forDate(now);
 
+  /// Re-reads the date (call when the app returns to the foreground), so
+  /// yesterday's "done" card gives way to today's challenge.
+  void refresh() => notifyListeners();
+
   DailyResult? resultFor(String dateKey) => _results[dateKey];
   DailyResult? get todayResult => _results[todayKey];
   int get played => _results.length;

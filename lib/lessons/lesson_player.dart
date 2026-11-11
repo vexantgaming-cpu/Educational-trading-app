@@ -6,6 +6,7 @@ import 'package:market_sim/market_sim.dart';
 
 import '../chart/candle_chart.dart';
 import '../chart/chart_models.dart';
+import '../data/curriculum.dart';
 import '../progress/progress_scope.dart';
 import '../theme/app_colors.dart';
 import '../theme/illustrations.dart';
@@ -418,60 +419,96 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
   Widget _completion(BuildContext context, LessonContent lesson) {
     final theme = Theme.of(context);
     final questions = lesson.questionCount;
+    final next = nextLesson(
+      ProgressScope.of(context).isCompleted,
+      afterId: lesson.id,
+    );
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: SizedBox(
-                  width: 170,
-                  height: 170,
-                  child: CustomPaint(
-                    painter: TrophyArt(context.palette, showRing: false),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: SizedBox(
+                    width: 150,
+                    height: 150,
+                    child: CustomPaint(
+                      painter: TrophyArt(context.palette, showRing: false),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Lesson complete!',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                lesson.title,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.titleMedium,
-              ),
-              const SizedBox(height: 24),
-              if (questions > 0)
+                const SizedBox(height: 16),
                 Text(
-                  '$_correct of $questions answers correct',
+                  'Lesson complete!',
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyLarge,
+                  style: theme.textTheme.headlineMedium,
                 ),
-              const SizedBox(height: 8),
-              Center(
-                child: _earnedXp > 0
-                    ? GradientText(
-                        '+$_earnedXp XP',
-                        style: theme.textTheme.headlineMedium,
-                      )
-                    : Text(
-                        'Already completed: no new XP',
-                        style: theme.textTheme.titleMedium,
+                const SizedBox(height: 8),
+                Text(
+                  lesson.title,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleMedium,
+                ),
+                const SizedBox(height: 20),
+                if (questions > 0)
+                  Text(
+                    '$_correct of $questions answers correct',
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyLarge,
+                  ),
+                const SizedBox(height: 8),
+                Center(
+                  child: _earnedXp > 0
+                      ? GradientText(
+                          '+$_earnedXp XP',
+                          style: theme.textTheme.headlineMedium,
+                        )
+                      : Text(
+                          'Already completed: no new XP',
+                          style: theme.textTheme.titleMedium,
+                        ),
+                ),
+                const SizedBox(height: 28),
+                if (next != null) ...[
+                  Text(
+                    'UP NEXT',
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: context.palette.gold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    next.lesson.title,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyLarge,
+                  ),
+                  const SizedBox(height: 14),
+                  GradientButton(
+                    label: 'Next lesson',
+                    icon: Icons.play_arrow,
+                    onPressed: () => Navigator.of(context).pushReplacement(
+                      MaterialPageRoute<bool>(
+                        builder: (_) =>
+                            LessonPlayerScreen(lessonId: next.lesson.id!),
                       ),
-              ),
-              const SizedBox(height: 32),
-              GradientButton(
-                label: 'Back to lessons',
-                onPressed: () => Navigator.of(context).pop(true),
-              ),
-            ],
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('Back to lessons'),
+                  ),
+                ] else
+                  GradientButton(
+                    label: 'Back to lessons',
+                    onPressed: () => Navigator.of(context).pop(true),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

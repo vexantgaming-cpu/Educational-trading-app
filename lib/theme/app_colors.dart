@@ -114,6 +114,11 @@ class AppPalette extends ThemeExtension<AppPalette> {
 
   bool get isDark => brightness == Brightness.dark;
 
+  /// Text and icons on a solid [up] / [down] fill (Buy, Sell, Close):
+  /// dark ink on the bright dark-theme colours, white on the light-theme ones.
+  Color get onUp => readableOn(up);
+  Color get onDown => readableOn(down);
+
   LinearGradient get heroGradient => LinearGradient(
     colors: [heroTop, heroBottom],
     begin: Alignment.topLeft,
@@ -150,6 +155,17 @@ class AppPalette extends ThemeExtension<AppPalette> {
       heroBottom: l(heroBottom, other.heroBottom),
     );
   }
+}
+
+/// Dark ink or white, whichever is easier to read on a solid [background]
+/// (WCAG contrast). Bright fills such as the dark theme's green need dark
+/// text; white on them is under 3:1.
+Color readableOn(Color background) {
+  const ink = Color(0xFF0B0F15);
+  final l = background.computeLuminance();
+  final withWhite = 1.05 / (l + 0.05);
+  final withInk = (l + 0.05) / (ink.computeLuminance() + 0.05);
+  return withInk > withWhite ? ink : Colors.white;
 }
 
 extension PaletteContext on BuildContext {

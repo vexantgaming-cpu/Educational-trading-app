@@ -505,3 +505,47 @@ Answered on 30 Sep 2026: see §0. Still open:
 6. GitHub Actions: ✅ tests + installable test APK on every push; signed `.aab` for Play in Phase 2.
 7. Clickable prototype → beginner usability test → iterate.
 8. Owner registers the Play developer account (personal) and payments profile.
+
+## 15. App review (11 Nov 2026)
+
+A screen-by-screen review of the app. **Fixed the same day:**
+
+- Trading screen: **Close** is green while the trade is in profit and red
+  while it is losing (it used to follow the trade's direction).
+- Text on green/red buttons and chart price tags is dark in the dark theme
+  (white on the bright green was about 2:1 contrast; the design system's
+  `onUp`/`onDown` rule).
+- The app re-checks the date when it comes back to the foreground and before a
+  ranked session, so a league week that ended while the app stayed open is
+  settled, and the Daily Challenge card shows the new day. A ranked session is
+  recorded on the day it started.
+- Phones are locked to portrait: sideways, the trading screen had no room for
+  the chart.
+- Learn: progress counts the lessons that exist (28), a **Start here / Up
+  next** card opens the next unfinished lesson, opened levels and scroll
+  position survive a tab switch, and the lesson-complete screen has a **Next
+  lesson** button.
+- "Place the trade" opens on a different chart each time. A practice session
+  summary offers **Trade another market**. Account shows the real league
+  balance instead of a fixed "$10k".
+
+**Suggested next, in priority order (owner to choose):**
+
+1. **Resume an interrupted trading session.** If the phone closes the app
+   mid-session the day is lost; and because a ranked day is only recorded at
+   the end, it can be replayed after seeing the chart. Saving the session as
+   it goes fixes both. Needed before online leagues.
+2. **First-run welcome** (2–3 screens: what Upwiq is, virtual money only,
+   start the first lesson).
+3. **Go back one step in a lesson**, and ask before closing a lesson halfway.
+4. **Daily reminder** (the Account row says "Soon"): one opt-in notification a
+   day for the Daily Challenge. Hide the "Language" row until there is a
+   second language.
+5. **Daily Challenge: resume after an interruption** (today an unfinished
+   attempt can be restarted from round 1 with the answers already seen).
+6. **Tablet layout**: screens stretch to the full width; a centred column or
+   two-pane layout would look better.
+7. **Glossary** of terms, linked from lessons; **review quizzes** that bring
+   back earlier questions (the plan's spaced repetition).
+8. **Screen-reader support for charts** (a spoken summary; "Spot it" answers
+   by list).

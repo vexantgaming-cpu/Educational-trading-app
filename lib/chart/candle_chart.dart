@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:market_sim/market_sim.dart';
 
+import '../theme/app_colors.dart';
 import 'chart_models.dart';
 
 /// Interactive candlestick chart used by lessons and exercises.
@@ -468,7 +469,7 @@ class _CandlePainter extends CustomPainter {
           Paint()..color = line.color,
         );
         final grip = Paint()
-          ..color = Colors.white
+          ..color = readableOn(line.color)
           ..strokeWidth = 1.5;
         for (final dy in [-3.0, 0.0, 3.0]) {
           canvas.drawLine(
@@ -492,7 +493,7 @@ class _CandlePainter extends CustomPainter {
       canvas,
       text,
       Offset(g.plotWidth + 6, y - 7),
-      Colors.white,
+      readableOn(color),
       bold: true,
     );
   }

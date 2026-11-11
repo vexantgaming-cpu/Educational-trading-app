@@ -155,25 +155,28 @@ class GameStore extends ChangeNotifier {
   List<Standing> get standings => standingsAfter(now.weekday);
   Standing get you => standings.firstWhere((s) => s.isYou);
 
-  /// Records today's ranked session and applies it to the account.
+  /// Records a ranked session and applies it to the account. [date] is the
+  /// day the session started (it can end after midnight); today by default.
   Future<void> recordRankedDay({
     required String symbol,
     required double pnl,
     required int trades,
+    String? date,
   }) async {
+    final day = date ?? todayKey;
     final before = balance;
     balance = math.max(0, balance + pnl);
     seasonDays = [
       ...seasonDays,
       DayResult(
-        date: todayKey,
+        date: day,
         symbol: symbol,
         pnl: pnl,
         returnPct: before == 0 ? 0 : pnl / before * 100,
         trades: trades,
       ),
     ];
-    lastRankedDate = todayKey;
+    lastRankedDate = day;
     if (balance < LeagueRules.startingBalance * LeagueRules.blownFraction) {
       _resetAccount();
       justBlown = true;
@@ -196,12 +199,12 @@ class GameStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Re-checks the season (call when the app returns to the foreground).
+  /// Re-checks the date and the season: settles last week if a new one has
+  /// started. Called when the app returns to the foreground and before a
+  /// ranked session, because the app can stay open for days.
   Future<void> refresh() async {
-    if (_rollSeasonIfNeeded()) {
-      await _save();
-      notifyListeners();
-    }
+    if (_rollSeasonIfNeeded()) await _save();
+    notifyListeners();
   }
 
   void _resetAccount() {

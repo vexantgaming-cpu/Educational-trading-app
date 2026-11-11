@@ -168,6 +168,8 @@ class _LeagueScreenState extends State<LeagueScreen> {
         );
       }
       await store.clearNotices();
+      // Ready for the next one (the app can stay open across weeks).
+      if (mounted) _noticeShown = false;
     });
   }
 

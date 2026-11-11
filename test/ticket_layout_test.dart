@@ -146,6 +146,7 @@ void main() {
           SettingsStore.reset();
           final progress = await ProgressStore.load();
           final settings = await SettingsStore.load();
+          final game = await store();
           for (final tab in const [
             LearnScreen(),
             PracticeScreen(),
@@ -156,18 +157,21 @@ void main() {
                 store: settings,
                 child: ProgressScope(
                   store: progress,
-                  child: DailyScope(
-                    store: DailyChallengeStore.memory(
-                      clock: () => DateTime(2026, 10, 3, 10),
-                    ),
-                    child: MaterialApp(
-                      theme: buildAppTheme(palette),
-                      builder: (context, child) => MediaQuery(
-                        data: MediaQuery.of(context)
-                            .copyWith(textScaler: TextScaler.linear(scale)),
-                        child: child!,
+                  child: GameScope(
+                    store: game,
+                    child: DailyScope(
+                      store: DailyChallengeStore.memory(
+                        clock: () => DateTime(2026, 10, 3, 10),
                       ),
-                      home: Scaffold(body: tab),
+                      child: MaterialApp(
+                        theme: buildAppTheme(palette),
+                        builder: (context, child) => MediaQuery(
+                          data: MediaQuery.of(context)
+                              .copyWith(textScaler: TextScaler.linear(scale)),
+                          child: child!,
+                        ),
+                        home: Scaffold(body: tab),
+                      ),
                     ),
                   ),
                 ),
