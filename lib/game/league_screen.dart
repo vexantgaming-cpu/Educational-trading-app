@@ -10,6 +10,7 @@ import 'game_store.dart';
 import 'leaderboard_screen.dart';
 import 'league_style.dart';
 import 'market_picker_screen.dart';
+import 'session_launcher.dart';
 
 /// The trading game: your league, today's session, and the leaderboard.
 class LeagueScreen extends StatefulWidget {
@@ -205,7 +206,10 @@ class _TodayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final done = store.rankedPlayedToday;
+    // An unfinished ranked session comes first: it has to be finished (or
+    // ended) before anything else counts.
+    final saved = store.rankedSession;
+    final done = saved == null && store.rankedPlayedToday;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -233,11 +237,18 @@ class _TodayCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      done ? 'Today\'s session is done' : 'Today\'s session',
+                      saved != null
+                          ? 'Session in progress'
+                          : done
+                          ? 'Today\'s session is done'
+                          : 'Today\'s session',
                       style: theme.textTheme.titleMedium,
                     ),
                     Text(
-                      done
+                      saved != null
+                          ? '${describeSavedSession(saved)}. Your trades and '
+                                'orders are saved.'
+                          : done
                           ? 'New markets and news tomorrow.'
                           : 'Read the news, pick a market, trade 08:00–16:00.',
                       style: theme.textTheme.bodySmall,
@@ -248,7 +259,13 @@ class _TodayCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          if (!done)
+          if (saved != null)
+            GradientButton(
+              label: 'Resume session',
+              icon: Icons.play_arrow,
+              onPressed: () => resumeRankedSession(context),
+            )
+          else if (!done)
             GradientButton(
               label: 'Pick today\'s market',
               icon: Icons.play_arrow,

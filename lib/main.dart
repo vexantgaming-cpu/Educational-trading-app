@@ -9,6 +9,7 @@ import 'exercises/place_trade_exercise.dart';
 import 'game/game_scope.dart';
 import 'game/game_store.dart';
 import 'game/league_screen.dart';
+import 'game/session_launcher.dart';
 import 'game/session_summary_screen.dart';
 import 'game/trading_session_screen.dart';
 import 'lessons/lesson_player.dart';
@@ -164,6 +165,36 @@ class _HomeShellState extends State<HomeShell> {
   void initState() {
     super.initState();
     _lifecycle = AppLifecycleListener(onResume: _refresh);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _offerResume());
+  }
+
+  /// Once per launch: if a ranked session was left unfinished (the phone
+  /// closed the app, or it was paused), offer to pick it up.
+  Future<void> _offerResume() async {
+    if (!mounted) return;
+    final saved = GameScope.of(context).rankedSession;
+    if (saved == null) return;
+    final resume = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Resume your ranked session?'),
+        content: Text(
+          '${describeSavedSession(saved)}. Your trades and orders are saved, '
+          'and the market waits for you.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Later'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Resume'),
+          ),
+        ],
+      ),
+    );
+    if ((resume ?? false) && mounted) await resumeRankedSession(context);
   }
 
   @override

@@ -5,8 +5,7 @@ import '../theme/app_colors.dart';
 import '../widgets/gradient_button.dart';
 import 'game_scope.dart';
 import 'league_style.dart';
-import 'session_summary_screen.dart';
-import 'trading_session_screen.dart';
+import 'session_launcher.dart';
 
 /// Choose today's market. Each card shows that market's morning headline,
 /// so reading the news is part of the choice.
@@ -78,30 +77,16 @@ class _MarketPickerScreenState extends State<MarketPickerScreen> {
 
   void _start(BuildContext context, MarketProfile market) {
     final store = GameScope.of(context);
-    final dayNumber = _dayFor(store.dayNumber);
-    // The session belongs to the day it starts on, even if it ends after
-    // midnight.
-    final startedOn = store.todayKey;
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(
-        builder: (_) => TradingSessionScreen(
-          market: market,
-          dayNumber: dayNumber,
-          ranked: ranked,
-          startingBalance: ranked ? store.balance : LeagueRules.startingBalance,
-          onComplete: (result) async {
-            if (ranked) {
-              await store.recordRankedDay(
-                symbol: market.symbol,
-                pnl: result.pnl,
-                trades: result.trades.length,
-                date: startedOn,
-              );
-            }
-            return SessionSummaryScreen(result: result);
-          },
-        ),
-      ),
+    // One ranked session at a time: an unfinished one is continued, never
+    // replaced by a fresh start.
+    final unfinished = ranked ? store.rankedSession : null;
+    openTradingSession(
+      context,
+      market: unfinished?.market ?? market,
+      dayNumber: unfinished?.dayNumber ?? _dayFor(store.dayNumber),
+      ranked: ranked,
+      resume: unfinished,
+      replace: true,
     );
   }
 }

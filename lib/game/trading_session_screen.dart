@@ -431,7 +431,7 @@ class _TradingSessionScreenState extends State<TradingSessionScreen> {
               ? 'Pause: your trades and orders are saved and the market '
                     'waits for you. Resume from the League tab.\n\n'
                     'End: any open trade is closed at the current price and '
-                    'the result is final.'
+                    'that is your ranked result for the day.'
               : 'Any open trade will be closed at the current price.',
         ),
         actions: [
