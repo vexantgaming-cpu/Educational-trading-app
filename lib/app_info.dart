@@ -4,9 +4,11 @@ library;
 /// Must match `version:` in pubspec.yaml (checked by a test).
 const appVersion = '1.0.0';
 
-/// Where "Leave feedback" in Account sends messages (through the user's own
-/// email app). Change it here once the mailbox exists.
-const feedbackEmail = 'feedback@upwiq.com';
+/// The app's public contact address: where "Leave feedback" in Account
+/// sends messages (through the user's own email app), and the address shown
+/// in the privacy policy (`site/privacy/`) and the Play Store listing. A
+/// test keeps the three in step.
+const feedbackEmail = 'upwiqapp@gmail.com';
 
 /// The public website (the `site/` folder, published with GitHub Pages).
 const websiteUrl =

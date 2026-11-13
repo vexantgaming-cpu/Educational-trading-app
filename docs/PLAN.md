@@ -449,8 +449,7 @@ Targets are starting assumptions to revisit after the closed test.
 
 **User feedback** (added 2 Oct 2026): Account → *Leave feedback* (rating, topic,
 message, optional app details) opens the user's email app addressed to
-`feedback@upwiq.com`. Set up that mailbox (or change `lib/app_info.dart`) before
-the closed test. Later, when Firebase arrives for online leagues, feedback can be
+`upwiqapp@gmail.com` (the app's public contact address since 13 Nov 2026). Later, when Firebase arrives for online leagues, feedback can be
 stored there instead of email.
 
 ---
@@ -523,8 +522,8 @@ Done in the repository; the owner's steps are in
 - **Play Console forms:** prepared answers for data safety, content rating,
   target audience (18+), ads, financial features.
 
-Open with the owner: the public contact email and the publisher name for the
-privacy policy; then the Play developer account, the 12-tester closed test
+Contact address: `upwiqapp@gmail.com`. Open with the owner: the publisher name
+for the privacy policy; then the Play developer account, the 12-tester closed test
 (14 days) and the production application.
 
 ## 15. App review (11 Nov 2026)

@@ -142,16 +142,20 @@ void main() {
     });
 
     test('one contact address everywhere', () {
+      // The feedback form, the privacy policy and the Play listing must
+      // all give the same address.
+      expect(feedbackEmail, matches(RegExp(r'^[\w.+-]+@[\w-]+\.[\w.]+$')));
       final policy = read('site/privacy/index.html');
-      // Until the owner chooses the address, the policy says so and the
-      // website workflow refuses to publish it.
-      expect(
-        policy.contains(feedbackEmail) || policy.contains('TO-BE-ADDED'),
-        isTrue,
-        reason:
-            'The privacy policy must show the same address the feedback '
-            'form sends to ($feedbackEmail).',
-      );
+      expect(policy, contains('mailto:$feedbackEmail'));
+      expect(policy, isNot(contains('TO-BE-ADDED: contact email')));
+      for (final doc in ['listing.md', 'console-answers.md', 'README.md']) {
+        expect(
+          read('docs/play-store/$doc'),
+          contains(feedbackEmail),
+          reason: 'docs/play-store/$doc gives another contact address',
+        );
+      }
+      // The website workflow refuses to publish while anything is missing.
       expect(read('.github/workflows/site.yml'), contains('TO-BE-ADDED'));
     });
   });

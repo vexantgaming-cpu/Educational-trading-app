@@ -81,9 +81,10 @@ at `/#/feedback`.
 
 "Leave feedback" in Account collects a star rating, a topic and a message and
 opens the user's email app addressed to `feedbackEmail` in `lib/app_info.dart`
-(currently `feedback@upwiq.com`, which needs a mailbox or forwarding once the
-domain is registered). Nothing is sent until the user presses send there. If no
-email app is installed, the text is copied to the clipboard instead.
+(`upwiqapp@gmail.com`, the app's public contact address, also shown in the privacy
+policy and the store listing). Nothing is sent until the user presses send
+there. If no email app is installed, the text is copied to the clipboard
+instead.
 
 ### Daily reminder
 

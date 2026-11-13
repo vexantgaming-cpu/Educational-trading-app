@@ -22,16 +22,17 @@ repository.
   workflow.
 - **Privacy policy link** in the app: Account → Privacy policy.
 
-## Step 1. Two decisions (You → tell Claude)
+## Step 1. One decision left (You → tell Claude)
 
-1. The **contact email** to publish (privacy policy, store listing, the
-   app's feedback form). It will be public; a dedicated address is better
-   than a personal one.
-2. The **publisher name** for the privacy policy: your own name or a
-   registered business name. Data protection law requires the app's
-   publisher to be named.
+- ✅ **Contact email:** `upwiqapp@gmail.com`. It is public: it appears in the
+  privacy policy, the store listing and the app's feedback form. Check that
+  mailbox regularly, and use the same address as the developer contact in
+  Play Console.
+- The **publisher name** for the privacy policy: your own name or a
+  registered business name. Data protection law requires the app's
+  publisher to be named.
 
-Until both are filled in, the website stays unpublished (the policy shows
+Until the name is filled in, the website stays unpublished (the policy shows
 "TO-BE-ADDED").
 
 ## Step 2. Give GitHub the upload key (You, 5 minutes)

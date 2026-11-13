@@ -93,7 +93,7 @@ Tablet screenshots are optional; skip them until there is a tablet layout.
 | App or game | App |
 | Category | Education |
 | Tags | Education, and Finance if offered |
-| Email address | the contact address (same as in the privacy policy) |
+| Email address | `upwiqapp@gmail.com` |
 | Website | https://vexantgaming-cpu.github.io/Educational-trading-app/ |
 | Phone number | leave empty |
 | Privacy policy | https://vexantgaming-cpu.github.io/Educational-trading-app/privacy/ |

@@ -26,7 +26,7 @@ login, and nothing is locked behind a code or a purchase.
 
 ## Content rating (questionnaire)
 
-- Email address: the contact address.
+- Email address: `upwiqapp@gmail.com`.
 - Category: **All other app types** (it is an education app, not a game, a
   social app or a browser).
 - Violence, fear, sexuality, bad language, drugs, alcohol, tobacco: **No**.
