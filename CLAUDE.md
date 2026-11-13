@@ -55,3 +55,22 @@ web PNGs are rendered from `app-icon.svg`. Keep them in sync if the logo changes
   the owner's phone. Don't add exact-alarm permissions (Play restricts them).
 - The app's navigator key is created in `main()` and passed in, not a global:
   a global key would carry the old navigator into a rebuilt app in tests.
+
+## Google Play
+- Launch kit and owner's guide: `docs/play-store/`. Keep it current when the
+  release process changes.
+- The repository is public: never commit a keystore, `key.properties` or a
+  password. The upload key lives in the GitHub secrets
+  `UPLOAD_KEYSTORE_BASE64` and `UPLOAD_KEYSTORE_PASSWORD`; only its public
+  certificate is in `docs/play-store/`. The owner holds the key file.
+- CI's "Play Store bundle" job builds the `.aab` on `main` with version code
+  = the CI run number, so don't rename `.github/workflows/ci.yml`. The
+  visible version is `version:` in `pubspec.yaml` plus `appVersion`.
+- Privacy promises are public (`site/privacy/`, the Data safety form in
+  `docs/play-store/console-answers.md`): no accounts, no network, no
+  analytics. `test/play_store_test.dart` fails when a preference key, a
+  dependency or a permission is added, and CI fails if the release build
+  asks for `INTERNET`. Update the policy and the form answers first, and tell
+  the owner the Play Console form needs changing too.
+- Store listing texts are length-checked by the same test. Regenerate the
+  graphics with `tool/store_graphics.mjs` after visible UI changes.

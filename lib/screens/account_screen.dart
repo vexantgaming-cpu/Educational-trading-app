@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../app_info.dart';
 import '../data/curriculum.dart';
 import '../format.dart';
 import '../game/game_scope.dart';
+import '../links.dart';
 import '../progress/progress_scope.dart';
 import '../settings/settings_store.dart';
 import '../theme/app_colors.dart';
@@ -25,7 +27,44 @@ const _ranks = [
 ];
 
 class AccountScreen extends StatelessWidget {
-  const AccountScreen({super.key});
+  const AccountScreen({super.key, this.openLink = openInBrowser});
+
+  /// Opens the privacy policy in the browser (replaced in tests).
+  final LinkOpener openLink;
+
+  Future<void> _openPrivacyPolicy(BuildContext context) async {
+    if (await openLink(Uri.parse(privacyPolicyUrl))) return;
+    if (!context.mounted) return;
+    // No browser to hand over to: show the address instead.
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Privacy policy'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('We couldn\'t open your browser. You can read it at:'),
+            SizedBox(height: 12),
+            SelectableText(privacyPolicyUrl),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Clipboard.setData(const ClipboardData(text: privacyPolicyUrl));
+              Navigator.pop(context);
+            },
+            child: const Text('Copy link'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,6 +170,13 @@ class AccountScreen extends StatelessWidget {
                         ? reminderTimeText(context, settings.reminderMinutes)
                         : 'Off',
                     onTap: () => showReminderSheet(context),
+                  ),
+                  const Divider(indent: 56),
+                  _SettingRow(
+                    icon: Icons.privacy_tip_outlined,
+                    title: 'Privacy policy',
+                    trailingIcon: Icons.open_in_new,
+                    onTap: () => _openPrivacyPolicy(context),
                   ),
                   const Divider(indent: 56),
                   _SettingRow(
@@ -316,12 +362,16 @@ class _SettingRow extends StatelessWidget {
     required this.icon,
     required this.title,
     this.value,
+    this.trailingIcon = Icons.chevron_right,
     this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String? value;
+
+  /// Shown when there is no [value]; "open in new" for rows that leave the app.
+  final IconData trailingIcon;
   final VoidCallback? onTap;
 
   @override
@@ -331,7 +381,7 @@ class _SettingRow extends StatelessWidget {
       title: Text(title),
       trailing: value != null
           ? Text(value!, style: Theme.of(context).textTheme.bodySmall)
-          : Icon(Icons.chevron_right, color: context.palette.textMuted),
+          : Icon(trailingIcon, color: context.palette.textMuted),
       onTap: onTap,
     );
   }

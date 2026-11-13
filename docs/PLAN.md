@@ -506,6 +506,27 @@ Answered on 30 Sep 2026: see §0. Still open:
 7. Clickable prototype → beginner usability test → iterate.
 8. Owner registers the Play developer account (personal) and payments profile.
 
+## 16. Google Play preparation (13 Nov 2026)
+
+Done in the repository; the owner's steps are in
+[`docs/play-store/README.md`](play-store/README.md).
+
+- **Release signing.** CI builds a signed app bundle (`.aab`) on every push
+  to `main` once the upload key's two secrets are in GitHub. The key is not
+  in the repository. Play App Signing keeps the real signing key with Google.
+- **Privacy policy and website** in `site/` (GitHub Pages), linked from the
+  app (Account → Privacy policy) and the listing. The policy's claims (no
+  account, no internet access, nothing leaves the phone) are enforced by
+  tests and a CI check on the built app.
+- **Store listing:** name, short and full description, release notes, eight
+  phone screenshots and the feature graphic.
+- **Play Console forms:** prepared answers for data safety, content rating,
+  target audience (18+), ads, financial features.
+
+Open with the owner: the public contact email and the publisher name for the
+privacy policy; then the Play developer account, the 12-tester closed test
+(14 days) and the production application.
+
 ## 15. App review (11 Nov 2026)
 
 A screen-by-screen review of the app. **Fixed the same day:**

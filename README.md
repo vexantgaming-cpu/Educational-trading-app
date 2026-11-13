@@ -25,8 +25,17 @@ Every push builds a test APK:
 2. Copy the APK to your phone and open it. Android will ask you to allow
    installs from that source (Files/Chrome) the first time.
 
-This test build is signed with a development key. The Play Store build will be
-signed separately (Phase 2).
+This test build is signed with a development key.
+
+## Publishing on Google Play
+
+[`docs/play-store/README.md`](docs/play-store/README.md) is the step-by-step
+guide: the signed Play bundle (`upwiq-play-bundle`, built by CI once the two
+upload-key secrets are added), the store listing texts, the answers for Play
+Console's forms, the screenshots and feature graphic, and the closed test
+Google requires. The website and privacy policy are in `site/`, published to
+GitHub Pages by the "Website" workflow; the app links to the policy from
+Account → Privacy policy.
 
 ## Project layout
 
@@ -49,6 +58,9 @@ signed separately (Phase 2).
 | `lib/app_info.dart` | App version and the address feedback is sent to |
 | `lib/data/curriculum.dart` | The 56-lesson learning path |
 | `docs/PLAN.md` | Product plan, decisions, compliance notes, roadmap |
+| `docs/play-store/` | Google Play launch kit: guide, listing texts, form answers, graphics, the upload key's public certificate |
+| `site/` | The public website: landing page and privacy policy (static HTML, no scripts) |
+| `tool/store_graphics.mjs` | Regenerates the Play screenshots and feature graphic from the running app |
 
 ## Development
 

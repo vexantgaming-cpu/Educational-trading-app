@@ -1,0 +1,91 @@
+/* Upwiq website: plain static pages, no scripts, no cookies, no trackers.
+   Colours follow the app's two themes (lib/theme/app_colors.dart). */
+@font-face {
+  font-family: "Poppins";
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/Poppins_600SemiBold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Inter";
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/Inter_400Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Inter";
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/Inter_600SemiBold.ttf") format("truetype");
+}
+
+:root {
+  color-scheme: dark light;
+  --bg: #0b0f15;
+  --surface: #131922;
+  --outline: #283343;
+  --text: #eaeef3;
+  --muted: #8a96a8;
+  --gold: #ffb627;
+  --letters: #eaeef3;
+  --note-bg: rgba(255, 182, 39, 0.1);
+  --grad: linear-gradient(135deg, #ffb627, #ff7a2f);
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+    --outline: #d8dee8;
+    --text: #111827;
+    --muted: #5b6577;
+    --gold: #a86500;
+    --letters: #111827;
+    --note-bg: rgba(168, 101, 0, 0.08);
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 17px/1.6 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+
+header.site { padding: 22px 0; }
+header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.logo { display: inline-flex; color: var(--letters); }
+.logo svg { height: 34px; width: auto; display: block; }
+nav a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 15px; }
+nav a:hover, nav a:focus-visible { color: var(--gold); }
+
+h1, h2, h3 { font-family: "Poppins", "Inter", system-ui, sans-serif; font-weight: 600; line-height: 1.2; }
+h1 { font-size: clamp(32px, 7vw, 46px); margin: 28px 0 12px; letter-spacing: -0.01em; }
+h1 em { font-style: normal; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+h2 { font-size: 22px; margin: 40px 0 8px; }
+h3 { font-size: 17px; margin: 0 0 4px; }
+p, ul { margin: 0 0 14px; }
+ul { padding-left: 22px; }
+li { margin-bottom: 6px; }
+a { color: var(--gold); }
+.lead { font-size: 19px; color: var(--muted); max-width: 34em; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+
+.pill {
+  display: inline-block; margin: 18px 0 8px; padding: 10px 18px; border-radius: 999px;
+  background: var(--grad); color: #1b1203; font-weight: 600; font-size: 15px;
+}
+.cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin: 30px 0 8px; padding: 0; list-style: none; }
+.cards li, .box {
+  background: var(--surface); border: 1px solid var(--outline); border-radius: 18px; padding: 18px; margin: 0;
+}
+.cards p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
+.box { margin: 22px 0; }
+.box ul { margin-bottom: 0; }
+.note { background: var(--note-bg); border: 1px solid var(--gold); border-radius: 12px; padding: 2px 8px; font-weight: 600; }
+
+footer.site { margin-top: 56px; border-top: 1px solid var(--outline); padding: 22px 0 40px; color: var(--muted); font-size: 14px; }
+footer.site p { margin-bottom: 8px; }

@@ -7,3 +7,11 @@ const appVersion = '1.0.0';
 /// Where "Leave feedback" in Account sends messages (through the user's own
 /// email app). Change it here once the mailbox exists.
 const feedbackEmail = 'feedback@upwiq.com';
+
+/// The public website (the `site/` folder, published with GitHub Pages).
+const websiteUrl =
+    'https://vexantgaming-cpu.github.io/Educational-trading-app/';
+
+/// The privacy policy: linked from Account and from the Play Store listing.
+/// The page is `site/privacy/index.html`.
+const privacyPolicyUrl = '${websiteUrl}privacy/';
