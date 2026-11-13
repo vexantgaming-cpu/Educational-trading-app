@@ -22,18 +22,32 @@ repository.
   workflow.
 - **Privacy policy link** in the app: Account → Privacy policy.
 
-## Step 1. One decision left (You → tell Claude)
+## Step 1. Contact details (done)
 
 - ✅ **Contact email:** `upwiqapp@gmail.com`. It is public: it appears in the
   privacy policy, the store listing and the app's feedback form. Check that
   mailbox regularly, and use the same address as the developer contact in
   Play Console.
-- The **publisher name** for the privacy policy: your own name or a
-  registered business name. Data protection law requires the app's
-  publisher to be named.
+- ✅ **Publisher name:** the privacy policy says Upwiq is published "by an
+  independent developer under the name Upwiq" (owner's choice, 13 Nov 2026:
+  no personal name, and no registered business yet).
 
-Until the name is filled in, the website stays unpublished (the policy shows
-"TO-BE-ADDED").
+Two things to know about that choice:
+
+- Data protection law (GDPR) expects the publisher to be identifiable. A
+  brand name with a working contact address is common for solo developers
+  and the app collects nothing, so the risk is small, but it is not the
+  strictest reading of the rule. When a business is registered, put its
+  name in the policy (ask Claude). This is not legal advice.
+- **Google Play decides what it shows about you, whatever the policy says.**
+  Google's help pages say a personal account shows the *developer name* you
+  choose (this can be "Upwiq"), your *legal name*, your *country* and your
+  contact email. Once the app earns money (Premium), EU rules treat you as a
+  "trader" and Google also shows an address and phone number to people in
+  the EU. Before you pay for the account, look at the **Developer profile**
+  preview during sign-up: it shows exactly what will be public. The way to
+  keep a personal name off Google Play is an **organization** account, which
+  needs a registered business (and a D-U-N-S number).
 
 ## Step 2. Give GitHub the upload key (You, 5 minutes)
 
@@ -48,7 +62,7 @@ Claude sent two private files: `upwiq-upload-key.p12` and
 3. Open **Actions → CI → Run workflow** (branch `main`). When it finishes,
    the run's page lists **upwiq-play-bundle** under Artifacts.
 
-## Step 3. Switch on the website (You, 2 minutes; after Step 1)
+## Step 3. Switch on the website (You, 2 minutes)
 
 1. Repository **Settings → Pages → Build and deployment → Source: GitHub
    Actions**.

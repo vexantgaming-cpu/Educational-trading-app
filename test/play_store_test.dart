@@ -147,7 +147,10 @@ void main() {
       expect(feedbackEmail, matches(RegExp(r'^[\w.+-]+@[\w-]+\.[\w.]+$')));
       final policy = read('site/privacy/index.html');
       expect(policy, contains('mailto:$feedbackEmail'));
-      expect(policy, isNot(contains('TO-BE-ADDED: contact email')));
+      // Nothing left to fill in, and no claim to be a registered company.
+      expect(policy, isNot(contains('TO-BE-ADDED')));
+      expect(policy, contains('independent developer under the name Upwiq'));
+      expect(policy, isNot(matches(RegExp(r'Upwiq (Ltd|LLC|Inc|GmbH|SRL)'))));
       for (final doc in ['listing.md', 'console-answers.md', 'README.md']) {
         expect(
           read('docs/play-store/$doc'),

@@ -522,8 +522,11 @@ Done in the repository; the owner's steps are in
 - **Play Console forms:** prepared answers for data safety, content rating,
   target audience (18+), ads, financial features.
 
-Contact address: `upwiqapp@gmail.com`. Open with the owner: the publisher name
-for the privacy policy; then the Play developer account, the 12-tester closed test
+Contact address: `upwiqapp@gmail.com`. The privacy policy names the publisher as
+"an independent developer under the name Upwiq" (owner's choice: no personal
+name, no registered business yet; revisit when a business exists, see
+`docs/play-store/README.md` step 1). Next for the owner: the Play developer
+account, the 12-tester closed test
 (14 days) and the production application.
 
 ## 15. App review (11 Nov 2026)
